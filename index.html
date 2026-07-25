@@ -1164,12 +1164,20 @@
       }
     }
 
-    function handleLogout() { 
-      if (currentUser) {
-        db.ref(`status/${currentUser.uid}`).set({ state: 'offline', lastChanged: firebase.database.ServerValue.TIMESTAMP }).then(() => {
-          auth.signOut().then(() => location.reload());
-        });
-      } else {
+    // ÇIKIŞ YAP FONKSİYONU GÜNCELLENDİ (Düzeltildi)
+    async function handleLogout() {
+      try {
+        if (currentUser) {
+          await db.ref(`status/${currentUser.uid}`).set({ 
+            state: 'offline', 
+            lastChanged: firebase.database.ServerValue.TIMESTAMP 
+          });
+        }
+        await auth.signOut();
+        closeProfileModal();
+        location.reload();
+      } catch (err) {
+        alert("Çıkış yapılırken bir hata oluştu: " + err.message);
         auth.signOut().then(() => location.reload());
       }
     }
