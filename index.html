@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta name="google-site-verification" content="pK0h6T2bXQyhYlpRFFxPzMv4ulEevve3ykmfePqAHEU" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BelascoAuto | BeamNG İlan Pazarı</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Firebase SDK'ları -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+  <style>
+    :root {
+      --bg-main: #0f1115;
+      --bg-card: #181b21;
+      --bg-hover: #22262f;
+      --accent-orange: #ff6b00;
+      --accent-hover: #e05e00;
+      --text-main: #f0f2f5;
+      --text-muted: #8b949e;
+      --border-color: #2a2e37;
+      --badge-danger: #ef4444;
+      --badge-mod: #3b82f6;
+      --badge-pending: #f59e0b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
+
+    /* Header & Logo */
+    header { background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+    
+    .logo { display: flex; align-items: center; gap: 0.75rem; font-size: 1.4rem; font-weight: 700; color: var(--text-main); text-decoration: none; transition: opacity 0.2s; }
+    .logo:hover { opacity: 0.95; }
+    .logo span { color: var(--accent-orange); }
+    
+    .logo-icon { width: 42px; height: 42px; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); flex-shrink: 0; }
+    .logo:hover .logo-icon { transform: scale(1.08) rotate(-3deg); }
+
+    .nav-links { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    
+    .btn-post { background-color: var(--accent-orange); color: #fff; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: 0.2s; }
+    .btn-post:hover { background-color: var(--accent-hover); }
+    
+    .btn-auth { background-color: var(--bg-hover); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 0.4rem; }
+    .btn-auth:hover { border-color: var(--accent-orange); color: var(--accent-orange); }
+
+    .user-profile-badge { display: flex; align-items: center; gap: 0.5rem; background: var(--bg-main); padding: 0.3rem 0.8rem; border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; }
+    .user-profile-badge img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+
+    /* Layout */
+    .main-container { max-width: 1400px; margin: 2rem auto; padding: 0 1rem; display: grid; grid-template-columns: 300px 1fr; gap: 2rem; width: 100%; }
+    @media(max-width: 900px) { .main-container { grid-template-columns: 1fr; } }
+
+    /* Sidebar / Filters */
+    .filters-sidebar { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1.5rem; height: fit-content; }
+    .filter-group { margin-bottom: 1.2rem; }
+    .filter-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase; }
+    .filter-input, .filter-select { width: 100%; padding: 0.7rem; background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-main); outline: none; font-size: 0.9rem; }
+    .filter-input:focus, .filter-select:focus { border-color: var(--accent-orange); }
+
+    /* Grid & Cards */
+    .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+    .listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+    .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; position: relative; }
+    .card:hover { transform: translateY(-4px); border-color: var(--accent-orange); }
+    .card-img-wrapper { position: relative; height: 190px; background-color: #121419; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .badge-modded { position: absolute; top: 10px; left: 10px; background-color: var(--badge-mod); color: #fff; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; z-index: 2; }
+    .badge-pert { position: absolute; top: 10px; right: 10px; background-color: var(--badge-danger); color: #fff; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; z-index: 2; }
+    .badge-pending { position: absolute; top: 10px; right: 10px; background-color: var(--badge-pending); color: #000; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; z-index: 2; }
+    
+    /* Favori Butonu */
+    .favorite-btn { position: absolute; top: 10px; right: 45px; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); border: 1px solid var(--border-color); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 5; transition: 0.2s; color: #fff; font-size: 1rem; }
+    .favorite-btn:hover { background: rgba(255, 107, 0, 0.8); transform: scale(1.1); }
+    .favorite-btn.active { color: #ef4444; border-color: #ef4444; background: rgba(239, 68, 68, 0.15); }
+    .card-img-wrapper .badge-pert ~ .favorite-btn, .card-img-wrapper .badge-pending ~ .favorite-btn { right: 85px; }
+
+    .card-body { padding: 1.25rem; display: flex; flex-direction: column; flex: 1; }
+    .card-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; font-size: 0.75rem; margin-bottom: 0.8rem; }
+    .tag { background: var(--bg-main); padding: 0.25rem 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); color: var(--text-muted); }
+    .card-specs { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 0.8rem; margin-top: auto; align-items: center; }
+
+    /* Modals */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(5px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 1rem; }
+    .modal-overlay.active { display: flex; }
+    .modal-content { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative; }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
+    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 2rem; cursor: pointer; line-height: 1; }
+    .close-btn:hover { color: var(--accent-orange); }
+
+    .btn-action { width: 100%; padding: 0.9rem; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+    .btn-primary { background-color: var(--accent-orange); color: white; }
+    .btn-primary:hover { background-color: var(--accent-hover); }
+    .btn-danger { background-color: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; }
+    .btn-danger:hover { background-color: #991b1b; }
+
+    .auth-tabs { display: flex; gap: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; }
+    .auth-tab { padding: 0.5rem 1rem; cursor: pointer; font-weight: 600; color: var(--text-muted); border-bottom: 2px solid transparent; }
+    .auth-tab.active { color: var(--accent-orange); border-bottom-color: var(--accent-orange); }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media(max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+    .form-group.full-width { grid-column: span 2; }
+
+    /* Multi Image Preview & Upload */
+    .preview-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+    .preview-thumb-wrapper { position: relative; width: 70px; height: 70px; }
+    .preview-thumb { width: 100%; height: 100%; border-radius: 6px; object-fit: cover; border: 1px solid var(--border-color); }
+    .remove-thumb { position: absolute; top: -5px; right: -5px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+    /* Detail View Styling */
+    .detail-gallery { display: flex; flex-direction: column; gap: 10px; }
+    .main-detail-img { width: 100%; height: 320px; object-fit: cover; border-radius: 8px; background: #121419; cursor: zoom-in; transition: opacity 0.2s; }
+    .main-detail-img:hover { opacity: 0.95; }
+    .gallery-thumbs { display: flex; flex-wrap: wrap; gap: 8px; max-height: 140px; overflow-y: auto; padding: 4px; background: var(--bg-main); border-radius: 8px; border: 1px solid var(--border-color); }
+    .gallery-thumbs img { width: 64px; height: 48px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: 0.15s; }
+    .gallery-thumbs img.active-thumb { border-color: var(--accent-orange); transform: scale(1.05); }
+
+    /* Lightbox Modal */
+    .lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; cursor: zoom-out; }
+    .lightbox-overlay.active { display: flex; }
+    .lightbox-img { max-width: 92vw; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); cursor: default; }
+
+    /* Tartışma ve DM Alanı Ortak Stiller */
+    .messenger-container { display: flex; flex-direction: column; height: 400px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; margin-top: 1rem; }
+    .messenger-messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .chat-msg { display: flex; gap: 10px; align-items: flex-start; background: var(--bg-hover); border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; position: relative; }
+    .chat-msg:hover .delete-msg-btn { opacity: 1; }
+    .delete-msg-btn { position: absolute; top: 8px; right: 8px; background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; border-radius: 4px; padding: 2px 6px; font-size: 0.7rem; cursor: pointer; opacity: 0; transition: opacity 0.2s; }
+    .messenger-input-area { padding: 10px; background: var(--bg-card); border-top: 1px solid var(--border-color); display: flex; gap: 8px; align-items: center; }
+
+    .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); grid-column: 1 / -1; }
+    .empty-state span { font-size: 3rem; display: block; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="#" class="logo">
+      <svg class="logo-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="100" height="100" rx="22" fill="#181B21" stroke="#FF6B00" stroke-width="4" stroke-opacity="0.3"/>
+        <path d="M18 28 L48 16 L85 24" stroke="#F0F2F5" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M22 62 L38 34 L72 34 L82 62 Z" fill="none" stroke="url(#logoGrad)" stroke-width="7" stroke-linejoin="round"/>
+        <path d="M33 47 H65" stroke="url(#logoGrad)" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="37" cy="62" r="8" fill="#0F1115" stroke="#FF6B00" stroke-width="6"/>
+        <circle cx="71" cy="62" r="8" fill="#0F1115" stroke="#FF6B00" stroke-width="6"/>
+        <defs>
+          <linearGradient id="logoGrad" x1="22" y1="34" x2="82" y2="62" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#FF6B00"/>
+            <stop offset="1" stop-color="#FFA800"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div>Belasco<span>Auto</span></div>
+    </a>
+    
+    <div class="nav-links">
+      <button class="btn-auth" id="btnToggleFavorites" onclick="toggleFavoritesFilter()" style="display: none;">❤️ Favorilerim (<span id="favCountBadge">0</span>)</button>
+      <button class="btn-auth" id="btnToggleDM" onclick="openInboxModal()" style="display: none;">💬 Mesajlarım</button>
+
+      <div id="userInfoArea" style="display: none;" class="user-profile-badge" onclick="openProfileModal()">
+        <img id="userHeaderAvatar" src="https://via.placeholder.com/150" alt="Avatar">
+        <span id="userNicknameText" style="font-weight: 600; font-size: 0.9rem;">...</span>
+      </div>
+
+      <button class="btn-auth" id="btnAuthOpen" onclick="openAuthModal()">🔑 Giriş Yap / Kayıt Ol</button>
+      <button class="btn-post" onclick="checkAuthAndOpenPost()">+ Ücretsiz İlan Ver</button>
+    </div>
+  </header>
+
+  <div class="main-container">
+    <aside class="filters-sidebar">
+      <h3 style="margin-bottom: 1.2rem; font-size: 1.1rem;">Gelişmiş Arama</h3>
+      
+      <div class="filter-group">
+        <label>Kelime Ara</label>
+        <input type="text" id="filterSearch" class="filter-input" placeholder="Örn: V8, Doğan, Drift..." oninput="renderAds()">
+      </div>
+
+      <div class="filter-group">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
+          <input type="checkbox" id="filterIsModded" style="width: 16px; height: 16px; cursor: pointer;" onchange="populateFilterBrands()">
+          <label for="filterIsModded" style="margin-bottom: 0; cursor: pointer;">Modlu Markalar</label>
+        </div>
+        <label>Marka</label>
+        <select id="filterBrand" class="filter-select" onchange="renderAds()">
+          <option value="all">Tüm Markalar</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Model Yılı (Min)</label>
+        <input type="number" id="filterYear" class="filter-input" placeholder="Örn: 1990" oninput="renderAds()">
+      </div>
+
+      <div class="filter-group">
+        <label>Motor Hacmi</label>
+        <select id="filterEngine" class="filter-select" onchange="renderAds()">
+          <option value="all">Tümü</option>
+          <option value="0.5L">0.5L</option>
+          <option value="0.6L">0.6L</option>
+          <option value="0.8L">0.8L</option>
+          <option value="1.0L">1.0L</option>
+          <option value="1.2L">1.2L</option>
+          <option value="1.4L">1.4L</option>
+          <option value="1.6L">1.6L</option>
+          <option value="1.8L">1.8L</option>
+          <option value="2.0L">2.0L</option>
+          <option value="2.5L">2.5L</option>
+          <option value="3.0L">3.0L</option>
+          <option value="3.5L">3.5L</option>
+          <option value="4.0L+">4.0L+</option>
+          <option value="Elektrikli">Elektrikli</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Hasar Durumu</label>
+        <select id="filterDamage" class="filter-select" onchange="renderAds()">
+          <option value="all">Tümü</option>
+          <option value="🟢 Hatasız / Boyasız">🟢 Hatasız / Boyasız</option>
+          <option value="🟡 Çizik / Lokal Boyalı">🟡 Çizik / Lokal Boyalı</option>
+          <option value="🟠 Parça Değişenli / Hafif Hasarlı">🟠 Parça Değişenli / Hafif Hasarlı</option>
+          <option value="🔴 Projelik / Kazalı">🔴 Projelik / Kazalı</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Çekiş Tipi</label>
+        <select id="filterDrive" class="filter-select" onchange="renderAds()">
+          <option value="all">Tümü</option>
+          <option value="RWD">Arkadan İtiş (RWD)</option>
+          <option value="FWD">Önden Çekiş (FWD)</option>
+          <option value="AWD">Dört Çeker (AWD / 4WD)</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Vites Tipi</label>
+        <select id="filterTrans" class="filter-select" onchange="renderAds()">
+          <option value="all">Tümü</option>
+          <option value="Manuel">Manuel</option>
+          <option value="Otomatik">Otomatik</option>
+          <option value="Sıralı (Sequential)">Sıralı (Sequential)</option>
+          <option value="DCT / Çift Kavrama">DCT / Çift Kavrama</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Araç Durumu</label>
+        <select id="filterModdedStatus" class="filter-select" onchange="renderAds()">
+          <option value="all">Tümü (Vanilla + Modlu)</option>
+          <option value="vanilla">Sadece Orijinal (Vanilla)</option>
+          <option value="modded">Sadece Modlu Araçlar</option>
+        </select>
+      </div>
+
+      <button onclick="resetFilters()" class="btn-action btn-auth" style="justify-content: center;">Filtreleri Sıfırla</button>
+    </aside>
+
+    <main>
+      <div class="content-header">
+        <h2 id="contentHeaderTitle">Aktif İlanlar</h2>
+        <span id="listingCount" style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</span>
+      </div>
+      <div class="listings-grid" id="listingsGrid"></div>
+    </main>
+  </div>
+
+  <!-- HESAP MODALI -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-content" style="max-width: 420px;">
+      <div class="modal-header">
+        <h3>Hesap İşlemleri</h3>
+        <button class="close-btn" onclick="closeAuthModal()">&times;</button>
+      </div>
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tabLogin" onclick="switchAuthTab('login')">Giriş Yap</div>
+        <div class="auth-tab" id="tabRegister" onclick="switchAuthTab('register')">Kayıt Ol</div>
+      </div>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <input type="email" id="loginEmail" class="filter-input" placeholder="E-Posta" required>
+          <input type="password" id="loginPass" class="filter-input" placeholder="Şifre" required>
+          <button type="submit" class="btn-action btn-primary">Giriş Yap</button>
+        </div>
+      </form>
+      <form id="registerForm" onsubmit="handleRegister(event)" style="display: none;">
+        <div style="display: flex; flex-direction: column; gap: 1rem;">
+          <input type="text" id="regNickname" class="filter-input" placeholder="Kullanıcı Adı (Benzersiz Nickname)" required>
+          <input type="email" id="regEmail" class="filter-input" placeholder="E-Posta" required>
+          <input type="password" id="regPass" class="filter-input" placeholder="Şifre (Min 6 Karakter)" minlength="6" required>
+          <input type="password" id="regPassConfirm" class="filter-input" placeholder="Şifreyi Tekrar Girin" minlength="6" required>
+          <button type="submit" class="btn-action btn-primary">Hesap Oluştur</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- PROFİL MODALI -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3>⚙️ Hesap Ayarları</h3>
+        <button class="close-btn" onclick="closeProfileModal()">&times;</button>
+      </div>
+      <form id="profileForm" onsubmit="handleUpdateProfile(event)" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div style="text-align: center;">
+          <img id="profileModalAvatar" src="https://via.placeholder.com/150" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-orange); margin-bottom: 0.5rem;">
+          <input type="file" id="profileAvatarFile" accept="image/*" onchange="previewAvatar(event)" style="display: block; margin: 0 auto; font-size: 0.8rem; color: var(--text-muted);">
+        </div>
+        <div>
+          <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">KULLANICI ADI (NICKNAME)</label>
+          <input type="text" id="profileNickname" class="filter-input" required>
+        </div>
+        <div>
+          <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">E-POSTA ADRESİ</label>
+          <input type="email" id="profileEmail" class="filter-input" required>
+        </div>
+        <hr style="border-color: var(--border-color);">
+        <h4 style="font-size: 0.95rem; color: var(--text-main);">Şifre Değiştir (Opsiyonel)</h4>
+        <div>
+          <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">YENİ ŞİFRE</label>
+          <input type="password" id="profileNewPass" class="filter-input" placeholder="Boş bırakırsanız değişmez">
+        </div>
+        <hr style="border-color: var(--border-color);">
+        <div>
+          <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MEVCUT ŞİFRE (İşlem Onayı İçin Şarttır)</label>
+          <input type="password" id="profileCurrentPass" class="filter-input" placeholder="Değişiklikleri kaydetmek için şifrenizi girin" required>
+        </div>
+        <button type="submit" class="btn-action btn-primary">Değişiklikleri Kaydet</button>
+
+        <div id="adminButtonContainer" style="display: none; margin-top: 0.5rem;">
+          <button type="button" onclick="openAdminModal()" class="btn-action" style="background-color: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444;">🛡️ Admin Paneli (Yetkili)</button>
+        </div>
+
+        <button type="button" onclick="handleLogout()" class="btn-action btn-danger" style="margin-top: 0.5rem;">Çıkış Yap</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN MODALI -->
+  <div class="modal-overlay" id="adminModal">
+    <div class="modal-content" style="max-width: 900px;">
+      <div class="modal-header">
+        <h3>🛡️ Admin Paneli (İlan Onay & Yönetimi)</h3>
+        <button class="close-btn" onclick="closeAdminModal()">&times;</button>
+      </div>
+      <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Burada onay bekleyen yeni ilanları onaylayabilir ya da mevcut ilanları silebilirsiniz.</p>
+      <div id="adminAdsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 500px; overflow-y: auto;"></div>
+    </div>
+  </div>
+
+  <!-- İLAN VERME / DÜZENLEME MODALI -->
+  <div class="modal-overlay" id="postModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="postModalTitle">🚀 Yeni Araç İlanı Oluştur</h3>
+        <button class="close-btn" onclick="closePostModal()">&times;</button>
+      </div>
+      <form id="postForm" onsubmit="handleSaveAd(event)">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">İLAN BAŞLIĞI</label>
+            <input type="text" id="postTitle" class="filter-input" placeholder="Örn: Modifiye Tofaş Doğan SLX" required>
+          </div>
+
+          <div class="form-group full-width" style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-main); padding: 0.8rem; border-radius: 6px; border: 1px solid var(--border-color);">
+            <input type="checkbox" id="postIsModded" style="width: 18px; height: 18px; cursor: pointer;" onchange="toggleBrandList()">
+            <label for="postIsModded" style="cursor: pointer; font-size: 0.9rem; font-weight: 600;">Bu araç modlu</label>
+          </div>
+
+          <div class="form-group full-width" id="modLinkGroup" style="display: none;">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MOD İNDİRME LİNKİ</label>
+            <input type="url" id="postModLink" class="filter-input" placeholder="Örn: https://www.modland.net/beamng-drive-mods/...">
+            <small style="color: var(--text-muted); font-size: 0.75rem; margin-top: 4px; display: block;">Güvenilir mod sitelerinden indirme linki ekleyebilirsiniz.</small>
+          </div>
+
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MARKA</label>
+            <select id="postBrand" class="filter-select" required></select>
+          </div>
+
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MODEL</label>
+            <input type="text" id="postModel" class="filter-input" placeholder="Örn: Doğan SLX / Covet" required>
+          </div>
+
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MODEL YILI</label>
+            <input type="number" id="postYear" class="filter-input" placeholder="Örn: 1993" min="1900" max="2026" required>
+          </div>
+
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">KİLOMETRE (KM)</label>
+            <input type="number" id="postKm" class="filter-input" placeholder="120000" required>
+          </div>
+
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MOTOR GÜCÜ (HP)</label>
+            <input type="number" id="postHp" class="filter-input" placeholder="Örn: 140" min="1" max="5000" required>
+          </div>
+
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">ÇEKİŞ TİPİ</label>
+            <select id="postDrive" class="filter-select" required>
+              <option value="RWD">Arkadan İtiş (RWD)</option>
+              <option value="FWD">Önden Çekiş (FWD)</option>
+              <option value="AWD">Dört Çeker (AWD / 4WD)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">VİTES TİPİ</label>
+            <select id="postTrans" class="filter-select" required>
+              <option value="Manuel">Manuel</option>
+              <option value="Otomatik">Otomatik</option>
+              <option value="Sıralı (Sequential)">Sıralı (Sequential)</option>
+              <option value="DCT / Çift Kavrama">DCT / Çift Kavrama</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MOTOR HACMİ</label>
+            <select id="postEngine" class="filter-select" required>
+              <option value="0.5L">0.5L</option>
+              <option value="0.6L">0.6L</option>
+              <option value="0.8L">0.8L</option>
+              <option value="1.0L">1.0L</option>
+              <option value="1.2L">1.2L</option>
+              <option value="1.4L">1.4L</option>
+              <option value="1.6L" selected>1.6L</option>
+              <option value="1.8L">1.8L</option>
+              <option value="2.0L">2.0L</option>
+              <option value="2.5L">2.5L</option>
+              <option value="3.0L">3.0L</option>
+              <option value="3.5L">3.5L</option>
+              <option value="4.0L+">4.0L+</option>
+              <option value="Elektrikli">Elektrikli</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MOTOR BESLEME TİPİ</label>
+            <select id="postAspiration" class="filter-select" required>
+              <option value="Atmosferik">Atmosferik (Doğal Emişli)</option>
+              <option value="Turboşarj">Turboşarj</option>
+              <option value="Supercharger">Supercharger</option>
+              <option value="Twin-Turbo">Twin-Turbo</option>
+              <option value="Elektrik Motoru">Elektrik Motoru</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">İLAN AÇIKLAMASI</label>
+            <textarea id="postDescription" class="filter-input" placeholder="Aracın kondisyonu, yapılan modifikasyonlar, ekstra detaylar..." style="height: 100px; resize: vertical;"></textarea>
+          </div>
+
+          <div class="form-group full-width damage-box" style="border: 1px solid var(--accent-orange); padding: 15px; border-radius: 8px; background: rgba(255, 107, 0, 0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <label style="color: #fff; font-size: 0.9rem; font-weight:600;">Hasar Durumu Yapılandırması</label>
+              <label style="background: #7f1d1d; color: #fca5a5; padding: 4px 10px; border-radius: 6px; border: 1px solid #ef4444; font-weight: bold; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; cursor: pointer;">
+                <input type="checkbox" id="postIsPert" style="cursor:pointer;" onchange="togglePertState()"> ⚠️ Ağır Hasar Kayıtlı (Pert)
+              </label>
+            </div>
+            <select id="postDamageStatus" class="filter-select">
+              <option value="🟢 Hatasız / Boyasız">🟢 Hatasız / Boyasız</option>
+              <option value="🟡 Çizik / Lokal Boyalı">🟡 Çizik / Lokal Boyalı</option>
+              <option value="🟠 Parça Değişenli / Hafif Hasarlı">🟠 Parça Değişenli / Hafif Hasarlı</option>
+              <option value="🔴 Projelik / Kazalı">🔴 Projelik / Kazalı</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width" style="border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; background: var(--bg-main);">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">BEAMNG .PC KONFİGÜRASYON DOSYASI (İsteğe Bağlı)</label>
+            <input type="file" id="postPcFile" class="filter-input" accept=".pc">
+            <small style="color: var(--text-muted); font-size: 0.75rem; margin-top: 4px; display: block;">Aracınızın .pc ayar dosyasını ekleyebilirsiniz.</small>
+          </div>
+
+          <div class="form-group full-width">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
+              <label style="font-size: 0.8rem; color: var(--text-muted);">ARAÇ FOTOĞRAFLARI (Maksimum 20 Adet)</label>
+              <button type="button" onclick="document.getElementById('postImagesFile').click()" class="btn-auth" style="padding: 0.2rem 0.6rem; font-size: 0.8rem;">+ Fotoğraf Ekle</button>
+            </div>
+            <input type="file" id="postImagesFile" class="filter-input" accept="image/*" multiple onchange="handleMultipleImages(event)" style="display: none;">
+            <div id="imagePreviewContainer" class="preview-container"></div>
+          </div>
+
+        </div>
+        <button type="submit" id="submitPostBtn" class="btn-action btn-primary" style="margin-top: 1.5rem;">🚀 İlanı Yayınla</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- DETAYLI İLAN GÖRÜNTÜLEME MODALI -->
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal-content" style="max-width: 900px;">
+      <div class="modal-header">
+        <div>
+          <h3 id="detailTitle">İlan Detayı</h3>
+          <span id="detailTimeAgo" style="font-size: 0.75rem; color: var(--text-muted);"></span>
+        </div>
+        <button class="close-btn" onclick="closeDetailModal()">&times;</button>
+      </div>
+      <div class="form-grid" style="align-items: start;">
+        <div class="detail-gallery">
+          <img id="detailMainImg" class="main-detail-img" src="" alt="Araç Görseli" onclick="openLightbox(this.src)" title="Fotoğrafı tam boyutta büyütmek için tıklayın">
+          <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: -4px;">🔍 Fotoğrafa tıklayarak sayfa üzerinde tam boyutta inceleyebilirsiniz.</div>
+          <div id="detailThumbnails" class="gallery-thumbs"></div>
+          <div id="detailPcArea" style="margin-top: 0.5rem;"></div>
+          <div id="detailModLinkArea" style="margin-top: 0.5rem;"></div>
+        </div>
+        <div>
+          <div id="detailSpecs" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;"></div>
+          
+          <div id="detailDescriptionContainer" style="margin-bottom: 1rem; background: var(--bg-main); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); display: none;">
+            <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase;">İlan Açıklaması</div>
+            <div id="detailDescription" style="font-size: 0.9rem; color: var(--text-main); white-space: pre-wrap;"></div>
+          </div>
+
+          <div style="background: var(--bg-main); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <img id="detailSellerAvatar" src="" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" alt="İlan Sahibi">
+              <div>
+                <div id="detailSellerName" style="font-weight: 600; color: var(--text-main);">İlan Sahibi</div>
+                <div id="detailSellerAccountDate" style="font-size: 0.75rem; color: var(--text-muted);">Kayıt Tarihi: ...</div>
+              </div>
+            </div>
+            <button id="detailDmBtn" onclick="" class="btn-primary" style="padding: 0.5rem 0.8rem; font-size: 0.8rem; border-radius: 6px; border:none; cursor:pointer; font-weight:600; display:none;">💬 Özel Mesaj</button>
+          </div>
+
+          <button onclick="openMessengerModal()" class="btn-action btn-auth" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 0.5rem; border-color: var(--border-color);">
+            📢 Soru Sor & Genel Tartışma Alanı
+          </button>
+
+          <div id="detailOwnerActionArea" style="display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GELEN KUTUSU / MESAJLARIM LİSTESİ MODALI -->
+  <div class="modal-overlay" id="inboxModal">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3>💬 Özel Mesajlarım (DM Kutusu)</h3>
+        <button class="close-btn" onclick="closeInboxModal()">&times;</button>
+      </div>
+      <div id="inboxListContainer" style="display: flex; flex-direction: column; gap: 10px; max-height: 450px; overflow-y: auto;"></div>
+    </div>
+  </div>
+
+  <!-- ÖZEL MESAJLAŞMA (DM) SOHBET PENCERESİ MODALI -->
+  <div class="modal-overlay" id="dmModal">
+    <div class="modal-content" style="max-width: 500px; padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 550px;">
+      <div style="background: var(--bg-card); padding: 1rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <img id="dmPeerAvatar" src="https://via.placeholder.com/150" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+          <div>
+            <div id="dmPeerName" style="font-weight: 600; font-size: 0.95rem;">Kullanıcı</div>
+            <div id="dmPeerStatus" style="font-size: 0.75rem; color: #10b981;">🟢 Çevrimiçi</div>
+          </div>
+        </div>
+        <button class="close-btn" onclick="closeDmModal()">&times;</button>
+      </div>
+
+      <div class="messenger-messages" id="dmMessagesContainer"></div>
+
+      <div class="messenger-input-area">
+        <input type="text" id="dmInput" class="filter-input" placeholder="Özel mesajınızı yazın..." onkeypress="if(event.key==='Enter') sendDmMessage()">
+        <button onclick="sendDmMessage()" class="btn-primary" style="padding: 0 1.2rem; height: 42px; border-radius: 6px; border:none; cursor:pointer; font-weight:600;">Gönder</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SİTE İÇİ TAM EKRAN FOTOĞRAF BÜYÜTME (LIGHTBOX) -->
+  <div class="lightbox-overlay" id="lightboxModal" onclick="closeLightbox()">
+    <button class="close-btn" style="position: absolute; top: 20px; right: 25px; color: #fff; font-size: 2.5rem;" onclick="closeLightbox()">&times;</button>
+    <img id="lightboxImg" class="lightbox-img" src="" alt="Tam Boyut Görsel" onclick="event.stopPropagation()">
+  </div>
+
+  <!-- GENEL İLAN TARTIŞMA ALANI MODALI -->
+  <div class="modal-overlay" id="messengerModal">
+    <div class="modal-content" style="max-width: 500px; padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 550px;">
+      <div style="background: var(--bg-card); padding: 1rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div>
+            <div id="messengerPeerName" style="font-weight: 600; font-size: 0.95rem;">Soru & Tartışma Alanı</div>
+            <div style="font-size: 0.75rem; color: #f59e0b;">⏱️ 3 Saniye Yavaş Mod Aktif | 🗑️ 30 Dakikadan eski mesajlar silinemez</div>
+          </div>
+        </div>
+        <button class="close-btn" onclick="closeMessengerModal()">&times;</button>
+      </div>
+
+      <div class="messenger-messages" id="messengerMessagesContainer"></div>
+
+      <div class="messenger-input-area">
+        <input type="text" id="messengerInput" class="filter-input" placeholder="Bir soru veya mesaj yazın..." onkeypress="if(event.key==='Enter') sendMessengerMessage()">
+        <button id="sendChatBtn" onclick="sendMessengerMessage()" class="btn-primary" style="padding: 0 1.2rem; height: 42px; border-radius: 6px; border:none; cursor:pointer; font-weight:600;">Gönder</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // İlanın ne zaman koyulduğunu gösteren fonksiyon (Zaman Göstergesi)
+    function timeAgo(timestamp) {
+      if (!timestamp) return 'Yeni eklendi';
+      const seconds = Math.floor((Date.now() - timestamp) / 1000);
+      
+      let interval = seconds / 31536000;
+      if (interval > 1) return Math.floor(interval) + " yıl önce";
+      interval = seconds / 2592000;
+      if (interval > 1) return Math.floor(interval) + " ay önce";
+      interval = seconds / 86400;
+      if (interval > 1) return Math.floor(interval) + " gün önce";
+      interval = seconds / 3600;
+      if (interval > 1) return Math.floor(interval) + " saat önce";
+      interval = seconds / 60;
+      if (interval > 1) return Math.floor(interval) + " dakika önce";
+      return "Az önce eklendi";
+    }
+
+    const ADMIN_EMAIL = "kendolarin@gmail.com"; 
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBbKXyS0hzjXOyj7nCsPBF1gRBzHdFTmXY",
+      authDomain: "beamng-ilan.firebaseapp.com",
+      databaseURL: "https://beamng-ilan-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "beamng-ilan",
+      storageBucket: "beamng-ilan.firebasestorage.app",
+      messagingSenderId: "220828166685",
+      appId: "1:220828166685:web:abbda68c6e22cf8ea974f4",
+      measurementId: "G-ZHJ48F54M0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    let currentUser = null;
+    let currentUserProfile = { nickname: "Kullanıcı", avatar: "https://via.placeholder.com/150", createdAt: Date.now(), favorites: [] };
+    let adsData = [];
+    let currentUploadedImages = [];
+    let currentSelectedAdId = null;
+    let editingAdId = null; 
+    let messengerChatRef = null;
+    let dmChatRef = null;
+    let peerStatusRef = null;
+    let currentDmChatId = null;
+    let isSubmittingAd = false;
+    let lastMessageTimestamp = 0;
+    let showOnlyFavorites = false;
+
+    const beamngBrands = ["Autobello", "Bruckell", "Cherrier", "Civetta", "ETK", "Gavril", "Hirochi", "Ibishu", "Soliad", "Wentward"].sort();
+    const realBrands = ["Anadol", "Audi", "BMW", "Chevrolet", "Devrim", "Fiat", "Ford", "Honda", "Hyundai", "Karsan", "Lamborghini", "Mazda", "Mercedes-Benz", "Nissan", "Otokar", "Peugeot", "Porsche", "Renault", "Subaru", "Tofaş", "Toyota", "Volkswagen", "Volvo"].sort();
+
+    function openLightbox(imgSrc) {
+      if (!imgSrc) return;
+      document.getElementById('lightboxImg').src = imgSrc;
+      document.getElementById('lightboxModal').classList.add('active');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightboxModal').classList.remove('active');
+    }
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') closeLightbox();
+    });
+
+    async function toggleFavorite(event, adId) {
+      event.stopPropagation();
+      if (!currentUser) {
+        alert("İlanları favorilere eklemek için giriş yapmalısınız!");
+        openAuthModal();
+        return;
+      }
+
+      if (!currentUserProfile.favorites) currentUserProfile.favorites = [];
+      const index = currentUserProfile.favorites.indexOf(adId);
+      if (index > -1) {
+        currentUserProfile.favorites.splice(index, 1);
+      } else {
+        currentUserProfile.favorites.push(adId);
+      }
+
+      try {
+        await db.ref('users/' + currentUser.uid).update({ favorites: currentUserProfile.favorites });
+        updateFavoritesUI();
+        renderAds();
+      } catch (err) {
+        alert("Favoriler güncellenirken hata oluştu: " + err.message);
+      }
+    }
+
+    function updateFavoritesUI() {
+      const favs = currentUserProfile.favorites || [];
+      const badge = document.getElementById('favCountBadge');
+      const btnToggle = document.getElementById('btnToggleFavorites');
+      const btnDM = document.getElementById('btnToggleDM');
+      if (badge) badge.textContent = favs.length;
+      if (btnToggle) btnToggle.style.display = currentUser ? 'flex' : 'none';
+      if (btnDM) btnDM.style.display = currentUser ? 'flex' : 'none';
+    }
+
+    function toggleFavoritesFilter() {
+      showOnlyFavorites = !showOnlyFavorites;
+      const btnToggle = document.getElementById('btnToggleFavorites');
+      const title = document.getElementById('contentHeaderTitle');
+      if (showOnlyFavorites) {
+        btnToggle.style.borderColor = 'var(--accent-orange)';
+        btnToggle.style.color = 'var(--accent-orange)';
+        if (title) title.textContent = "❤️ Favori İlanlarım";
+      } else {
+        btnToggle.style.borderColor = 'var(--border-color)';
+        btnToggle.style.color = 'var(--text-main)';
+        if (title) title.textContent = "Aktif İlanlar";
+      }
+      renderAds();
+    }
+
+    function autoModerateAd(adData) {
+      const forbiddenWords = ["reklam", "script", "hack", "free robux", ".exe", "discord.gg", "cheat", "hile"];
+      const textToCheck = ((adData.title || "") + " " + (adData.description || "")).toLowerCase();
+      
+      if (forbiddenWords.some(word => textToCheck.includes(word))) {
+        return { isApproved: false, reason: "Yasaklı kelime tespit edildi." };
+      }
+
+      if (adData.isModded && adData.modLink) {
+        const whitelistedDomains = [
+          "beamng.com", "modland.net", "patreon.com", "mega.nz", 
+          "drive.google.com", "github.com", "ko-fi.com", "mediafire.com", 
+          "discord.com", "itch.io", "worldofmods.com", "nexusmods.com"
+        ];
+        try {
+          const url = new URL(adData.modLink);
+          const domain = url.hostname.toLowerCase();
+          if (!whitelistedDomains.some(d => domain === d || domain.endsWith('.' + d))) {
+            return { isApproved: false, reason: "Girilen mod linki onaylı güvenilir mod siteleri listesinde bulunmuyor." };
+          }
+        } catch (e) {
+          return { isApproved: false, reason: "Geçersiz mod indirme linki formatı." };
+        }
+      }
+
+      if (adData.hp < 1 || adData.hp > 5000) return { isApproved: false, reason: "Motor gücü (HP) geçersiz." };
+      if (adData.year < 1900 || adData.year > 2026) return { isApproved: false, reason: "Model yılı geçersiz." };
+      if (!adData.images || adData.images.length === 0) return { isApproved: false, reason: "Araç fotoğrafı yüklenmemiş." };
+
+      return { isApproved: true, reason: "Otomatik denetim başarılı." };
+    }
+
+    function toggleBrandList() {
+      const isModded = document.getElementById('postIsModded').checked;
+      const brandSelect = document.getElementById('postBrand');
+      const modLinkGroup = document.getElementById('modLinkGroup');
+      
+      if (modLinkGroup) modLinkGroup.style.display = isModded ? 'block' : 'none';
+
+      const currentSelectedBrand = brandSelect.value;
+      brandSelect.innerHTML = "";
+      const brands = isModded ? realBrands : beamngBrands;
+      brands.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b; opt.textContent = b;
+        brandSelect.appendChild(opt);
+      });
+      if (brands.includes(currentSelectedBrand)) brandSelect.value = currentSelectedBrand;
+    }
+
+    function populateFilterBrands() {
+      const isModded = document.getElementById('filterIsModded').checked;
+      const filterBrandSelect = document.getElementById('filterBrand');
+      filterBrandSelect.innerHTML = '<option value="all">Tüm Markalar</option>';
+      const brands = isModded ? realBrands : beamngBrands;
+      brands.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b; opt.textContent = b;
+        filterBrandSelect.appendChild(opt);
+      });
+      renderAds();
+    }
+
+    function togglePertState() {
+      const isPert = document.getElementById('postIsPert').checked;
+      const damageSelect = document.getElementById('postDamageStatus');
+      if (isPert) {
+        damageSelect.value = "🔴 Projelik / Kazalı";
+        damageSelect.disabled = true;
+      } else {
+        damageSelect.disabled = false;
+      }
+    }
+
+    function handleMultipleImages(event) {
+      const files = event.target.files;
+      if (currentUploadedImages.length + files.length > 20) {
+        alert("En fazla 20 fotoğraf ekleyebilirsiniz!");
+        return;
+      }
+
+      for (let i = 0; i < files.length; i++) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          currentUploadedImages.push(e.target.result);
+          renderImagePreviews();
+        };
+        reader.readAsDataURL(files[i]);
+      }
+    }
+
+    function renderImagePreviews() {
+      const container = document.getElementById('imagePreviewContainer');
+      container.innerHTML = "";
+      currentUploadedImages.forEach((imgSrc, index) => {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'preview-thumb-wrapper';
+        wrapper.innerHTML = `
+          <img src="${escapeHtml(imgSrc)}" class="preview-thumb">
+          <button type="button" class="remove-thumb" onclick="removeUploadedImage(${index})">&times;</button>
+        `;
+        container.appendChild(wrapper);
+      });
+    }
+
+    function removeUploadedImage(index) {
+      currentUploadedImages.splice(index, 1);
+      renderImagePreviews();
+    }
+
+    let currentNewAvatar = "";
+    function previewAvatar(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          currentNewAvatar = e.target.result;
+          document.getElementById('profileModalAvatar').src = currentNewAvatar;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    auth.onAuthStateChanged(async (user) => {
+      currentUser = user;
+      if (user) {
+        document.getElementById('btnAuthOpen').style.display = 'none';
+        document.getElementById('userInfoArea').style.display = 'flex';
+        
+        // Aktiflik Durumu (Presence) Takibi
+        const userStatusDatabaseRef = db.ref(`status/${user.uid}`);
+        const isOfflineForDatabase = { state: 'offline', lastChanged: firebase.database.ServerValue.TIMESTAMP };
+        const isOnlineForDatabase = { state: 'online', lastChanged: firebase.database.ServerValue.TIMESTAMP };
+
+        db.ref('.info/connected').on('value', (snapshot) => {
+          if (snapshot.val() === false) return;
+          userStatusDatabaseRef.onDisconnect().set(isOfflineForDatabase).then(() => {
+            userStatusDatabaseRef.set(isOnlineForDatabase);
+          });
+        });
+
+        const snapshot = await db.ref('users/' + user.uid).once('value');
+        if (snapshot.exists()) {
+          currentUserProfile = snapshot.val();
+          if (!currentUserProfile.favorites) currentUserProfile.favorites = [];
+        } else {
+          currentUserProfile = { 
+            nickname: user.email.split('@')[0], 
+            avatar: "https://via.placeholder.com/150",
+            createdAt: Date.now(),
+            favorites: []
+          };
+          await db.ref('users/' + user.uid).set(currentUserProfile);
+        }
+        document.getElementById('userNicknameText').textContent = currentUserProfile.nickname;
+        document.getElementById('userHeaderAvatar').src = currentUserProfile.avatar;
+        updateFavoritesUI();
+
+        if (currentUserProfile.isAdmin || user.email === ADMIN_EMAIL || user.email === "admin@belascoauto.com") {
+          document.getElementById('adminButtonContainer').style.display = 'block';
+        } else {
+          document.getElementById('adminButtonContainer').style.display = 'none';
+        }
+      } else {
+        document.getElementById('userInfoArea').style.display = 'none';
+        document.getElementById('btnAuthOpen').style.display = 'flex';
+        document.getElementById('adminButtonContainer').style.display = 'none';
+        document.getElementById('btnToggleFavorites').style.display = 'none';
+        document.getElementById('btnToggleDM').style.display = 'none';
+        showOnlyFavorites = false;
+      }
+      renderAds();
+    });
+
+    db.ref('ads').on('value', (snapshot) => {
+      const data = snapshot.val();
+      adsData = [];
+      if (data) {
+        Object.keys(data).forEach(key => adsData.push({ id: key, ...data[key] }));
+        adsData.reverse();
+      }
+      renderAds();
+    });
+
+    function renderAds() {
+      const grid = document.getElementById('listingsGrid');
+      const search = document.getElementById('filterSearch').value.toLowerCase().trim();
+      const fBrand = document.getElementById('filterBrand').value;
+      const fYear = document.getElementById('filterYear').value;
+      const fEngine = document.getElementById('filterEngine').value;
+      const fDamage = document.getElementById('filterDamage').value;
+      const drive = document.getElementById('filterDrive').value;
+      const trans = document.getElementById('filterTrans').value;
+      const moddedStatus = document.getElementById('filterModdedStatus').value;
+
+      const userFavorites = currentUserProfile.favorites || [];
+
+      const filtered = adsData.filter(ad => {
+        if (showOnlyFavorites && !userFavorites.includes(ad.id)) return false;
+
+        const isApprovedOrOwner = ad.approved !== false || (currentUser && ad.ownerId === currentUser.uid);
+        if (!isApprovedOrOwner) return false;
+
+        const mSearch = (ad.title || '').toLowerCase().includes(search) || (ad.brand || '').toLowerCase().includes(search) || (ad.model || '').toLowerCase().includes(search);
+        const mBrand = (fBrand === 'all') || (ad.brand === fBrand);
+        const mYear = !fYear || (ad.year && Number(ad.year) >= Number(fYear));
+        const mEngine = (fEngine === 'all') || (ad.engine === fEngine);
+        const mDamage = (fDamage === 'all') || (ad.damageStatus === fDamage);
+        const mDrive = (drive === 'all') || (ad.drive === drive);
+        const mTrans = (trans === 'all') || (ad.trans === trans);
+        let mModded = true;
+        if (moddedStatus === 'vanilla') mModded = !ad.isModded;
+        if (moddedStatus === 'modded') mModded = !!ad.isModded;
+
+        return mSearch && mBrand && mYear && mEngine && mDamage && mDrive && mTrans && mModded;
+      });
+
+      grid.innerHTML = '';
+      document.getElementById('listingCount').textContent = `${filtered.length} İlan Gösteriliyor`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><span>🔍</span><h3>İlan Bulunamadı</h3></div>`;
+        return;
+      }
+
+      filtered.forEach(ad => {
+        const modBadge = ad.isModded ? `<div class="badge-modded">MODLU</div>` : '';
+        const pertBadge = ad.isPert ? `<div class="badge-pert">PERT KAYITLI</div>` : '';
+        const pendingBadge = (ad.approved === false) ? `<div class="badge-pending">⏳ ONAY BEKLİYOR</div>` : '';
+        const mainImg = (ad.images && ad.images.length > 0) ? ad.images[0] : 'https://via.placeholder.com/400';
+        
+        const isFav = userFavorites.includes(ad.id);
+        const favBtnClass = isFav ? 'favorite-btn active' : 'favorite-btn';
+        const favIconSymbol = isFav ? '❤️' : '🤍';
+        const formattedTimeAgo = timeAgo(ad.createdAt);
+
+        grid.insertAdjacentHTML('beforeend', `
+          <div class="card" onclick="openDetailModal('${escapeHtml(ad.id)}')">
+            <div class="card-img-wrapper">
+              ${modBadge}
+              ${pertBadge}
+              ${pendingBadge}
+              <button class="${favBtnClass}" onclick="toggleFavorite(event, '${escapeHtml(ad.id)}')">${favIconSymbol}</button>
+              <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(ad.title)}">
+            </div>
+            <div class="card-body">
+              <div class="card-title">${escapeHtml(ad.title)}</div>
+              <div style="font-size: 0.75rem; color: var(--accent-orange); margin-bottom: 0.5rem; font-weight: 500;">⏱️ ${escapeHtml(formattedTimeAgo)}</div>
+              <div class="card-tags">
+                <span class="tag">📅 ${escapeHtml(ad.year || 'N/A')}</span>
+                <span class="tag">⚡ ${escapeHtml(ad.hp || '?')} HP</span>
+                <span class="tag">⚙️ ${escapeHtml(ad.engine || '1.6L')}</span>
+                <span class="tag">🛣️ ${ad.km ? Number(ad.km).toLocaleString() : '0'} KM</span>
+              </div>
+              <div class="card-specs">
+                <div>🏷️ ${escapeHtml(ad.brand || '')} ${escapeHtml(ad.model || '')}</div>
+                <div>👤 ${escapeHtml(ad.ownerNickname || 'Anonim')}</div>
+              </div>
+            </div>
+          </div>
+        `);
+      });
+    }
+
+    function resetFilters() {
+      document.getElementById('filterSearch').value = '';
+      document.getElementById('filterIsModded').checked = false;
+      populateFilterBrands();
+      document.getElementById('filterBrand').value = 'all';
+      document.getElementById('filterYear').value = '';
+      document.getElementById('filterEngine').value = 'all';
+      document.getElementById('filterDamage').value = 'all';
+      document.getElementById('filterDrive').value = 'all';
+      document.getElementById('filterTrans').value = 'all';
+      document.getElementById('filterModdedStatus').value = 'all';
+      showOnlyFavorites = false;
+      document.getElementById('contentHeaderTitle').textContent = "Aktif İlanlar";
+      renderAds();
+    }
+
+    function openAuthModal() { document.getElementById('authModal').classList.add('active'); }
+    function closeAuthModal() { document.getElementById('authModal').classList.remove('active'); }
+    function switchAuthTab(tab) {
+      document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+      document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+      document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+      document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+    }
+
+    function openProfileModal() {
+      if (!currentUser) return;
+      document.getElementById('profileNickname').value = currentUserProfile.nickname;
+      document.getElementById('profileEmail').value = currentUser.email;
+      document.getElementById('profileModalAvatar').src = currentUserProfile.avatar;
+      document.getElementById('profileCurrentPass').value = "";
+      document.getElementById('profileNewPass').value = "";
+      document.getElementById('profileModal').classList.add('active');
+    }
+    function closeProfileModal() { document.getElementById('profileModal').classList.remove('active'); }
+
+    function openAdminModal() {
+      if (currentUserProfile.isAdmin || currentUser.email === ADMIN_EMAIL || currentUser.email === "admin@belascoauto.com") {
+        document.getElementById('adminModal').classList.add('active');
+        renderAdminAds();
+      } else {
+        alert("Bu işlem için yetkiniz bulunmuyor!");
+      }
+    }
+    function closeAdminModal() { document.getElementById('adminModal').classList.remove('active'); }
+
+    function renderAdminAds() {
+      const container = document.getElementById('adminAdsList');
+      container.innerHTML = "";
+      if (adsData.length === 0) {
+        container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:2rem;">Hiç ilan bulunmuyor.</div>`;
+        return;
+      }
+      adsData.forEach(ad => {
+        const isApproved = ad.approved !== false;
+        const statusText = isApproved ? `<span style="color:#10b981;">(Onaylı / Yayında)</span>` : `<span style="color:#f59e0b;">(Onay Bekliyor)</span>`;
+        const approveBtn = !isApproved ? `<button onclick="adminApproveAd('${escapeHtml(ad.id)}')" class="btn-primary" style="padding:0.4rem 0.8rem; border-radius:6px; font-size:0.8rem;">Onayla</button>` : '';
+
+        container.insertAdjacentHTML('beforeend', `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-main); padding:10px 15px; border-radius:8px; border:1px solid var(--border-color);">
+            <div>
+              <div style="font-weight:600; font-size:0.95rem;">${escapeHtml(ad.title)} ${statusText}</div>
+              <div style="font-size:0.8rem; color:var(--text-muted);">Sahibi: ${escapeHtml(ad.ownerNickname)} | Marka: ${escapeHtml(ad.brand)} ${escapeHtml(ad.model)}</div>
+            </div>
+            <div style="display:flex; gap: 8px;">
+              ${approveBtn}
+              <button onclick="adminDeleteAd('${escapeHtml(ad.id)}')" class="btn-danger" style="padding:0.4rem 0.8rem; border-radius:6px; font-size:0.8rem;">İlanı Kaldır</button>
+            </div>
+          </div>
+        `);
+      });
+    }
+
+    async function adminApproveAd(adId) {
+      try {
+        await db.ref('ads/' + adId).update({ approved: true });
+        alert("İlan onaylandı!");
+        renderAdminAds();
+      } catch(err) { alert("Hata: " + err.message); }
+    }
+
+    async function adminDeleteAd(adId) {
+      if (confirm("Bu ilanı kaldırmak istediğinize emin misiniz?")) {
+        try {
+          await db.ref('ads/' + adId).remove();
+          await db.ref('chats/' + adId).remove();
+          alert("İlan kaldırıldı.");
+          renderAdminAds();
+        } catch(err) { alert("Hata: " + err.message); }
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      try {
+        await auth.signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPass').value);
+        alert("Giriş Yapıldı!"); closeAuthModal();
+      } catch (err) { alert("Hata: " + err.message); }
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const nickname = document.getElementById('regNickname').value.trim();
+      const email = document.getElementById('regEmail').value;
+      const pass = document.getElementById('regPass').value;
+      const passConfirm = document.getElementById('regPassConfirm').value;
+
+      if (pass !== passConfirm) { alert("Şifreler eşleşmiyor!"); return; }
+
+      try {
+        const cred = await auth.createUserWithEmailAndPassword(email, pass);
+        await cred.user.sendEmailVerification();
+        await db.ref('users/' + cred.user.uid).set({
+          nickname: nickname,
+          avatar: "https://via.placeholder.com/150",
+          createdAt: Date.now(),
+          favorites: []
+        });
+        alert("Hesap oluşturuldu! E-posta doğrulama bağlantısı gönderildi.");
+        closeAuthModal();
+      } catch (err) { alert("Hata: " + err.message); }
+    }
+
+    async function handleUpdateProfile(e) {
+      e.preventDefault();
+      const currentPass = document.getElementById('profileCurrentPass').value;
+      const newNickname = document.getElementById('profileNickname').value.trim();
+      const newEmail = document.getElementById('profileEmail').value;
+      const newPass = document.getElementById('profileNewPass').value;
+
+      try {
+        const credential = firebase.auth.EmailAuthProvider.credential(currentUser.email, currentPass);
+        await currentUser.reauthenticateWithCredential(credential);
+
+        if (newNickname !== currentUserProfile.nickname) {
+          const nickCheck = await db.ref('users').orderByChild('nickname').equalTo(newNickname).once('value');
+          if (nickCheck.exists()) { alert("Bu kullanıcı adı alınmış!"); return; }
+        }
+
+        let updates = { nickname: newNickname };
+        if (currentNewAvatar) updates.avatar = currentNewAvatar;
+
+        await db.ref('users/' + currentUser.uid).update(updates);
+
+        const adsRef = db.ref('ads');
+        const adsSnap = await adsRef.orderByChild('ownerId').equalTo(currentUser.uid).once('value');
+        if (adsSnap.exists()) {
+          const adUpdates = {};
+          adsSnap.forEach(childSnap => {
+            adUpdates[childSnap.key + '/ownerNickname'] = newNickname;
+            if (currentNewAvatar) adUpdates[childSnap.key + '/ownerAvatar'] = currentNewAvatar;
+          });
+          await adsRef.update(adUpdates);
+        }
+
+        if (newEmail !== currentUser.email) await currentUser.updateEmail(newEmail);
+        if (newPass) await currentUser.updatePassword(newPass);
+
+        alert("Profil güncellendi!");
+        location.reload();
+      } catch(err) {
+        alert("Şifre yanlış veya hata oluştu: " + err.message);
+      }
+    }
+
+    function handleLogout() { 
+      if (currentUser) {
+        db.ref(`status/${currentUser.uid}`).set({ state: 'offline', lastChanged: firebase.database.ServerValue.TIMESTAMP }).then(() => {
+          auth.signOut().then(() => location.reload());
+        });
+      } else {
+        auth.signOut().then(() => location.reload());
+      }
+    }
+
+    function checkAuthAndOpenPost() {
+      if (!currentUser) { alert("Önce giriş yapmalısınız!"); openAuthModal(); return; }
+      editingAdId = null;
+      document.getElementById('postModalTitle').textContent = "🚀 Yeni Araç İlanı Oluştur";
+      document.getElementById('submitPostBtn').textContent = "🚀 İlanı Yayınla";
+      currentUploadedImages = [];
+      document.getElementById('imagePreviewContainer').innerHTML = "";
+      document.getElementById('postForm').reset();
+      document.getElementById('modLinkGroup').style.display = 'none';
+      toggleBrandList();
+      document.getElementById('postModal').classList.add('active');
+    }
+
+    function openEditModal(adId) {
+      const ad = adsData.find(a => a.id === adId);
+      if (!ad) return;
+
+      editingAdId = adId;
+      document.getElementById('postModalTitle').textContent = "✏️ İlanı Düzenle";
+      document.getElementById('submitPostBtn').textContent = "💾 Değişiklikleri Kaydet";
+
+      document.getElementById('postTitle').value = ad.title || '';
+      document.getElementById('postIsModded').checked = !!ad.isModded;
+      toggleBrandList();
+
+      document.getElementById('postBrand').value = ad.brand || '';
+      document.getElementById('postModel').value = ad.model || '';
+      document.getElementById('postYear').value = ad.year || '';
+      document.getElementById('postKm').value = ad.km || '';
+      document.getElementById('postHp').value = ad.hp || '';
+      document.getElementById('postDrive').value = ad.drive || 'RWD';
+      document.getElementById('postTrans').value = ad.trans || 'Manuel';
+      document.getElementById('postEngine').value = ad.engine || '1.6L';
+      document.getElementById('postAspiration').value = ad.aspiration || 'Atmosferik';
+      document.getElementById('postDescription').value = ad.description || '';
+      document.getElementById('postModLink').value = ad.modLink || '';
+
+      const isPert = !!ad.isPert;
+      document.getElementById('postIsPert').checked = isPert;
+      const damageSelect = document.getElementById('postDamageStatus');
+      damageSelect.value = ad.damageStatus || "🟢 Hatasız / Boyasız";
+      damageSelect.disabled = isPert;
+
+      currentUploadedImages = ad.images ? [...ad.images] : [];
+      renderImagePreviews();
+
+      closeDetailModal();
+      document.getElementById('postModal').classList.add('active');
+    }
+
+    function closePostModal() { document.getElementById('postModal').classList.remove('active'); }
+
+    async function handleSaveAd(e) {
+      e.preventDefault();
+      if (isSubmittingAd) return;
+      if (currentUploadedImages.length === 0) { alert("En az bir fotoğraf ekleyin!"); return; }
+
+      isSubmittingAd = true;
+      const submitBtn = document.getElementById('submitPostBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Kaydediliyor...";
+
+      const pcFileInput = document.getElementById('postPcFile');
+      let pcFileData = null;
+      let pcFileName = null;
+
+      if (pcFileInput.files.length > 0) {
+        const file = pcFileInput.files[0];
+        pcFileName = file.name;
+        const reader = new FileReader();
+        pcFileData = await new Promise((resolve) => {
+          reader.onload = (e) => resolve(e.target.result);
+          reader.readAsDataURL(file);
+        });
+      }
+
+      const isModded = document.getElementById('postIsModded').checked;
+      const modLink = isModded ? document.getElementById('postModLink').value.trim() : '';
+
+      const adDataPayload = {
+        title: document.getElementById('postTitle').value,
+        description: document.getElementById('postDescription').value,
+        isModded: isModded,
+        modLink: modLink,
+        brand: document.getElementById('postBrand').value,
+        model: document.getElementById('postModel').value,
+        year: parseInt(document.getElementById('postYear').value),
+        km: parseInt(document.getElementById('postKm').value),
+        hp: parseInt(document.getElementById('postHp').value),
+        drive: document.getElementById('postDrive').value,
+        trans: document.getElementById('postTrans').value,
+        engine: document.getElementById('postEngine').value,
+        aspiration: document.getElementById('postAspiration').value,
+        damageStatus: document.getElementById('postDamageStatus').value,
+        isPert: document.getElementById('postIsPert').checked,
+        images: currentUploadedImages,
+        ownerId: currentUser.uid,
+        ownerNickname: currentUserProfile.nickname,
+        ownerAvatar: currentUserProfile.avatar
+      };
+
+      if (pcFileData) {
+        adDataPayload.pcFile = pcFileData;
+        adDataPayload.pcFileName = pcFileName;
+      }
+
+      const modResult = autoModerateAd(adDataPayload);
+      adDataPayload.approved = modResult.isApproved;
+
+      try {
+        if (editingAdId) {
+          await db.ref('ads/' + editingAdId).update(adDataPayload);
+          alert("✅ İlan güncellendi!");
+        } else {
+          adDataPayload.createdAt = Date.now();
+          await db.ref('ads').push(adDataPayload);
+          if (modResult.isApproved) {
+            alert("✅ İlanınız yayınlandı!");
+          } else {
+            alert(`⏳ İlanınız incelemeye alındı (${modResult.reason}).`);
+          }
+        }
+
+        document.getElementById('postForm').reset();
+        document.getElementById('imagePreviewContainer').innerHTML = "";
+        currentUploadedImages = [];
+        editingAdId = null;
+        toggleBrandList();
+        closePostModal();
+      } catch (err) { 
+        alert("Hata: " + err.message); 
+      } finally {
+        isSubmittingAd = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = "🚀 İlanı Yayınla";
+      }
+    }
+
+    async function deleteAd(adId) {
+      if (confirm("Bu ilanı kaldırmak istediğinize emin misiniz?")) {
+        try {
+          await db.ref('ads/' + adId).remove();
+          await db.ref('chats/' + adId).remove();
+          alert("İlan kaldırıldı!");
+          closeDetailModal();
+        } catch(err) { alert("Silme hatası: " + err.message); }
+      }
+    }
+
+    async function openDetailModal(adId) {
+      currentSelectedAdId = adId;
+      const ad = adsData.find(a => a.id === adId);
+      if (!ad) return;
+
+      document.getElementById('detailTitle').textContent = ad.title;
+      document.getElementById('detailTimeAgo').textContent = `Yayınlanma: ${timeAgo(ad.createdAt)}`;
+      
+      const imgs = ad.images || ['https://via.placeholder.com/400'];
+      const mainImgElem = document.getElementById('detailMainImg');
+      mainImgElem.src = imgs[0];
+
+      const thumbsElem = document.getElementById('detailThumbnails');
+      thumbsElem.innerHTML = "";
+      imgs.forEach((imgSrc, idx) => {
+        const thumb = document.createElement('img');
+        thumb.src = imgSrc;
+        if (idx === 0) thumb.className = "active-thumb";
+        thumb.onclick = () => {
+          mainImgElem.src = imgSrc;
+          document.querySelectorAll('.gallery-thumbs img').forEach(i => i.classList.remove('active-thumb'));
+          thumb.className = "active-thumb";
+        };
+        thumbsElem.appendChild(thumb);
+      });
+
+      const pcArea = document.getElementById('detailPcArea');
+      pcArea.innerHTML = "";
+      if (ad.pcFile) {
+        pcArea.innerHTML = `
+          <button onclick="requestAndDownloadPc('${escapeHtml(ad.id)}', '${escapeHtml(ad.pcFileName || 'config.pc')}')" class="btn-action btn-auth" style="justify-content: center; background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #93c5fd;">
+            📥 .pc Dosyasını İndir (${escapeHtml(ad.pcFileName || 'arac_ayar.pc')})
+          </button>
+        `;
+      }
+
+      const modLinkArea = document.getElementById('detailModLinkArea');
+      modLinkArea.innerHTML = "";
+      if (ad.isModded && ad.modLink) {
+        modLinkArea.innerHTML = `
+          <a href="${escapeHtml(ad.modLink)}" target="_blank" class="btn-action btn-auth" style="justify-content: center; background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #93c5fd; text-decoration: none; display: flex; align-items: center; gap: 6px;">
+            🔗 Mod İndirme / Kaynak Linkine Git
+          </a>
+        `;
+      }
+
+      const descContainer = document.getElementById('detailDescriptionContainer');
+      const descElem = document.getElementById('detailDescription');
+      if (ad.description && ad.description.trim() !== "") {
+        descContainer.style.display = 'block';
+        descElem.textContent = ad.description;
+      } else {
+        descContainer.style.display = 'none';
+      }
+
+      document.getElementById('detailSpecs').innerHTML = `
+        <div>🏷️ Marka / Model: <strong>${escapeHtml(ad.brand)} ${escapeHtml(ad.model)} (${escapeHtml(ad.year || 'N/A')})</strong></div>
+        <div>🛣️ Kilometre: <strong>${Number(ad.km).toLocaleString()} KM</strong></div>
+        <div>⚡ Motor Gücü: <strong>${escapeHtml(ad.hp || '?')} HP</strong></div>
+        <div>⚙️ Motor: <strong>${escapeHtml(ad.engine)} (${escapeHtml(ad.aspiration)})</strong></div>
+        <div>🕹️ Vites / Çekiş: <strong>${escapeHtml(ad.trans)} / ${escapeHtml(ad.drive)}</strong></div>
+        <div>⚠️ Hasar Durumu: <strong>${escapeHtml(ad.damageStatus)} ${ad.isPert ? '(PERT)' : ''}</strong></div>
+      `;
+
+      document.getElementById('detailSellerAvatar').src = ad.ownerAvatar || 'https://via.placeholder.com/150';
+      document.getElementById('detailSellerName').textContent = ad.ownerNickname || 'İlan Sahibi';
+
+      const dmBtn = document.getElementById('detailDmBtn');
+      if (currentUser && currentUser.uid !== ad.ownerId) {
+        dmBtn.style.display = 'block';
+        dmBtn.onclick = () => openDmChat(ad.ownerId, ad.ownerNickname, ad.ownerAvatar);
+      } else {
+        dmBtn.style.display = 'none';
+      }
+
+      const userSnap = await db.ref('users/' + ad.ownerId).once('value');
+      let accountDateStr = "Bilinmiyor";
+      if (userSnap.exists() && userSnap.val().createdAt) {
+        accountDateStr = new Date(userSnap.val().createdAt).toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' });
+      }
+      document.getElementById('detailSellerAccountDate').textContent = `Kayıt: ${accountDateStr}`;
+
+      const ownerActionArea = document.getElementById('detailOwnerActionArea');
+      ownerActionArea.innerHTML = "";
+      if (currentUser && currentUser.uid === ad.ownerId) {
+        ownerActionArea.innerHTML = `
+          <button onclick="openEditModal('${escapeHtml(ad.id)}')" class="btn-action btn-auth" style="justify-content: center; background: rgba(59, 130, 246, 0.15); border-color: #3b82f6; color: #93c5fd;">✏️ İlanı Düzenle</button>
+          <button onclick="deleteAd('${escapeHtml(ad.id)}')" class="btn-action btn-danger">🗑️ Bu İlanı Kaldır (Sil)</button>
+        `;
+      }
+
+      document.getElementById('detailModal').classList.add('active');
+    }
+
+    function closeDetailModal() { document.getElementById('detailModal').classList.remove('active'); }
+
+    // ==========================================
+    // 💬 ÖZEL MESAJLAŞMA (DM) SİSTEMİ & AKTİFLİK
+    // ==========================================
+    function generateDmId(uid1, uid2) {
+      return uid1 < uid2 ? `${uid1}_${uid2}` : `${uid2}_${uid1}`;
+    }
+
+    async function openInboxModal() {
+      if (!currentUser) { alert("Giriş yapmalısınız!"); openAuthModal(); return; }
+      const container = document.getElementById('inboxListContainer');
+      container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:2rem;">Mesajlar yükleniyor...</div>`;
+      document.getElementById('inboxModal').classList.add('active');
+
+      const dmRef = db.ref('direct_messages');
+      dmRef.once('value', async snapshot => {
+        container.innerHTML = "";
+        const data = snapshot.val();
+        if (!data) {
+          container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:2rem;">Hiç özel mesajınız yok.</div>`;
+          return;
+        }
+
+        let foundAny = false;
+        for (const [dmKey, chatData] of Object.entries(data)) {
+          if (dmKey.includes(currentUser.uid)) {
+            foundAny = true;
+            const ids = dmKey.split('_');
+            const peerId = ids[0] === currentUser.uid ? ids[1] : ids[0];
+            
+            const peerSnap = await db.ref('users/' + peerId).once('value');
+            const peerInfo = peerSnap.exists() ? peerSnap.val() : { nickname: "Kullanıcı", avatar: "https://via.placeholder.com/150" };
+
+            const messages = chatData.messages ? Object.values(chatData.messages) : [];
+            const lastMsg = messages.length > 0 ? messages[messages.length - 1] : { text: "Sohbet başlatıldı", timestamp: Date.now() };
+
+            container.insertAdjacentHTML('beforeend', `
+              <div onclick="openDmChat('${escapeHtml(peerId)}', '${escapeHtml(peerInfo.nickname)}', '${escapeHtml(peerInfo.avatar)}')" style="display:flex; align-items:center; gap:12px; background:var(--bg-main); padding:12px; border-radius:8px; border:1px solid var(--border-color); cursor:pointer; transition:0.2s;" onmouseover="this.style.borderColor='var(--accent-orange)'" onmouseout="this.style.borderColor='var(--border-color)'">
+                <img src="${escapeHtml(peerInfo.avatar)}" style="width:45px; height:45px; border-radius:50%; object-fit:cover;">
+                <div style="flex:1; overflow:hidden;">
+                  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <span style="font-weight:600; font-size:0.95rem; color:var(--text-main);">${escapeHtml(peerInfo.nickname)}</span>
+                    <span style="font-size:0.75rem; color:var(--text-muted);">${timeAgo(lastMsg.timestamp)}</span>
+                  </div>
+                  <div style="font-size:0.85rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHtml(lastMsg.text)}</div>
+                </div>
+              </div>
+            `);
+          }
+        }
+
+        if (!foundAny) {
+          container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:2rem;">Hiç özel mesajınız yok. İlan detaylarından ilan sahiplerine mesaj atabilirsiniz.</div>`;
+        }
+      });
+    }
+
+    function closeInboxModal() { document.getElementById('inboxModal').classList.remove('active'); }
+
+    function openDmChat(peerId, peerName, peerAvatar) {
+      if (!currentUser) { alert("Giriş yapmalısınız!"); openAuthModal(); return; }
+      if (currentUser.uid === peerId) { alert("Kendinize mesaj atamazsınız!"); return; }
+
+      closeDetailModal();
+      closeInboxModal();
+
+      currentDmChatId = generateDmId(currentUser.uid, peerId);
+      document.getElementById('dmPeerName').textContent = peerName;
+      document.getElementById('dmPeerAvatar').src = peerAvatar || 'https://via.placeholder.com/150';
+
+      // Karşı tarafın aktiflik durumunu dinle
+      if (peerStatusRef) peerStatusRef.off();
+      peerStatusRef = db.ref(`status/${peerId}`);
+      peerStatusRef.on('value', snapshot => {
+        const statusVal = snapshot.val();
+        const statusElem = document.getElementById('dmPeerStatus');
+        if (statusVal && statusVal.state === 'online') {
+          statusElem.textContent = "🟢 Çevrimiçi";
+          statusElem.style.color = "#10b981";
+        } else {
+          const lastTime = statusVal && statusVal.lastChanged ? timeAgo(statusVal.lastChanged) : "Çevrimdışı";
+          statusElem.textContent = `⚪ Son görülme: ${lastTime}`;
+          statusElem.style.color = "var(--text-muted)";
+        }
+      });
+
+      loadDmMessages(currentDmChatId);
+      document.getElementById('dmModal').classList.add('active');
+    }
+
+    function closeDmModal() {
+      document.getElementById('dmModal').classList.remove('active');
+      if (dmChatRef) dmChatRef.off();
+      if (peerStatusRef) peerStatusRef.off();
+    }
+
+    function loadDmMessages(chatId) {
+      const container = document.getElementById('dmMessagesContainer');
+      container.innerHTML = "";
+
+      if (dmChatRef) dmChatRef.off();
+      dmChatRef = db.ref(`direct_messages/${chatId}/messages`);
+      dmChatRef.on('value', snapshot => {
+        container.innerHTML = "";
+        const data = snapshot.val();
+        if (data) {
+          Object.entries(data).forEach(([msgKey, msg]) => {
+            const avatar = msg.senderAvatar || 'https://via.placeholder.com/150';
+            const isMe = msg.senderId === currentUser.uid;
+            
+            container.insertAdjacentHTML('beforeend', `
+              <div class="chat-msg" style="${isMe ? 'background: rgba(255,107,0,0.05); border-color: rgba(255,107,0,0.2);' : ''}">
+                <img src="${escapeHtml(avatar)}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" alt="Avatar">
+                <div style="flex: 1; overflow: hidden;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--accent-orange);">${escapeHtml(msg.senderName)}</span>
+                    <span style="font-size: 0.7rem; color: var(--text-muted);">${msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
+                  </div>
+                  <div style="font-size: 0.85rem; color: var(--text-main); word-break: break-word;">${escapeHtml(msg.text)}</div>
+                </div>
+              </div>
+            `);
+          });
+          container.scrollTop = container.scrollHeight;
+        } else {
+          container.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:2rem; font-size:0.85rem;">Özel sohbet başlatıldı. İlk mesajı siz yazın!</div>`;
+        }
+      });
+    }
+
+    async function sendDmMessage() {
+      const input = document.getElementById('dmInput');
+      const text = input.value.trim();
+      if (!text || !currentDmChatId) return;
+
+      await db.ref(`direct_messages/${currentDmChatId}/messages`).push({
+        senderId: currentUser.uid,
+        senderName: currentUserProfile.nickname,
+        senderAvatar: currentUserProfile.avatar || 'https://via.placeholder.com/150',
+        text: text,
+        timestamp: Date.now()
+      });
+
+      input.value = "";
+    }
+
+    // ==========================================
+    // 📢 GENEL İLAN TARTIŞMA ALANI
+    // ==========================================
+    function openMessengerModal() {
+      if (!currentUser) { alert("Soru sormak veya mesaj yazmak için giriş yapmalısınız!"); openAuthModal(); return; }
+      const ad = adsData.find(a => a.id === currentSelectedAdId);
+      if (!ad) return;
+
+      document.getElementById('messengerPeerName').textContent = `Soru & Tartışma: ${ad.title}`;
+      loadMessengerMessages(currentSelectedAdId);
+      document.getElementById('messengerModal').classList.add('active');
+    }
+
+    function closeMessengerModal() {
+      document.getElementById('messengerModal').classList.remove('active');
+      if (messengerChatRef) messengerChatRef.off();
+    }
+
+    function loadMessengerMessages(adId) {
+      const container = document.getElementById('messengerMessagesContainer');
+      container.innerHTML = "";
+      
+      messengerChatRef = db.ref('chats/' + adId);
+      messengerChatRef.on('value', snapshot => {
+        container.innerHTML = "";
+        const data = snapshot.val();
+        if (data) {
+          Object.entries(data).forEach(([msgKey, msg]) => {
+            const avatar = msg.senderAvatar || 'https://via.placeholder.com/150';
+            const isOwnerOrSender = currentUser && (currentUser.uid === msg.senderId || currentUserProfile.isAdmin || currentUser.email === ADMIN_EMAIL);
+            
+            const now = Date.now();
+            const diffMinutes = (now - (msg.timestamp || 0)) / (1000 * 60);
+            
+            let deleteBtnHtml = '';
+            if (isOwnerOrSender && diffMinutes <= 30) {
+              deleteBtnHtml = `<button class="delete-msg-btn" onclick="deleteMessage('${escapeHtml(adId)}', '${escapeHtml(msgKey)}')">Sil</button>`;
+            }
+
+            container.insertAdjacentHTML('beforeend', `
+              <div class="chat-msg">
+                ${deleteBtnHtml}
+                <img src="${escapeHtml(avatar)}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" alt="Avatar">
+                <div style="flex: 1; overflow: hidden; padding-right: 25px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
+                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--accent-orange);">${escapeHtml(msg.senderName)}</span>
+                    <span style="font-size: 0.7rem; color: var(--text-muted);">${msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
+                  </div>
+                  <div style="font-size: 0.85rem; color: var(--text-main); word-break: break-word;">${escapeHtml(msg.text)}</div>
+                </div>
+              </div>
+            `);
+          });
+          container.scrollTop = container.scrollHeight;
+        } else {
+          container.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:2rem; font-size:0.85rem;">Bu ilan için henüz soru sorulmamış.</div>`;
+        }
+      });
+    }
+
+    async function deleteMessage(adId, msgKey) {
+      if (!currentUser) return;
+      try {
+        const msgRef = db.ref(`chats/${adId}/${msgKey}`);
+        const snap = await msgRef.once('value');
+        if (snap.exists()) {
+          const msgData = snap.val();
+          const diffMinutes = (Date.now() - (msgData.timestamp || 0)) / (1000 * 60);
+          
+          if (diffMinutes > 30 && !currentUserProfile.isAdmin && currentUser.email !== ADMIN_EMAIL) {
+            alert("Üstünden 30 dakika geçen mesajlar silinemez!");
+            return;
+          }
+
+          if (confirm("Bu mesajı silmek istediğinize emin misiniz?")) {
+            await msgRef.remove();
+          }
+        }
+      } catch (err) {
+        alert("Hata: " + err.message);
+      }
+    }
+
+    async function sendMessengerMessage() {
+      if (!currentUser) { alert("Giriş yapmalısınız!"); openAuthModal(); return; }
+      
+      const now = Date.now();
+      const timeDiff = (now - lastMessageTimestamp) / 1000;
+      if (timeDiff < 3) {
+        alert(`⏱️ Yavaş mod aktif! Lütfen ${Math.ceil(3 - timeDiff)} saniye bekleyin.`);
+        return;
+      }
+
+      const input = document.getElementById('messengerInput');
+      const text = input.value.trim();
+      if (!text || !currentSelectedAdId) return;
+
+      await db.ref('chats/' + currentSelectedAdId).push({
+        senderId: currentUser.uid,
+        senderName: currentUserProfile.nickname,
+        senderAvatar: currentUserProfile.avatar || 'https://via.placeholder.com/150',
+        text: text,
+        timestamp: now
+      });
+
+      lastMessageTimestamp = Date.now();
+      input.value = "";
+    }
+
+    function requestAndDownloadPc(adId, fileName) {
+      if (!currentUser) { alert("Giriş yapmalısınız!"); openAuthModal(); return; }
+
+      db.ref('chats/' + adId).push({
+        senderId: currentUser.uid,
+        senderName: currentUserProfile.nickname,
+        senderAvatar: currentUserProfile.avatar || 'https://via.placeholder.com/150',
+        text: `[Sistem Talebi]: Merhaba, "${fileName}" adlı .pc dosyasını indirdim.`,
+        timestamp: Date.now()
+      });
+
+      const ad = adsData.find(a => a.id === adId);
+      if (ad && ad.pcFile) {
+        const a = document.createElement('a');
+        a.href = ad.pcFile;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    }
+
+    toggleBrandList();
+    populateFilterBrands();
+  </script>
+</body>
+</html>
