@@ -5,11 +5,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BelascoAuto | BeamNG İlan Pazarı</title>
-  
-  <!-- Favicon Eklemeleri -->
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="apple-touch-icon" href="favicon.png">
-
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Firebase SDK'ları -->
@@ -33,7 +28,7 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-    body { background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; animation: fadeIn 0.4s ease-out; }
+    body { background-color: var(--bg-main); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; animation: fadeIn 0.4s ease-out; overflow-x: hidden; }
 
     /* Yumuşak Geçiş Animasyonu */
     @keyframes fadeIn {
@@ -41,37 +36,43 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Header & Logo */
-    header { background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+    /* Header & Logo - Mobil Uyumlu */
+    header { background-color: var(--bg-card); border-bottom: 1px solid var(--border-color); padding: 0.8rem 1rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 0.5rem; }
+    @media(min-width: 768px) { header { padding: 1rem 2rem; } }
     
-    .logo { display: flex; align-items: center; gap: 0.75rem; font-size: 1.4rem; font-weight: 700; color: var(--text-main); text-decoration: none; transition: opacity 0.2s; }
+    .logo { display: flex; align-items: center; gap: 0.5rem; font-size: 1.2rem; font-weight: 700; color: var(--text-main); text-decoration: none; transition: opacity 0.2s; }
+    @media(min-width: 768px) { .logo { font-size: 1.4rem; gap: 0.75rem; } }
     .logo:hover { opacity: 0.95; }
     .logo span { color: var(--accent-orange); }
     
-    .logo-icon { width: 42px; height: 42px; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); flex-shrink: 0; }
+    .logo-icon { width: 36px; height: 36px; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); flex-shrink: 0; }
+    @media(min-width: 768px) { .logo-icon { width: 42px; height: 42px; } }
     .logo:hover .logo-icon { transform: scale(1.08) rotate(-3deg); }
 
-    .nav-links { display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap; }
+    .nav-links { display: flex; gap: 0.4rem; align-items: center; flex-wrap: wrap; }
+    @media(min-width: 768px) { .nav-links { gap: 0.75rem; } }
     
-    .btn-post { background-color: var(--accent-orange); color: #fff; padding: 0.6rem 1.2rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: 0.2s; }
+    .btn-post { background-color: var(--accent-orange); color: #fff; padding: 0.5rem 0.9rem; border-radius: 8px; font-weight: 600; border: none; cursor: pointer; transition: 0.2s; font-size: 0.85rem; }
+    @media(min-width: 768px) { .btn-post { padding: 0.6rem 1.2rem; font-size: 1rem; } }
     .btn-post:hover { background-color: var(--accent-hover); }
     
-    .btn-auth { background-color: var(--bg-hover); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.6rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 0.4rem; }
+    .btn-auth { background-color: var(--bg-hover); color: var(--text-main); border: 1px solid var(--border-color); padding: 0.5rem 0.8rem; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 0.3rem; font-size: 0.85rem; }
+    @media(min-width: 768px) { .btn-auth { padding: 0.6rem 1rem; font-size: 0.95rem; } }
     .btn-auth:hover { border-color: var(--accent-orange); color: var(--accent-orange); }
 
     .btn-notification { background: rgba(245, 158, 11, 0.15); border: 1px solid var(--badge-pending); color: #fbbf24; font-weight: 700; }
     .btn-notification:hover { background: rgba(245, 158, 11, 0.3); border-color: #fbbf24; color: #fff; }
 
-    .user-profile-badge { display: flex; align-items: center; gap: 0.5rem; background: var(--bg-main); padding: 0.3rem 0.8rem; border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; position: relative; }
-    .user-profile-badge img { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; }
+    .user-profile-badge { display: flex; align-items: center; gap: 0.4rem; background: var(--bg-main); padding: 0.25rem 0.6rem; border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; position: relative; }
+    .user-profile-badge img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
 
     /* Admin Badge */
     .admin-badge {
       background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
       color: #ffffff;
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 800;
-      padding: 2px 6px;
+      padding: 2px 5px;
       border-radius: 4px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -83,99 +84,191 @@
       margin-left: 4px;
     }
 
-    /* Layout & En Sola Kenarlanmış Filtre Alanı */
-    .main-container { width: 100%; margin: 1.5rem 0; padding: 0 1.5rem 0 0; display: grid; grid-template-columns: 320px 1fr; gap: 1.5rem; }
-    @media(max-width: 900px) { .main-container { grid-template-columns: 1fr; padding: 0 1rem; } }
+    /* Layout & Mobil Uyumlu Grid */
+    .main-container { width: 100%; margin: 1rem 0; padding: 0 0.5rem; display: grid; grid-template-columns: 1fr; gap: 1rem; }
+    @media(min-width: 900px) { .main-container { grid-template-columns: 320px 1fr; padding: 0 1.5rem 0 0; margin: 1.5rem 0; gap: 1.5rem; } }
 
-    /* En Sola Yapışık Sidebar / Filtreler */
-    .filters-sidebar { background-color: var(--bg-card); border-right: 1px solid var(--border-color); border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); border-top-right-radius: 12px; border-bottom-right-radius: 12px; padding: 1.5rem; height: fit-content; position: sticky; top: 80px; }
-    .filter-group { margin-bottom: 1.1rem; }
-    .filter-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.4rem; text-transform: uppercase; }
-    .filter-input, .filter-select { width: 100%; padding: 0.7rem; background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-main); outline: none; font-size: 0.9rem; }
+    /* Filtre Alanı - Mobil Açılır/Kapanır veya Esnek */
+    .filters-sidebar { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; height: fit-content; margin-bottom: 1rem; }
+    @media(min-width: 900px) { .filters-sidebar { border-left: none; border-top-left-radius: 0; border-bottom-left-radius: 0; border-top-right-radius: 12px; border-bottom-right-radius: 12px; padding: 1.5rem; position: sticky; top: 80px; margin-bottom: 0; } }
+    
+    .filter-group { margin-bottom: 1rem; }
+    .filter-group label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.3rem; text-transform: uppercase; }
+    .filter-input, .filter-select { width: 100%; padding: 0.6rem; background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-main); outline: none; font-size: 0.85rem; }
     .filter-input:focus, .filter-select:focus { border-color: var(--accent-orange); }
 
-    /* Grid & Cards */
-    .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-    .listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1.5rem; }
+    /* Grid & Cards - Mobil Uyumlu */
+    .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 0 0.5rem; }
+    @media(min-width: 768px) { .content-header { margin-bottom: 1.5rem; padding: 0; } }
+    
+    .listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; padding: 0 0.5rem; }
+    @media(min-width: 768px) { .listings-grid { grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 1.5rem; padding: 0; } }
+    
     .card { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.25s ease; display: flex; flex-direction: column; position: relative; }
     .card:hover { transform: translateY(-4px); border-color: var(--accent-orange); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
-    .card-img-wrapper { position: relative; height: 190px; background-color: #121419; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .card-img-wrapper { position: relative; height: 170px; background-color: #121419; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    @media(min-width: 768px) { .card-img-wrapper { height: 190px; } }
     .card-img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
     
-    .badge-modded { position: absolute; top: 10px; left: 10px; background-color: var(--badge-mod); color: #fff; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; z-index: 2; }
-    .badge-pert { position: absolute; top: 10px; left: 75px; background-color: var(--badge-danger); color: #fff; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; z-index: 2; }
-    .badge-pending { position: absolute; top: 10px; left: 10px; background-color: var(--badge-pending); color: #000; padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; z-index: 2; }
+    .badge-modded { position: absolute; top: 10px; left: 10px; background-color: var(--badge-mod); color: #fff; padding: 0.2rem 0.4rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; z-index: 2; }
+    .badge-pert { position: absolute; top: 10px; left: 70px; background-color: var(--badge-danger); color: #fff; padding: 0.2rem 0.4rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; z-index: 2; }
+    .badge-pending { position: absolute; top: 10px; left: 10px; background-color: var(--badge-pending); color: #000; padding: 0.2rem 0.4rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; z-index: 2; }
     
-    /* Kalp (Favori) Tuşu - Sağa Çekildi */
-    .favorite-btn { position: absolute; top: 10px; right: 12px; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); border: 1px solid var(--border-color); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 5; transition: 0.2s; color: #fff; font-size: 1.1rem; }
+    /* Kalp (Favori) Tuşu */
+    .favorite-btn { position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); border: 1px solid var(--border-color); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 5; transition: 0.2s; color: #fff; font-size: 1rem; }
     .favorite-btn:hover { background: rgba(255, 107, 0, 0.9); transform: scale(1.1); }
     .favorite-btn.active { color: #ef4444; border-color: #ef4444; background: rgba(239, 68, 68, 0.2); }
 
-    .card-body { padding: 1.25rem; display: flex; flex-direction: column; flex: 1; }
-    .card-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.6rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; font-size: 0.75rem; margin-bottom: 0.8rem; }
-    .tag { background: var(--bg-main); padding: 0.25rem 0.5rem; border-radius: 4px; border: 1px solid var(--border-color); color: var(--text-muted); }
-    .card-specs { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 0.8rem; margin-top: auto; align-items: center; }
+    .card-body { padding: 1rem; display: flex; flex-direction: column; flex: 1; }
+    @media(min-width: 768px) { .card-body { padding: 1.25rem; } }
+    .card-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; font-size: 0.7rem; margin-bottom: 0.6rem; }
+    .tag { background: var(--bg-main); padding: 0.2rem 0.4rem; border-radius: 4px; border: 1px solid var(--border-color); color: var(--text-muted); }
+    .card-specs { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 0.6rem; margin-top: auto; align-items: center; }
 
-    /* Modals & Smooth Animation */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.82); backdrop-filter: blur(6px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 1rem; opacity: 0; transition: opacity 0.3s ease; }
+    /* Modals & Mobil Tam Uyumlu Tasarım */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(6px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 0.5rem; opacity: 0; transition: opacity 0.3s ease; }
+    @media(min-width: 768px) { .modal-overlay { padding: 1rem; } }
     .modal-overlay.active { display: flex; opacity: 1; }
-    .modal-content { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; padding: 2rem; position: relative; transform: scale(0.95); transition: transform 0.3s ease; }
+    
+    .modal-content { background-color: var(--bg-card); border: 1px solid var(--border-color); border-radius: 12px; width: 100%; max-width: 800px; max-height: 95vh; overflow-y: auto; padding: 1.2rem; position: relative; transform: scale(0.95); transition: transform 0.3s ease; }
+    @media(min-width: 768px) { .modal-content { padding: 2rem; max-height: 90vh; } }
     .modal-overlay.active .modal-content { transform: scale(1); }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
-    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 2rem; cursor: pointer; line-height: 1; }
+    
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.8rem; }
+    .close-btn { background: none; border: none; color: var(--text-muted); font-size: 1.8rem; cursor: pointer; line-height: 1; }
     .close-btn:hover { color: var(--accent-orange); }
 
-    .btn-action { width: 100%; padding: 0.9rem; border: none; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+    .btn-action { width: 100%; padding: 0.8rem; border: none; border-radius: 8px; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: 0.2s; }
     .btn-primary { background-color: var(--accent-orange); color: white; }
     .btn-primary:hover { background-color: var(--accent-hover); }
     .btn-danger { background-color: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; }
     .btn-danger:hover { background-color: #991b1b; }
 
-    .auth-tabs { display: flex; gap: 1rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; }
-    .auth-tab { padding: 0.5rem 1rem; cursor: pointer; font-weight: 600; color: var(--text-muted); border-bottom: 2px solid transparent; }
+    .auth-tabs { display: flex; gap: 0.5rem; border-bottom: 1px solid var(--border-color); margin-bottom: 1.2rem; overflow-x: auto; }
+    .auth-tab { padding: 0.4rem 0.8rem; cursor: pointer; font-weight: 600; color: var(--text-muted); border-bottom: 2px solid transparent; white-space: nowrap; font-size: 0.9rem; }
     .auth-tab.active { color: var(--accent-orange); border-bottom-color: var(--accent-orange); }
 
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    @media(max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
-    .form-group.full-width { grid-column: span 2; }
+    .form-grid { display: grid; grid-template-columns: 1fr; gap: 0.8rem; }
+    @media(min-width: 600px) { .form-grid { grid-template-columns: 1fr 1fr; gap: 1rem; } }
+    .form-group.full-width { grid-column: 1 / -1; }
 
     /* Thumbnail Seçim Kutusu */
-    .preview-container { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
-    .preview-thumb-wrapper { position: relative; width: 85px; height: 85px; border-radius: 8px; overflow: hidden; border: 2px solid var(--border-color); cursor: pointer; }
+    .preview-container { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+    .preview-thumb-wrapper { position: relative; width: 75px; height: 75px; border-radius: 8px; overflow: hidden; border: 2px solid var(--border-color); cursor: pointer; }
     .preview-thumb-wrapper.is-thumb { border-color: var(--accent-orange); box-shadow: 0 0 8px rgba(255,107,0,0.6); }
     .preview-thumb { width: 100%; height: 100%; object-fit: cover; }
-    .thumb-label { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(255,107,0,0.9); color: white; font-size: 0.65rem; text-align: center; font-weight: bold; padding: 2px 0; }
-    .remove-thumb { position: absolute; top: 2px; right: 2px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; }
+    .thumb-label { position: absolute; bottom: 0; left: 0; width: 100%; background: rgba(255,107,0,0.9); color: white; font-size: 0.55rem; text-align: center; font-weight: bold; padding: 2px 0; }
+    .remove-thumb { position: absolute; top: 2px; right: 2px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 5; }
 
-    .detail-gallery { display: flex; flex-direction: column; gap: 10px; }
-    .main-detail-img { width: 100%; height: 320px; object-fit: cover; border-radius: 8px; background: #121419; cursor: zoom-in; transition: opacity 0.2s; }
+    .detail-gallery { display: flex; flex-direction: column; gap: 8px; }
+    .main-detail-img { width: 100%; height: 240px; object-fit: cover; border-radius: 8px; background: #121419; cursor: zoom-in; transition: opacity 0.2s; }
+    @media(min-width: 768px) { .main-detail-img { height: 320px; } }
     .main-detail-img:hover { opacity: 0.95; }
-    .gallery-thumbs { display: flex; flex-wrap: wrap; gap: 8px; max-height: 140px; overflow-y: auto; padding: 4px; background: var(--bg-main); border-radius: 8px; border: 1px solid var(--border-color); }
-    .gallery-thumbs img { width: 64px; height: 48px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: 0.15s; }
+    .gallery-thumbs { display: flex; flex-wrap: wrap; gap: 6px; max-height: 120px; overflow-y: auto; padding: 4px; background: var(--bg-main); border-radius: 8px; border: 1px solid var(--border-color); }
+    .gallery-thumbs img { width: 56px; height: 42px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: 0.15s; }
     .gallery-thumbs img.active-thumb { border-color: var(--accent-orange); transform: scale(1.05); }
 
-    .lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; cursor: zoom-out; }
+    .lightbox-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 15px; cursor: zoom-out; }
     .lightbox-overlay.active { display: flex; }
-    .lightbox-img { max-width: 92vw; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); cursor: default; }
+    .lightbox-img { max-width: 95vw; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); cursor: default; }
 
-    .messenger-container { display: flex; flex-direction: column; height: 400px; background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; margin-top: 1rem; }
-    .messenger-messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-    .chat-msg { display: flex; gap: 10px; align-items: flex-start; background: var(--bg-hover); border: 1px solid var(--border-color); padding: 10px; border-radius: 8px; position: relative; }
-    .chat-msg:hover .delete-msg-btn, .chat-msg:hover .report-msg-btn { opacity: 1; }
-    .delete-msg-btn { position: absolute; top: 8px; right: 8px; background: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444; border-radius: 4px; padding: 2px 6px; font-size: 0.7rem; cursor: pointer; opacity: 0; transition: opacity 0.2s; }
-    .report-msg-btn { position: absolute; top: 8px; right: 45px; background: var(--bg-main); color: var(--text-muted); border: 1px solid var(--border-color); border-radius: 4px; padding: 2px 6px; font-size: 0.7rem; cursor: pointer; opacity: 0; transition: opacity 0.2s; }
+    /* ===== Tartışma / Soru-Cevap Alanı ===== */
+    .messenger-messages {
+      flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 2px;
+      background:
+        radial-gradient(circle at 15% 8%, rgba(255,107,0,0.05), transparent 40%),
+        var(--bg-main);
+    }
+    .messenger-messages::-webkit-scrollbar { width: 8px; }
+    .messenger-messages::-webkit-scrollbar-track { background: transparent; }
+    .messenger-messages::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 8px; }
+    .messenger-messages::-webkit-scrollbar-thumb:hover { background: var(--accent-orange); }
+
+    @keyframes chatMsgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    .chat-msg-row { display: flex; gap: 8px; align-items: flex-end; margin: 6px 0; max-width: 88%; animation: chatMsgIn 0.22s ease; position: relative; }
+    .chat-msg-row.is-own { flex-direction: row-reverse; margin-left: auto; }
+
+    .chat-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border-color); }
+    .chat-avatar.is-admin-avatar { border: 2px solid #ef4444; box-shadow: 0 0 6px rgba(239, 68, 68, 0.5); }
+
+    .chat-bubble-col { display: flex; flex-direction: column; min-width: 0; }
+    .chat-msg-row.is-own .chat-bubble-col { align-items: flex-end; }
+
+    .chat-meta { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; padding: 0 4px; }
+    .chat-sender-name { font-size: 0.72rem; font-weight: 700; color: var(--accent-orange); }
+    .chat-msg-row.is-own .chat-sender-name { color: #93c5fd; }
+    .chat-time { font-size: 0.62rem; color: var(--text-muted); }
+
+    .chat-bubble {
+      position: relative;
+      background: var(--bg-hover);
+      border: 1px solid var(--border-color);
+      padding: 8px 12px;
+      border-radius: 14px 14px 14px 4px;
+      font-size: 0.83rem;
+      color: var(--text-main);
+      word-break: break-word;
+      white-space: pre-wrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+    .chat-msg-row.is-own .chat-bubble {
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-hover));
+      color: #fff;
+      border-color: transparent;
+      border-radius: 14px 14px 4px 14px;
+    }
+    .chat-bubble.is-admin-bubble { border-color: #ef4444; box-shadow: 0 0 0 1px rgba(239,68,68,0.35); }
+    .chat-bubble.is-system-bubble { background: var(--bg-main); border-style: dashed; color: var(--text-muted); font-style: italic; }
+
+    .chat-msg-actions {
+      display: flex; gap: 4px; opacity: 0; transition: opacity 0.15s;
+      position: absolute; top: -12px; right: 4px;
+    }
+    .chat-msg-row.is-own .chat-msg-actions { right: auto; left: 4px; }
+    .chat-msg-row:hover .chat-msg-actions { opacity: 1; }
+    .chat-icon-btn {
+      width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-muted);
+      font-size: 0.65rem; cursor: pointer; transition: 0.15s;
+    }
+    .chat-icon-btn:hover { transform: scale(1.12); }
+    .chat-icon-btn.report-icon:hover { color: #fbbf24; border-color: #fbbf24; }
+    .chat-icon-btn.delete-icon:hover { color: #f87171; border-color: #ef4444; background: rgba(239,68,68,0.15); }
+
+    .chat-empty-state { margin: auto; text-align: center; color: var(--text-muted); padding: 2rem 1rem; }
+    .chat-empty-state .icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; opacity: 0.6; }
+    .chat-empty-state .sub { font-size: 0.75rem; margin-top: 0.2rem; opacity: 0.8; }
+
+    .chat-day-divider { text-align: center; margin: 10px 0 6px; }
+    .chat-day-divider span { background: var(--bg-hover); color: var(--text-muted); font-size: 0.65rem; padding: 2px 10px; border-radius: 20px; border: 1px solid var(--border-color); }
+
     .messenger-input-area { padding: 10px; background: var(--bg-card); border-top: 1px solid var(--border-color); display: flex; gap: 8px; align-items: center; }
+    .messenger-input-area .filter-input { border-radius: 22px; padding: 0.65rem 1rem; background: var(--bg-main); }
+    .messenger-input-area .filter-input:focus { box-shadow: 0 0 0 3px rgba(255,107,0,0.15); }
+    .chat-send-btn {
+      width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0; border: none; cursor: pointer;
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-hover));
+      color: #fff; display: flex; align-items: center; justify-content: center; transition: 0.15s;
+      box-shadow: 0 2px 8px rgba(255,107,0,0.35);
+    }
+    .chat-send-btn:hover { transform: scale(1.08) rotate(-4deg); }
+    .chat-send-btn:active { transform: scale(0.95); }
+    .chat-send-btn svg { width: 17px; height: 17px; }
+
+    .slow-mode-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 0.65rem; color: #fbbf24; background: rgba(245, 158, 11, 0.12); border: 1px solid rgba(245, 158, 11, 0.4); padding: 2px 8px; border-radius: 20px; margin-top: 3px; }
+
 
     /* Sağ Alt Bildirim Kutusu (Toast Notification) */
-    .toast-notification { position: fixed; bottom: 25px; right: 25px; background: var(--bg-card); border: 1px solid var(--badge-pending); box-shadow: 0 10px 30px rgba(0,0,0,0.6); padding: 1rem 1.2rem; border-radius: 12px; display: flex; align-items: center; gap: 12px; z-index: 9999; transform: translateY(120px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+    .toast-notification { position: fixed; bottom: 20px; right: 20px; background: var(--bg-card); border: 1px solid var(--badge-pending); box-shadow: 0 10px 30px rgba(0,0,0,0.6); padding: 0.8rem 1rem; border-radius: 12px; display: flex; align-items: center; gap: 10px; z-index: 9999; transform: translateY(120px); opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; max-width: 90vw; }
     .toast-notification.active { transform: translateY(0); opacity: 1; }
 
-    .tutorial-box { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; margin-top: 1.5rem; font-size: 0.82rem; color: var(--text-muted); line-height: 1.45; }
-    .tutorial-box h4 { color: var(--accent-orange); font-size: 0.9rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 6px; }
+    .tutorial-box { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.9rem; margin-top: 1.2rem; font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+    .tutorial-box h4 { color: var(--accent-orange); font-size: 0.85rem; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 6px; }
 
-    .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-muted); grid-column: 1 / -1; }
-    .empty-state span { font-size: 3rem; display: block; margin-bottom: 1rem; }
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); grid-column: 1 / -1; }
+    .empty-state span { font-size: 2.5rem; display: block; margin-bottom: 0.8rem; }
   </style>
 </head>
 <body>
@@ -200,31 +293,31 @@
     </a>
     
     <div class="nav-links">
-      <button class="btn-auth btn-notification" id="btnAdminNotification" onclick="openAdminModal()" style="display: none;">🔔 Bildirimler (<span id="pendingAdsCount">0</span> Onay Bekleyen)</button>
+      <button class="btn-auth btn-notification" id="btnAdminNotification" onclick="openAdminModal()" style="display: none;">🔔 Bildirimler (<span id="pendingAdsCount">0</span>)</button>
       <button class="btn-auth" id="btnToggleFavorites" onclick="toggleFavoritesFilter()" style="display: none;">❤️ Favorilerim (<span id="favCountBadge">0</span>)</button>
 
       <div id="userInfoArea" style="display: none;" class="user-profile-badge" onclick="openProfileModal()">
         <img id="userHeaderAvatar" src="https://via.placeholder.com/150" alt="Avatar">
-        <span id="userNicknameText" style="font-weight: 600; font-size: 0.9rem;">...</span>
+        <span id="userNicknameText" style="font-weight: 600; font-size: 0.85rem;">...</span>
       </div>
 
-      <button class="btn-auth" id="btnAuthOpen" onclick="openAuthModal()">🔑 Giriş Yap / Kayıt Ol</button>
-      <button class="btn-post" onclick="checkAuthAndOpenPost()">+ Ücretsiz İlan Ver</button>
+      <button class="btn-auth" id="btnAuthOpen" onclick="openAuthModal()">🔑 Giriş</button>
+      <button class="btn-post" onclick="checkAuthAndOpenPost()">+ İlan Ver</button>
     </div>
   </header>
 
   <div class="main-container">
-    <!-- Sol Kenara Yapışık Filtre Alanı -->
+    <!-- Sol Kenar Filtre Alanı -->
     <aside class="filters-sidebar">
-      <h3 style="margin-bottom: 1.2rem; font-size: 1.1rem;">Gelişmiş Arama</h3>
+      <h3 style="margin-bottom: 1rem; font-size: 1rem;">Gelişmiş Arama</h3>
       
       <div class="filter-group">
         <label>Kelime Ara</label>
-        <input type="text" id="filterSearch" class="filter-input" placeholder="Örn: V8, Doğan, Drift..." oninput="renderAds()">
+        <input type="text" id="filterSearch" class="filter-input" placeholder="Örn: V8, Doğan..." oninput="debouncedRenderAds()">
       </div>
 
       <div class="filter-group">
-        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
           <input type="checkbox" id="filterIsModded" style="width: 16px; height: 16px; cursor: pointer;" onchange="populateFilterBrands()">
           <label for="filterIsModded" style="margin-bottom: 0; cursor: pointer;">Modlu Markalar</label>
         </div>
@@ -248,7 +341,7 @@
 
       <div class="filter-group">
         <label>Model Yılı (Min)</label>
-        <input type="number" id="filterYear" class="filter-input" placeholder="Örn: 1990" oninput="renderAds()">
+        <input type="number" id="filterYear" class="filter-input" placeholder="Örn: 1990" oninput="debouncedRenderAds()">
       </div>
 
       <div class="filter-group">
@@ -256,7 +349,6 @@
         <select id="filterEngine" class="filter-select" onchange="renderAds()">
           <option value="all">Tümü</option>
           <option value="0.5L">0.5L</option>
-          <option value="0.6L">0.6L</option>
           <option value="0.8L">0.8L</option>
           <option value="1.0L">1.0L</option>
           <option value="1.2L">1.2L</option>
@@ -266,7 +358,6 @@
           <option value="2.0L">2.0L</option>
           <option value="2.5L">2.5L</option>
           <option value="3.0L">3.0L</option>
-          <option value="3.5L">3.5L</option>
           <option value="4.0L+">4.0L+</option>
           <option value="Elektrikli">Elektrikli</option>
         </select>
@@ -313,24 +404,23 @@
         </select>
       </div>
 
-      <button onclick="resetFilters()" class="btn-action btn-auth" style="justify-content: center; margin-bottom: 1rem;">Filtreleri Sıfırla</button>
+      <button onclick="resetFilters()" class="btn-action btn-auth" style="justify-content: center; margin-bottom: 0.8rem;">Filtreleri Sıfırla</button>
 
       <!-- BeamNG .pc Dosya Yükleme Rehberi -->
       <div class="tutorial-box">
         <h4>📘 .pc Dosyası Yükleme Öğreticisi</h4>
         <p><strong>.pc Dosyası Nedir?</strong><br>
-        BeamNG.drive oyununda araç parçalarını, motor ayarlarını ve özel konfigürasyonları içeren kayıt dosyasıdır.</p>
-        <p style="margin-top:0.5rem;"><strong>Nasıl Yüklenir?</strong><br>
-        1. İndirdiğiniz <code>.pc</code> dosyasını kopyalayın.<br>
-        2. <code>AppData/Local/BeamNG.drive/vehicles/ [araç_kodu]</code> klasörüne yapıştırın.<br>
-        3. Oyunda aracı seçtikten sonra <em>Vehicle Config -> Save/Load</em> menüsünden yükleyin.</p>
+        BeamNG.drive oyununda araç ayarlarını içeren kayıt dosyasıdır.</p>
+        <p style="margin-top:0.4rem;"><strong>Nasıl Yüklenir?</strong><br>
+        1. <code>.pc</code> dosyasını indirin.<br>
+        2. <code>AppData/Local/BeamNG.drive/vehicles/</code> klasörüne atın.</p>
       </div>
     </aside>
 
     <main>
       <div class="content-header">
-        <h2 id="contentHeaderTitle">Aktif İlanlar</h2>
-        <span id="listingCount" style="color: var(--text-muted); font-size: 0.9rem;">Yükleniyor...</span>
+        <h2 id="contentHeaderTitle" style="font-size: 1.2rem;">Aktif İlanlar</h2>
+        <span id="listingCount" style="color: var(--text-muted); font-size: 0.85rem;">Yükleniyor...</span>
       </div>
       <div class="listings-grid" id="listingsGrid"></div>
     </main>
@@ -358,14 +448,40 @@
         </div>
       </form>
       <form id="registerForm" onsubmit="handleRegister(event)" style="display: none;">
-        <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div style="display: flex; flex-direction: column; gap: 0.9rem;">
           <input type="text" id="regNickname" class="filter-input" placeholder="Kullanıcı Adı (Benzersiz Nickname)" required>
           <input type="email" id="regEmail" class="filter-input" placeholder="E-Posta" required>
           <input type="password" id="regPass" class="filter-input" placeholder="Şifre (Min 6 Karakter)" minlength="6" required>
           <input type="password" id="regPassConfirm" class="filter-input" placeholder="Şifreyi Tekrar Girin" minlength="6" required>
+          
+          <div style="display: flex; align-items: flex-start; gap: 0.5rem; background: var(--bg-main); padding: 0.8rem; border-radius: 6px; border: 1px solid var(--border-color);">
+            <input type="checkbox" id="regAcceptRules" style="width: 18px; height: 18px; cursor: pointer; margin-top: 2px;" required>
+            <label for="regAcceptRules" style="cursor: pointer; font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
+              <a href="#" onclick="openRulesModal(); return false;" style="color: var(--accent-orange); text-decoration: underline;">İlan Sitesi Kuralları</a>'nı okudum ve kabul ediyorum[cite: 1].
+            </label>
+          </div>
+
           <button type="submit" class="btn-action btn-primary">Hesap Oluştur</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- KURALLAR MODALI -->
+  <div class="modal-overlay" id="rulesModal" style="z-index: 1100;">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3>📜 BelascoAuto İlan Sitesi Kuralları</h3>
+        <button class="close-btn" onclick="closeRulesModal()">&times;</button>
+      </div>
+      <div style="font-size: 0.85rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 10px; line-height: 1.5; max-height: 60vh; overflow-y: auto; padding-right: 5px;">
+        <p><strong>1. Genel Davranış Kuralları:</strong> Diğer üyelere karşı saygılı olmak zorunludur. Küfür, hakaret, nefret söylemi veya taciz kesinlikle yasaktır.</p>
+        <p><strong>2. İlan Verme Kuralları:</strong> Paylaşılan ilan başlıkları ve açıklamaları gerçeği yansıtmalı, BeamNG.drive oyun konseptine uygun olmalıdır. Yanıltıcı bilgi içeren veya hakaret barındıran ilanlar yöneticiler tarafından uyarılmaksızın silinir.</p>
+        <p><strong>3. Uygunsuz İçerik (+18 / NSFW):</strong> Görsellerde veya mesajlarda hiçbir şekilde müstehcen, yasadışı veya +18 içerik barındırılamaz. Sistem otomatik olarak şüpheli görselleri engeller.</p>
+        <p><strong>4. Mod ve Dosya Paylaşımı:</strong> Dış bağlantı veya mod paylaşımlarında virüslü veya zararlı içerik paylaşmak yasaktır. Tespit edilen hesaplar süresiz olarak cezalandırılır.</p>
+        <p><strong>5. Raporlama Sistemi:</strong> Kural ihlali yapan ilanları veya mesajları rapor butonuyla bildirebilirsiniz. Asılsız ve spam amaçlı raporlama yapmak yasaktır.</p>
+      </div>
+      <button onclick="closeRulesModal()" class="btn-action btn-primary" style="margin-top: 1rem;">Anladım / Kapat</button>
     </div>
   </div>
 
@@ -398,12 +514,12 @@
         <hr style="border-color: var(--border-color);">
         <div>
           <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MEVCUT ŞİFRE (İşlem Onayı İçin Şarttır)</label>
-          <input type="password" id="profileCurrentPass" class="filter-input" placeholder="Değişiklikleri kaydetmek için şifrenizi girin" required>
+          <input type="password" id="profileCurrentPass" class="filter-input" placeholder="Şifrenizi girin" required>
         </div>
         <button type="submit" class="btn-action btn-primary">Değişiklikleri Kaydet</button>
 
         <div id="adminButtonContainer" style="display: none; margin-top: 0.5rem;">
-          <button type="button" onclick="openAdminModal()" class="btn-action" style="background-color: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444;">🛡️ Admin Paneli (Yetkili)</button>
+          <button type="button" onclick="openAdminModal()" class="btn-action" style="background-color: #7f1d1d; color: #fca5a5; border: 1px solid #ef4444;">🛡️ Admin Paneli</button>
         </div>
 
         <button type="button" onclick="handleLogout()" class="btn-action btn-danger" style="margin-top: 0.5rem;">Çıkış Yap</button>
@@ -411,7 +527,7 @@
     </div>
   </div>
 
-  <!-- ADMIN MODALI (İlan Onay & Rapor Yönetimi) -->
+  <!-- ADMIN MODALI (İlan Onay, Raporlar ve Gelişmiş Ceza Sistemi) -->
   <div class="modal-overlay" id="adminModal">
     <div class="modal-content" style="max-width: 900px;">
       <div class="modal-header">
@@ -421,14 +537,52 @@
       <div class="auth-tabs">
         <div class="auth-tab active" id="tabAdminAds" onclick="switchAdminTab('ads')">İlan Onay & Yönetim</div>
         <div class="auth-tab" id="tabAdminReports" onclick="switchAdminTab('reports')">🚨 Bildirilen Raporlar</div>
+        <div class="auth-tab" id="tabAdminPunish" onclick="switchAdminTab('punish')">⚖️ Ceza Verme Sistemi</div>
+        <div class="auth-tab" id="tabAdminActivePunishments" onclick="switchAdminTab('activePunishments')">🚫 Aktif Cezalar</div>
       </div>
       <div id="adminAdsSection">
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Onay bekleyen veya yayındaki tüm ilanları göz atıp düzenleyebilir veya silebilirsiniz.</p>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Onay bekleyen veya yayındaki tüm ilanları göz atıp düzenleyebilir veya silebilirsiniz[cite: 1].</p>
         <div id="adminAdsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 480px; overflow-y: auto;"></div>
       </div>
       <div id="adminReportsSection" style="display: none;">
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Kullanıcılar tarafından raporlanan ilan ve mesaj şikayetleri.</p>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Kullanıcılar tarafından raporlanan ilan ve mesaj şikayetleri[cite: 1].</p>
         <div id="adminReportsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 480px; overflow-y: auto;"></div>
+      </div>
+      <div id="adminPunishSection" style="display: none;">
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Kurallara aykırı hareket eden kullanıcılara kullanıcı adı bazlı ve özel süreyle ceza uygulayın[cite: 1].</p>
+        <div style="display: flex; flex-direction: column; gap: 10px; background: var(--bg-main); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+          <div>
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.75rem; color:var(--text-muted);">KULLANICI ADI (NICKNAME)</label>
+            <input type="text" id="punishUsername" class="filter-input" placeholder="Örn: Ahmet123">
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.75rem; color:var(--text-muted);">CEZA TÜRÜ</label>
+            <select id="punishType" class="filter-select">
+              <option value="İlan Engeli">İlan Verme Engeli</option>
+              <option value="Sohbet Engeli">Sohbet / Mesaj Engeli</option>
+              <option value="Hesap Askıya Alma">Hesap Askıya Alma / Uzaklaştırma</option>
+            </select>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+              <label style="display:block; margin-bottom:0.3rem; font-size:0.75rem; color:var(--text-muted);">SÜRE (GÜN)</label>
+              <input type="number" id="punishDays" class="filter-input" placeholder="Örn: 3" min="0" value="1">
+            </div>
+            <div>
+              <label style="display:block; margin-bottom:0.3rem; font-size:0.75rem; color:var(--text-muted);">SÜRE (SAAT)</label>
+              <input type="number" id="punishHours" class="filter-input" placeholder="Örn: 12" min="0" max="23" value="0">
+            </div>
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.75rem; color:var(--text-muted);">CEZA SEBEBİ</label>
+            <textarea id="punishReason" class="filter-input" placeholder="Kural ihlali açıklaması..." style="height: 70px; resize: vertical;"></textarea>
+          </div>
+          <button onclick="issuePunishment()" class="btn-action btn-danger">Kullanıcıya Ceza Ver ⚠️</button>
+        </div>
+      </div>
+      <div id="adminActivePunishmentsSection" style="display: none;">
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Aktif cezası bulunan tüm hesaplar otomatik olarak aşağıda listelenmektedir. Tek tuşla cezayı kaldırabilirsiniz.</p>
+        <div id="adminActivePunishmentsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 480px; overflow-y: auto;"></div>
       </div>
     </div>
   </div>
@@ -470,8 +624,7 @@
 
           <div class="form-group full-width" id="modLinkGroup" style="display: none;">
             <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MOD İNDİRME LİNKİ</label>
-            <input type="url" id="postModLink" class="filter-input" placeholder="Örn: https://www.modland.net/beamng-drive-mods/...">
-            <small style="color: var(--text-muted); font-size: 0.75rem; margin-top: 4px; display: block;">Güvenilir mod sitelerinden indirme linki ekleyebilirsiniz.</small>
+            <input type="url" id="postModLink" class="filter-input" placeholder="Örn: https://www.modland.net/...">
           </div>
 
           <div class="form-group">
@@ -481,7 +634,7 @@
 
           <div class="form-group">
             <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MODEL</label>
-            <input type="text" id="postModel" class="filter-input" placeholder="Örn: Doğan SLX / Covet" required>
+            <input type="text" id="postModel" class="filter-input" placeholder="Örn: Doğan SLX" required>
           </div>
 
           <div class="form-group">
@@ -497,7 +650,7 @@
 
           <div class="form-group">
             <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MODEL YILI</label>
-            <input type="number" id="postYear" class="filter-input" placeholder="Örn: 1993" min="1900" max="2026" required>
+            <input type="number" id="postYear" class="filter-input" placeholder="1993" min="1900" max="2026" required>
           </div>
 
           <div class="form-group">
@@ -507,7 +660,7 @@
 
           <div class="form-group">
             <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MOTOR GÜCÜ (HP)</label>
-            <input type="number" id="postHp" class="filter-input" placeholder="Örn: 140" min="1" max="5000" required>
+            <input type="number" id="postHp" class="filter-input" placeholder="140" min="1" max="5000" required>
           </div>
 
           <div class="form-group">
@@ -533,7 +686,6 @@
             <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MOTOR HACMİ</label>
             <select id="postEngine" class="filter-select" required>
               <option value="0.5L">0.5L</option>
-              <option value="0.6L">0.6L</option>
               <option value="0.8L">0.8L</option>
               <option value="1.0L">1.0L</option>
               <option value="1.2L">1.2L</option>
@@ -543,16 +695,15 @@
               <option value="2.0L">2.0L</option>
               <option value="2.5L">2.5L</option>
               <option value="3.0L">3.0L</option>
-              <option value="3.5L">3.5L</option>
               <option value="4.0L+">4.0L+</option>
               <option value="Elektrikli">Elektrikli</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">MOTOR BESLEME TİPİ</label>
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">BESLEME TİPİ</label>
             <select id="postAspiration" class="filter-select" required>
-              <option value="Atmosferik">Atmosferik (Doğal Emişli)</option>
+              <option value="Atmosferik">Atmosferik</option>
               <option value="Turboşarj">Turboşarj</option>
               <option value="Supercharger">Supercharger</option>
               <option value="Twin-Turbo">Twin-Turbo</option>
@@ -562,14 +713,14 @@
 
           <div class="form-group full-width">
             <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">İLAN AÇIKLAMASI</label>
-            <textarea id="postDescription" class="filter-input" placeholder="Aracın kondisyonu, yapılan modifikasyonlar, ekstra detaylar..." style="height: 100px; resize: vertical;"></textarea>
+            <textarea id="postDescription" class="filter-input" placeholder="Araç hakkında detaylar..." style="height: 90px; resize: vertical;"></textarea>
           </div>
 
-          <div class="form-group full-width damage-box" style="border: 1px solid var(--accent-orange); padding: 15px; border-radius: 8px; background: rgba(255, 107, 0, 0.05);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <label style="color: #fff; font-size: 0.9rem; font-weight:600;">Hasar Durumu Yapılandırması</label>
-              <label style="background: #7f1d1d; color: #fca5a5; padding: 4px 10px; border-radius: 6px; border: 1px solid #ef4444; font-weight: bold; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; cursor: pointer;">
-                <input type="checkbox" id="postIsPert" style="cursor:pointer;" onchange="togglePertState()"> ⚠️ Ağır Hasar Kayıtlı (Pert)
+          <div class="form-group full-width damage-box" style="border: 1px solid var(--accent-orange); padding: 12px; border-radius: 8px; background: rgba(255, 107, 0, 0.05);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <label style="color: #fff; font-size: 0.85rem; font-weight:600;">Hasar Durumu</label>
+              <label style="background: #7f1d1d; color: #fca5a5; padding: 3px 8px; border-radius: 6px; border: 1px solid #ef4444; font-weight: bold; font-size: 0.75rem; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                <input type="checkbox" id="postIsPert" style="cursor:pointer;" onchange="togglePertState()"> Ağır Hasar (Pert)
               </label>
             </div>
             <select id="postDamageStatus" class="filter-select">
@@ -580,23 +731,22 @@
             </select>
           </div>
 
-          <div class="form-group full-width" style="border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; background: var(--bg-main);">
-            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">BEAMNG .PC KONFİGÜRASYON DOSYASI (İsteğe Bağlı)</label>
+          <div class="form-group full-width" style="border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; background: var(--bg-main);">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">BEAMNG .PC DOSYASI (İsteğe Bağlı)</label>
             <input type="file" id="postPcFile" class="filter-input" accept=".pc">
-            <small style="color: var(--text-muted); font-size: 0.75rem; margin-top: 4px; display: block;">Aracınızın .pc ayar dosyasını ekleyebilirsiniz.</small>
           </div>
 
           <div class="form-group full-width">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem;">
-              <label style="font-size: 0.8rem; color: var(--text-muted);">ARAÇ FOTOĞRAFLARI (Maksimum 20 Adet) - Kapak Resmi Seçmek İçin Görsele Tıklayın</label>
-              <button type="button" onclick="document.getElementById('postImagesFile').click()" class="btn-auth" style="padding: 0.2rem 0.6rem; font-size: 0.8rem;">+ Fotoğraf Ekle</button>
+              <label style="font-size: 0.8rem; color: var(--text-muted);">FOTOĞRAFLAR (Kapak için görsele tıklayın)</label>
+              <button type="button" onclick="document.getElementById('postImagesFile').click()" class="btn-auth" style="padding: 0.2rem 0.5rem; font-size: 0.75rem;">+ Ekle</button>
             </div>
             <input type="file" id="postImagesFile" class="filter-input" accept="image/*" multiple onchange="handleMultipleImages(event)" style="display: none;">
             <div id="imagePreviewContainer" class="preview-container"></div>
           </div>
 
         </div>
-        <button type="submit" id="submitPostBtn" class="btn-action btn-primary" style="margin-top: 1.5rem;">🚀 İlanı Yayınla</button>
+        <button type="submit" id="submitPostBtn" class="btn-action btn-primary" style="margin-top: 1.2rem;">🚀 İlanı Yayınla</button>
       </form>
     </div>
   </div>
@@ -606,43 +756,42 @@
     <div class="modal-content" style="max-width: 900px;">
       <div class="modal-header">
         <div>
-          <h3 id="detailTitle">İlan Detayı</h3>
-          <span id="detailTimeAgo" style="font-size: 0.75rem; color: var(--text-muted);"></span>
+          <h3 id="detailTitle" style="font-size: 1.1rem;">İlan Detayı</h3>
+          <span id="detailTimeAgo" style="font-size: 0.7rem; color: var(--text-muted);"></span>
         </div>
         <button class="close-btn" onclick="closeDetailModal()">&times;</button>
       </div>
       <div class="form-grid" style="align-items: start;">
         <div class="detail-gallery">
-          <img id="detailMainImg" class="main-detail-img" src="" alt="Araç Görseli" onclick="openLightbox(this.src)" title="Fotoğrafı tam boyutta büyütmek için tıklayın">
-          <div style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: -4px;">🔍 Fotoğrafa tıklayarak sayfa üzerinde tam boyutta inceleyebilirsiniz.</div>
+          <img id="detailMainImg" class="main-detail-img" src="" alt="Araç Görseli" onclick="openLightbox(this.src)" title="Tam boyutta incele">
           <div id="detailThumbnails" class="gallery-thumbs"></div>
-          <div id="detailPcArea" style="margin-top: 0.5rem;"></div>
-          <div id="detailModLinkArea" style="margin-top: 0.5rem;"></div>
+          <div id="detailPcArea" style="margin-top: 0.4rem;"></div>
+          <div id="detailModLinkArea" style="margin-top: 0.4rem;"></div>
         </div>
         <div>
-          <div id="detailSpecs" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;"></div>
+          <div id="detailSpecs" style="display: flex; flex-direction: column; gap: 6px; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;"></div>
           
-          <div id="detailDescriptionContainer" style="margin-bottom: 1rem; background: var(--bg-main); padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); display: none;">
-            <div style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase;">İlan Açıklaması</div>
-            <div id="detailDescription" style="font-size: 0.9rem; color: var(--text-main); white-space: pre-wrap;"></div>
+          <div id="detailDescriptionContainer" style="margin-bottom: 1rem; background: var(--bg-main); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); display: none;">
+            <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 3px; text-transform: uppercase;">İlan Açıklaması</div>
+            <div id="detailDescription" style="font-size: 0.85rem; color: var(--text-main); white-space: pre-wrap;"></div>
           </div>
 
           <div style="background: var(--bg-main); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <img id="detailSellerAvatar" src="" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" alt="İlan Sahibi">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <img id="detailSellerAvatar" src="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" alt="Satıcı">
               <div>
-                <div id="detailSellerName" style="font-weight: 600; color: var(--text-main); display: flex; align-items: center;">İlan Sahibi</div>
-                <div id="detailSellerAccountDate" style="font-size: 0.75rem; color: var(--text-muted);">Kayıt Tarihi: ...</div>
+                <div id="detailSellerName" style="font-weight: 600; color: var(--text-main); display: flex; align-items: center; font-size: 0.9rem;">Satıcı</div>
+                <div id="detailSellerAccountDate" style="font-size: 0.7rem; color: var(--text-muted);">Kayıt: ...</div>
               </div>
             </div>
-            <button onclick="reportAd()" style="background: none; border: none; color: #ef4444; font-size: 0.8rem; cursor: pointer;">🚨 İlanı Rapor Et</button>
+            <button onclick="reportAd()" style="background: none; border: none; color: #ef4444; font-size: 0.75rem; cursor: pointer;">🚨 Rapor Et</button>
           </div>
 
-          <button onclick="openMessengerModal()" class="btn-action btn-auth" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 0.5rem; border-color: var(--border-color);">
-            📢 Soru Sor & Genel Tartışma Alanı
+          <button onclick="openMessengerModal()" class="btn-action btn-auth" style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 0.5rem; border-color: var(--border-color); font-size: 0.85rem;">
+            📢 Soru Sor & Tartışma
           </button>
 
-          <div id="detailOwnerActionArea" style="display: flex; flex-direction: column; gap: 8px;"></div>
+          <div id="detailOwnerActionArea" style="display: flex; flex-direction: column; gap: 6px;"></div>
         </div>
       </div>
     </div>
@@ -650,17 +799,20 @@
 
   <!-- LIGHTBOX -->
   <div class="lightbox-overlay" id="lightboxModal" onclick="closeLightbox()">
-    <button class="close-btn" style="position: absolute; top: 20px; right: 25px; color: #fff; font-size: 2.5rem;" onclick="closeLightbox()">&times;</button>
-    <img id="lightboxImg" class="lightbox-img" src="" alt="Tam Boyut Görsel" onclick="event.stopPropagation()">
+    <button class="close-btn" style="position: absolute; top: 15px; right: 20px; color: #fff; font-size: 2.2rem;" onclick="closeLightbox()">&times;</button>
+    <img id="lightboxImg" class="lightbox-img" src="" alt="Tam Boyut" onclick="event.stopPropagation()">
   </div>
 
   <!-- TARTIŞMA MODALI -->
   <div class="modal-overlay" id="messengerModal">
-    <div class="modal-content" style="max-width: 500px; padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 550px;">
-      <div style="background: var(--bg-card); padding: 1rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <div id="messengerPeerName" style="font-weight: 600; font-size: 0.95rem;">Soru & Tartışma Alanı</div>
-          <div style="font-size: 0.75rem; color: #f59e0b;">⏱️ 3 Saniye Yavaş Mod Aktif</div>
+    <div class="modal-content" style="max-width: 500px; padding: 0; overflow: hidden; display: flex; flex-direction: column; height: 560px;">
+      <div style="background: var(--bg-card); padding: 0.8rem 1rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;">
+        <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+          <div style="width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; background: linear-gradient(135deg, var(--accent-orange), var(--accent-hover)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; box-shadow: 0 2px 8px rgba(255,107,0,0.35);">💬</div>
+          <div style="min-width: 0;">
+            <div id="messengerPeerName" style="font-weight: 700; font-size: 0.92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Soru & Tartışma Alanı</div>
+            <span class="slow-mode-badge">⏱️ 3sn yavaş mod</span>
+          </div>
         </div>
         <button class="close-btn" onclick="closeMessengerModal()">&times;</button>
       </div>
@@ -668,18 +820,21 @@
       <div class="messenger-messages" id="messengerMessagesContainer"></div>
 
       <div class="messenger-input-area">
-        <input type="text" id="messengerInput" class="filter-input" placeholder="Bir soru veya mesaj yazın..." onkeypress="if(event.key==='Enter') sendMessengerMessage()">
-        <button id="sendChatBtn" onclick="sendMessengerMessage()" class="btn-primary" style="padding: 0 1.2rem; height: 42px; border-radius: 6px; border:none; cursor:pointer; font-weight:600;">Gönder</button>
+        <input type="text" id="messengerInput" class="filter-input" placeholder="Bir mesaj yazın..." maxlength="500" onkeypress="if(event.key==='Enter') sendMessengerMessage()">
+        <button id="sendChatBtn" onclick="sendMessengerMessage()" class="chat-send-btn" title="Gönder" aria-label="Gönder">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3.4 20.6L21 12 3.4 3.4 3 10l12 2-12 2z" fill="currentColor"/></svg>
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Sağ Alt Toast Bildirim Kutusu -->
+
+  <!-- Toast Bildirim -->
   <div class="toast-notification" id="toastNotification" onclick="openAdminModal()">
-    <div style="font-size: 1.8rem;">🔔</div>
+    <div style="font-size: 1.5rem;">🔔</div>
     <div>
-      <div style="font-weight: bold; font-size: 0.9rem; color: #fbbf24;">Yeni Onay Bekleyen İlan!</div>
-      <div style="font-size: 0.8rem; color: var(--text-muted);" id="toastMessageText">Bir kullanıcı yeni ilan gönderdi.</div>
+      <div style="font-weight: bold; font-size: 0.85rem; color: #fbbf24;">Yeni Bildirim / Onay Bekleyen İlan!</div>
+      <div style="font-size: 0.75rem; color: var(--text-muted);" id="toastMessageText">Yeni bir aktivite gerçekleşti.</div>
     </div>
   </div>
 
@@ -738,11 +893,57 @@
     const beamngBrands = ["Autobello", "Bruckell", "Cherrier", "Civetta", "ETK", "Gavril", "Hirochi", "Ibishu", "Soliad", "Wentward"].sort();
     const realBrands = ["Anadol", "Audi", "BMW", "Chevrolet", "Devrim", "Fiat", "Ford", "Honda", "Hyundai", "Karsan", "Lamborghini", "Mazda", "Mercedes-Benz", "Nissan", "Otokar", "Peugeot", "Porsche", "Renault", "Subaru", "Tofaş", "Toyota", "Volkswagen", "Volvo"].sort();
 
+    // ⚠️ GÜVENLİK NOTU: Bu fonksiyon yalnızca ARAYÜZÜ (hangi butonların
+    // gösterileceğini) belirler. Gerçek yetkilendirme burada değil, Firebase
+    // Realtime Database Rules'ta yapılmalıdır. Örneğin 'ads' onaylama,
+    // 'punishments' yazma ve 'reports' okuma işlemleri Rules içinde
+    // auth.token.email === '...' gibi bir kuralla korunmuyorsa, herhangi biri
+    // tarayıcı konsolundan doğrudan veritabanına yazıp admin yetkisi olmadan
+    // ilan onaylayabilir veya ceza/rapor verisini değiştirebilir. Bu dosya
+    // client-side kod olduğu için bu kontrolü tek başına güvenli hale
+    // getiremez — mutlaka Firebase Console > Realtime Database > Rules
+    // bölümü sıkılaştırılmalıdır.
     function isUserAdmin(uid, email, profile) {
       return (profile && profile.isAdmin) || email === ADMIN_EMAIL || email === "admin@belascoauto.com";
     }
 
-    /* Görsel +18 NSFW Filtresi (Yapay Zeka Mantığı) */
+    // Performans: Fotoğrafları Realtime Database'e yazmadan önce küçültüp
+    // sıkıştırarak (max genişlik + JPEG kalitesi) yükleme/kayıt boyutunu düşürür.
+    function resizeImageFile(file, maxDimension = 1280, quality = 0.75) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let { width, height } = img;
+            if (width > maxDimension || height > maxDimension) {
+              if (width >= height) {
+                height = Math.round(height * (maxDimension / width));
+                width = maxDimension;
+              } else {
+                width = Math.round(width * (maxDimension / height));
+                height = maxDimension;
+              }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = () => reject(new Error('Görsel okunamadı.'));
+          img.src = e.target.result;
+        };
+        reader.onerror = () => reject(new Error('Dosya okunamadı.'));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Not: Bu yalnızca dosya adına göre basit bir ön filtredir; gerçek görsel
+    // içerik analizi yapmaz. Gerçek NSFW tespiti sunucu taraflı bir servis
+    // gerektirir. (Önceki sürümde burada hiçbir sonucu kullanılmayan, yalnızca
+    // kaynak tüketen bir canvas çizimi vardı; kaldırıldı.)
     function checkNSFWImage(file) {
       return new Promise((resolve) => {
         const forbiddenKeywords = ["adult", "nsfw", "porn", "nude", "sex", "18+"];
@@ -753,26 +954,10 @@
             return;
           }
         }
-        
-        // Canvas Üzerinden Basit Görsel Renk Analizi
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const img = new Image();
-          img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = 50;
-            canvas.height = 50;
-            ctx.drawImage(img, 0, 0, 50, 50);
-            resolve(false); 
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
+        resolve(false);
       });
     }
 
-    /* Sesli ve Görsel Bildirim Kutusu Tetikleyici */
     function playNotificationSoundAndToast(msg) {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -808,8 +993,20 @@
       if (event.key === 'Escape') closeLightbox();
     });
 
-    /* Harici Link Yönlendirme Onay Modalı */
+    function isSafeExternalUrl(url) {
+      try {
+        const parsed = new URL(url, window.location.href);
+        return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+      } catch (e) {
+        return false;
+      }
+    }
+
     function openExternalLinkModal(url) {
+      if (!isSafeExternalUrl(url)) {
+        alert("⚠️ Geçersiz veya güvensiz bağlantı, açılamıyor.");
+        return;
+      }
       document.getElementById('externalLinkDisplay').textContent = url;
       document.getElementById('btnConfirmExternalLink').href = url;
       document.getElementById('externalLinkModal').classList.add('active');
@@ -818,13 +1015,15 @@
       document.getElementById('externalLinkModal').classList.remove('active');
     }
 
-    /* Şifremi Unuttum İşlemi */
+    function openRulesModal() { document.getElementById('rulesModal').classList.add('active'); }
+    function closeRulesModal() { document.getElementById('rulesModal').classList.remove('active'); }
+
     async function handleForgotPassword() {
-      const email = prompt("Lütfen şifre sıfırlama bağlantısı gönderilecek e-posta adresinizi giriniz:");
+      const email = prompt("Şifre sıfırlama bağlantısı gönderilecek e-posta adresiniz:");
       if (email) {
         try {
           await auth.sendPasswordResetEmail(email.trim());
-          alert("✅ Şifre sıfırlama e-postası başarıyla gönderildi! Lütfen e-postanızı kontrol edin.");
+          alert("✅ Şifre sıfırlama e-postası gönderildi!");
         } catch(err) {
           alert("Hata: " + err.message);
         }
@@ -834,7 +1033,7 @@
     async function toggleFavorite(event, adId) {
       event.stopPropagation();
       if (!currentUser) {
-        alert("İlanları favorilere eklemek için giriş yapmalısınız!");
+        alert("Favorilere eklemek için giriş yapmalısınız!");
         openAuthModal();
         return;
       }
@@ -852,7 +1051,7 @@
         updateFavoritesUI();
         renderAds();
       } catch (err) {
-        alert("Favoriler güncellenirken hata oluştu: " + err.message);
+        alert("Hata: " + err.message);
       }
     }
 
@@ -922,6 +1121,8 @@
       }
     }
 
+    const MAX_IMAGE_SIZE_MB = 12;
+
     async function handleMultipleImages(event) {
       const files = event.target.files;
       if (currentUploadedImages.length + files.length > 20) {
@@ -930,18 +1131,24 @@
       }
 
       for (let i = 0; i < files.length; i++) {
-        const isNSFW = await checkNSFWImage(files[i]);
-        if (isNSFW) {
-          alert(`⚠️ "${files[i].name}" adlı görsel uygunsuz (+18 / NSFW) içerik tespit edildiği için reddedildi!`);
+        if (files[i].size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+          alert(`⚠️ "${files[i].name}" çok büyük (max ${MAX_IMAGE_SIZE_MB}MB). Atlandı.`);
           continue;
         }
 
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          currentUploadedImages.push(e.target.result);
+        const isNSFW = await checkNSFWImage(files[i]);
+        if (isNSFW) {
+          alert(`⚠️ "${files[i].name}" uygunsuz (+18 / NSFW) içerik tespit edildiği için reddedildi!`);
+          continue;
+        }
+
+        try {
+          const resizedDataUrl = await resizeImageFile(files[i]);
+          currentUploadedImages.push(resizedDataUrl);
           renderImagePreviews();
-        };
-        reader.readAsDataURL(files[i]);
+        } catch (err) {
+          alert(`⚠️ "${files[i].name}" işlenemedi: ${err.message}`);
+        }
       }
     }
 
@@ -960,7 +1167,7 @@
         wrapper.onclick = () => selectThumbnail(index);
         wrapper.innerHTML = `
           <img src="${escapeHtml(imgSrc)}" class="preview-thumb">
-          ${isThumb ? '<div class="thumb-label">KAPAK RESMİ</div>' : ''}
+          ${isThumb ? '<div class="thumb-label">KAPAK</div>' : ''}
           <button type="button" class="remove-thumb" onclick="event.stopPropagation(); removeUploadedImage(${index})">&times;</button>
         `;
         container.appendChild(wrapper);
@@ -979,18 +1186,23 @@
     async function previewAvatar(event) {
       const file = event.target.files[0];
       if (file) {
-        const isNSFW = await checkNSFWImage(file);
-        if (isNSFW) {
-          alert("⚠️ Seçilen profil fotoğrafında uygunsuz (+18 / NSFW) içerik tespit edildi!");
+        if (file.size > MAX_IMAGE_SIZE_MB * 1024 * 1024) {
+          alert(`⚠️ Dosya çok büyük (max ${MAX_IMAGE_SIZE_MB}MB).`);
           event.target.value = "";
           return;
         }
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          currentNewAvatar = e.target.result;
+        const isNSFW = await checkNSFWImage(file);
+        if (isNSFW) {
+          alert("⚠️ Uygunsuz (+18 / NSFW) profil fotoğrafı engellendi!");
+          event.target.value = "";
+          return;
+        }
+        try {
+          currentNewAvatar = await resizeImageFile(file, 400, 0.8);
           document.getElementById('profileModalAvatar').src = currentNewAvatar;
-        };
-        reader.readAsDataURL(file);
+        } catch (err) {
+          alert("⚠️ Fotoğraf işlenemedi: " + err.message);
+        }
       }
     }
 
@@ -1041,15 +1253,22 @@
         adsData.reverse();
       }
 
-      /* Admin Bildirim Tetikleyicisi */
       const pendingCount = adsData.filter(ad => ad.approved === false).length;
       if (previousPendingCount !== -1 && pendingCount > previousPendingCount && currentUser && isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile)) {
-        playNotificationSoundAndToast("Yeni bir ilan onay beklemeye başladı!");
+        playNotificationSoundAndToast("Yeni bir ilan onay bekliyor!");
       }
       previousPendingCount = pendingCount;
 
       renderAds();
     });
+
+    // Performans: her tuş vuruşunda tüm grid'i yeniden çizmek yerine
+    // kullanıcı yazmayı bıraktıktan kısa bir süre sonra render eder.
+    let renderAdsDebounceTimer = null;
+    function debouncedRenderAds() {
+      clearTimeout(renderAdsDebounceTimer);
+      renderAdsDebounceTimer = setTimeout(renderAds, 250);
+    }
 
     function renderAds() {
       const grid = document.getElementById('listingsGrid');
@@ -1064,10 +1283,10 @@
       const moddedStatus = document.getElementById('filterModdedStatus').value;
 
       const userFavorites = currentUserProfile.favorites || [];
-
       const pendingAds = adsData.filter(ad => ad.approved === false);
       const btnNotification = document.getElementById('btnAdminNotification');
       const pendingCountElem = document.getElementById('pendingAdsCount');
+
       if (currentUser && isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile)) {
         btnNotification.style.display = 'flex';
         pendingCountElem.textContent = pendingAds.length;
@@ -1097,7 +1316,7 @@
       });
 
       grid.innerHTML = '';
-      document.getElementById('listingCount').textContent = `${filtered.length} İlan Gösteriliyor`;
+      document.getElementById('listingCount').textContent = `${filtered.length} İlan`;
 
       if (filtered.length === 0) {
         grid.innerHTML = `<div class="empty-state"><span>🔍</span><h3>İlan Bulunamadı</h3></div>`;
@@ -1105,8 +1324,8 @@
       }
 
       filtered.forEach(ad => {
-        const modBadge = ad.isModded ? `<div class="badge-modded">MODLU</div>` : '';
-        const pertBadge = ad.isPert ? `<div class="badge-pert">PERT KAYITLI</div>` : '';
+        const modBadge = ad.isModded ? `<div class="badge-modded">MOD</div>` : '';
+        const pertBadge = ad.isPert ? `<div class="badge-pert">PERT</div>` : '';
         const pendingBadge = (ad.approved === false) ? `<div class="badge-pending">⏳ ONAY BEKLİYOR</div>` : '';
         
         let mainImg = 'https://via.placeholder.com/400';
@@ -1127,20 +1346,19 @@
               ${pertBadge}
               ${pendingBadge}
               <button class="${favBtnClass}" onclick="toggleFavorite(event, '${escapeHtml(ad.id)}')">${favIconSymbol}</button>
-              <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(ad.title)}">
+              <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(ad.title)}" loading="lazy">
             </div>
             <div class="card-body">
               <div class="card-title">${escapeHtml(ad.title)}</div>
-              <div style="font-size: 0.75rem; color: var(--accent-orange); margin-bottom: 0.5rem; font-weight: 500;">⏱️ ${escapeHtml(formattedTimeAgo)}</div>
+              <div style="font-size: 0.7rem; color: var(--accent-orange); margin-bottom: 0.4rem; font-weight: 500;">⏱️ ${escapeHtml(formattedTimeAgo)}</div>
               <div class="card-tags">
                 <span class="tag">📅 ${escapeHtml(ad.year || 'N/A')}</span>
                 <span class="tag">⛽ ${escapeHtml(ad.fuel || 'Benzin')}</span>
                 <span class="tag">⚡ ${escapeHtml(ad.hp || '?')} HP</span>
-                <span class="tag">⚙️ ${escapeHtml(ad.engine || '1.6L')}</span>
                 <span class="tag">🛣️ ${ad.km ? Number(ad.km).toLocaleString() : '0'} KM</span>
               </div>
               <div class="card-specs">
-                <div>🏷️ ${escapeHtml(ad.brand || '')} ${escapeHtml(ad.model || '')}</div>
+                <div>🏷️ ${escapeHtml(ad.brand || '')}</div>
                 <div>👤 ${escapeHtml(ad.ownerNickname || 'Anonim')}</div>
               </div>
             </div>
@@ -1191,8 +1409,9 @@
         document.getElementById('adminModal').classList.add('active');
         renderAdminAds();
         renderAdminReports();
+        renderAdminActivePunishments();
       } else {
-        alert("Bu işlem için yetkiniz bulunmuyor!");
+        alert("Yetkiniz yok!");
       }
     }
     function closeAdminModal() { document.getElementById('adminModal').classList.remove('active'); }
@@ -1200,33 +1419,38 @@
     function switchAdminTab(tab) {
       document.getElementById('tabAdminAds').classList.toggle('active', tab === 'ads');
       document.getElementById('tabAdminReports').classList.toggle('active', tab === 'reports');
+      document.getElementById('tabAdminPunish').classList.toggle('active', tab === 'punish');
+      document.getElementById('tabAdminActivePunishments').classList.toggle('active', tab === 'activePunishments');
+      
       document.getElementById('adminAdsSection').style.display = tab === 'ads' ? 'block' : 'none';
       document.getElementById('adminReportsSection').style.display = tab === 'reports' ? 'block' : 'none';
+      document.getElementById('adminPunishSection').style.display = tab === 'punish' ? 'block' : 'none';
+      document.getElementById('adminActivePunishmentsSection').style.display = tab === 'activePunishments' ? 'block' : 'none';
     }
 
     function renderAdminAds() {
       const container = document.getElementById('adminAdsList');
       container.innerHTML = "";
       if (adsData.length === 0) {
-        container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:2rem;">Hiç ilan bulunmuyor.</div>`;
+        container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:1.5rem;">İlan bulunmuyor.</div>`;
         return;
       }
       adsData.forEach(ad => {
         const isApproved = ad.approved !== false;
-        const statusText = isApproved ? `<span style="color:#10b981;">(Onaylı / Yayında)</span>` : `<span style="color:#f59e0b;">(Onay Bekliyor)</span>`;
-        const approveBtn = !isApproved ? `<button onclick="adminApproveAd('${escapeHtml(ad.id)}')" class="btn-primary" style="padding:0.4rem 0.8rem; border-radius:6px; font-size:0.8rem;">İlanı Onayla</button>` : '';
+        const statusText = isApproved ? `<span style="color:#10b981;">(Yayında)</span>` : `<span style="color:#f59e0b;">(Onay Bekliyor)</span>`;
+        const approveBtn = !isApproved ? `<button onclick="adminApproveAd('${escapeHtml(ad.id)}')" class="btn-primary" style="padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem;">Onayla</button>` : '';
 
         container.insertAdjacentHTML('beforeend', `
-          <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-main); padding:10px 15px; border-radius:8px; border:1px solid var(--border-color);">
+          <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-main); padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); flex-wrap:wrap; gap:8px;">
             <div>
-              <div style="font-weight:600; font-size:0.95rem;">${escapeHtml(ad.title)} ${statusText}</div>
-              <div style="font-size:0.8rem; color:var(--text-muted);">Sahibi: ${escapeHtml(ad.ownerNickname)} | Marka: ${escapeHtml(ad.brand)} ${escapeHtml(ad.model)}</div>
+              <div style="font-weight:600; font-size:0.85rem;">${escapeHtml(ad.title)} ${statusText}</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Sahibi: ${escapeHtml(ad.ownerNickname)}</div>
             </div>
-            <div style="display:flex; gap: 8px;">
-              <button onclick="openDetailModal('${escapeHtml(ad.id)}')" class="btn-auth" style="padding:0.4rem 0.8rem; font-size:0.8rem;">🔍 Göz At</button>
-              <button onclick="openEditModal('${escapeHtml(ad.id)}')" class="btn-auth" style="padding:0.4rem 0.8rem; font-size:0.8rem; border-color:#3b82f6; color:#93c5fd;">✏️ Düzenle</button>
+            <div style="display:flex; gap: 6px; flex-wrap:wrap;">
+              <button onclick="closeAdminModal(); openDetailModal('${escapeHtml(ad.id)}')" class="btn-auth" style="padding:0.3rem 0.6rem; font-size:0.75rem;">🔍 Göz At</button>
+              <button onclick="closeAdminModal(); openEditModal('${escapeHtml(ad.id)}')" class="btn-auth" style="padding:0.3rem 0.6rem; font-size:0.75rem; border-color:#3b82f6; color:#93c5fd;">✏️ Düzenle</button>
               ${approveBtn}
-              <button onclick="adminDeleteAd('${escapeHtml(ad.id)}')" class="btn-danger" style="padding:0.4rem 0.8rem; border-radius:6px; font-size:0.8rem;">İlanı Kaldır</button>
+              <button onclick="adminDeleteAd('${escapeHtml(ad.id)}')" class="btn-danger" style="padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem;">Sil</button>
             </div>
           </div>
         `);
@@ -1238,21 +1462,36 @@
       if (!reportsListenerAttached) {
         db.ref('reports').on('value', snapshot => {
           const container = document.getElementById('adminReportsList');
+          if (!container) return;
           container.innerHTML = "";
           const reports = snapshot.val();
           if (!reports) {
-            container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:2rem;">Bildirilen hiç rapor yok.</div>`;
+            container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:1.5rem;">Rapor yok.</div>`;
             return;
           }
           Object.entries(reports).forEach(([key, rep]) => {
+            let actionButtons = `<button onclick="deleteReport('${escapeHtml(key)}')" class="btn-auth" style="padding:0.25rem 0.5rem; font-size:0.7rem;">Temizle</button>`;
+            
+            if (rep.adId) {
+              actionButtons += `
+                <button onclick="closeAdminModal(); openDetailModal('${escapeHtml(rep.adId)}')" class="btn-auth" style="padding:0.25rem 0.5rem; font-size:0.7rem;">Göz At</button>
+                <button onclick="closeAdminModal(); openEditModal('${escapeHtml(rep.adId)}')" class="btn-auth" style="padding:0.25rem 0.5rem; font-size:0.7rem; border-color:#3b82f6; color:#93c5fd;">Düzenle</button>
+              `;
+            }
+            if (rep.msgKey && rep.adId) {
+              actionButtons += `
+                <button onclick="adminDeleteMessage('${escapeHtml(rep.adId)}', '${escapeHtml(rep.msgKey)}'); deleteReport('${escapeHtml(key)}');" class="btn-danger" style="padding:0.25rem 0.5rem; font-size:0.7rem;">Mesajı Sil</button>
+              `;
+            }
+
             container.insertAdjacentHTML('beforeend', `
-              <div style="background:var(--bg-main); padding:10px 15px; border-radius:8px; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+              <div style="background:var(--bg-main); padding:10px; border-radius:8px; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                 <div>
-                  <div style="font-weight:bold; color:#ef4444; font-size:0.85rem;">Tür: ${escapeHtml(rep.type)}</div>
-                  <div style="font-size:0.9rem; color:var(--text-main); margin-top:2px;">"${escapeHtml(rep.content || 'İçerik')}"</div>
-                  <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Rapor Eden: ${escapeHtml(rep.reporter)} | Sebep: ${escapeHtml(rep.reason)}</div>
+                  <div style="font-weight:bold; color:#ef4444; font-size:0.8rem;">Tür: ${escapeHtml(rep.type)}</div>
+                  <div style="font-size:0.85rem; color:var(--text-main); margin-top:2px;">"${escapeHtml(rep.content || '')}"</div>
+                  <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">Rapor Eden: ${escapeHtml(rep.reporter)} | Sebep: ${escapeHtml(rep.reason)}</div>
                 </div>
-                <button onclick="deleteReport('${escapeHtml(key)}')" class="btn-auth" style="padding:0.3rem 0.6rem; font-size:0.75rem;">Temizle</button>
+                <div style="display:flex; gap:5px; flex-wrap:wrap;">${actionButtons}</div>
               </div>
             `);
           });
@@ -1261,8 +1500,112 @@
       }
     }
 
+    let activePunishmentsListenerAttached = false;
+    function renderAdminActivePunishments() {
+      if (!activePunishmentsListenerAttached) {
+        db.ref('punishments').on('value', snapshot => {
+          const container = document.getElementById('adminActivePunishmentsList');
+          if (!container) return;
+          container.innerHTML = "";
+          const punishments = snapshot.val();
+          if (!punishments) {
+            container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:1.5rem;">Aktif cezası bulunan kullanıcı yok.</div>`;
+            return;
+          }
+          
+          let activeCount = 0;
+          const now = Date.now();
+
+          Object.entries(punishments).forEach(([punishKey, p]) => {
+            const durationMs = ((p.days || 0) * 24 * 3600 * 1000) + ((p.hours || 0) * 3600 * 1000);
+            const expiresAt = (p.timestamp || 0) + durationMs;
+            const isInfinite = durationMs === 0;
+
+            // Süresi dolmamışsa veya süresizse aktif ceza kabul edilir
+            if (isInfinite || now < expiresAt) {
+              activeCount++;
+              let remainingText = isInfinite ? "Süresiz" : `${Math.ceil((expiresAt - now) / (1000 * 60 * 60))} saat kaldı`;
+
+              container.insertAdjacentHTML('beforeend', `
+                <div style="background:var(--bg-main); padding:12px; border-radius:8px; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                  <div>
+                    <div style="font-weight:bold; color:#ef4444; font-size:0.9rem;">👤 ${escapeHtml(p.username)} <span style="font-size: 0.75rem; background: rgba(239, 68, 68, 0.2); padding: 2px 6px; border-radius: 4px; border: 1px solid #ef4444;">${escapeHtml(p.type)}</span></div>
+                    <div style="font-size:0.8rem; color:var(--text-main); margin-top:4px;"><strong>Sebep:</strong> ${escapeHtml(p.reason)}</div>
+                    <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Süre: ${p.days} gün ${p.hours} saat | Kalan: ${remainingText} | Veren: ${escapeHtml(p.admin || 'Admin')}</div>
+                  </div>
+                  <div>
+                    <button onclick="removePunishment('${escapeHtml(punishKey)}')" class="btn-danger" style="padding:0.4rem 0.8rem; border-radius:6px; font-size:0.8rem; font-weight:600;">Cezayı Kaldır 🟢</button>
+                  </div>
+                </div>
+              `);
+            }
+          });
+
+          if (activeCount === 0) {
+            container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:1.5rem;">Aktif cezası bulunan kullanıcı yok.</div>`;
+          }
+        });
+        activePunishmentsListenerAttached = true;
+      }
+    }
+
+    async function removePunishment(punishKey) {
+      if (confirm("Bu kullanıcının cezasını kaldırmak istediğinize emin misiniz?")) {
+        try {
+          await db.ref('punishments/' + punishKey).remove();
+          alert("✅ Kullanıcının cezası başarıyla kaldırıldı!");
+        } catch(e) {
+          alert("Hata: " + e.message);
+        }
+      }
+    }
+
     async function deleteReport(repKey) {
       await db.ref('reports/' + repKey).remove();
+    }
+
+    async function adminDeleteMessage(adId, msgKey) {
+      try {
+        await db.ref(`chats/${adId}/${msgKey}`).remove();
+        alert("Mesaj kaldırıldı.");
+      } catch(e) {
+        alert("Hata: " + e.message);
+      }
+    }
+
+    async function issuePunishment() {
+      const username = document.getElementById('punishUsername').value.trim();
+      const type = document.getElementById('punishType').value;
+      const days = parseInt(document.getElementById('punishDays').value) || 0;
+      const hours = parseInt(document.getElementById('punishHours').value) || 0;
+      const reason = document.getElementById('punishReason').value.trim();
+
+      if (!username || !reason) {
+        alert("Lütfen kullanıcı adını ve ceza sebebini doldurun!");
+        return;
+      }
+
+      if (days === 0 && hours === 0) {
+        alert("Lütfen geçerli bir ceza süresi (gün veya saat) girin!");
+        return;
+      }
+
+      try {
+        await db.ref('punishments').push({
+          username: username,
+          type: type,
+          days: days,
+          hours: hours,
+          reason: reason,
+          timestamp: Date.now(),
+          admin: currentUserProfile.nickname
+        });
+        alert(`✅ "${username}" kullanıcısına ${days} gün ${hours} saat süreyle ${type} cezası verildi.`);
+        document.getElementById('punishUsername').value = "";
+        document.getElementById('punishReason').value = "";
+      } catch(e) {
+        alert("Hata: " + e.message);
+      }
     }
 
     async function adminApproveAd(adId) {
@@ -1294,6 +1637,12 @@
 
     async function handleRegister(e) {
       e.preventDefault();
+      const acceptRules = document.getElementById('regAcceptRules').checked;
+      if (!acceptRules) {
+        alert("Kayıt olmak için kuralları kabul etmelisiniz!");
+        return;
+      }
+
       const nickname = document.getElementById('regNickname').value.trim();
       const email = document.getElementById('regEmail').value;
       const pass = document.getElementById('regPass').value;
@@ -1310,7 +1659,7 @@
           createdAt: Date.now(),
           favorites: []
         });
-        alert("Hesap oluşturuldu! E-posta doğrulama bağlantısı gönderildi.");
+        alert("Hesap oluşturuldu! Doğrulama e-postası gönderildi.");
         closeAuthModal();
       } catch (err) { alert("Hata: " + err.message); }
     }
@@ -1326,38 +1675,14 @@
         const credential = firebase.auth.EmailAuthProvider.credential(currentUser.email, currentPass);
         await currentUser.reauthenticateWithCredential(credential);
 
-        if (newNickname !== currentUserProfile.nickname) {
-          const nickCheck = await db.ref('users').orderByChild('nickname').equalTo(newNickname).once('value');
-          if (nickCheck.exists()) { alert("Bu kullanıcı adı alınmış!"); return; }
-        }
-
         let updates = { nickname: newNickname };
         if (currentNewAvatar) updates.avatar = currentNewAvatar;
 
         await db.ref('users/' + currentUser.uid).update(updates);
 
-        const adsRef = db.ref('ads');
-        const adsSnap = await adsRef.orderByChild('ownerId').equalTo(currentUser.uid).once('value');
-        if (adsSnap.exists()) {
-          const adUpdates = {};
-          adsSnap.forEach(childSnap => {
-            adUpdates[childSnap.key + '/ownerNickname'] = newNickname;
-            if (currentNewAvatar) adUpdates[childSnap.key + '/ownerAvatar'] = currentNewAvatar;
-          });
-          await adsRef.update(adUpdates);
-        }
-
         if (newEmail !== currentUser.email) {
-          try {
-            await currentUser.updateEmail(newEmail);
-          } catch(emailError) {
-            if (emailError.code === 'auth/requires-recent-login') {
-              throw emailError;
-            } else {
-              await currentUser.verifyBeforeUpdateEmail(newEmail);
-              alert("Güvenlik politikası gereği yeni e-posta adresinize bir doğrulama maili gönderildi. Lütfen gelen kutunuzu kontrol edin ve onaylayın.");
-            }
-          }
+          await currentUser.verifyBeforeUpdateEmail(newEmail);
+          alert("Yeni e-posta adresinize doğrulama postası gönderildi.");
         }
 
         if (newPass) await currentUser.updatePassword(newPass);
@@ -1375,7 +1700,6 @@
         closeProfileModal();
         location.reload();
       } catch (err) {
-        alert("Çıkış yapılırken bir hata oluştu: " + err.message);
         auth.signOut().then(() => location.reload());
       }
     }
@@ -1452,6 +1776,13 @@
 
       if (pcFileInput.files.length > 0) {
         const file = pcFileInput.files[0];
+        if (file.size > 20 * 1024 * 1024) {
+          alert("⚠️ .pc dosyası çok büyük (max 20MB). İlan .pc dosyası olmadan yayınlanamaz, lütfen dosyayı çıkarın veya küçültün.");
+          isSubmittingAd = false;
+          submitBtn.disabled = false;
+          submitBtn.textContent = "🚀 İlanı Yayınla";
+          return;
+        }
         pcFileName = file.name;
         const reader = new FileReader();
         pcFileData = await new Promise((resolve) => {
@@ -1496,11 +1827,11 @@
       try {
         if (editingAdId) {
           await db.ref('ads/' + editingAdId).update(adDataPayload);
-          alert("✅ İlan güncellendi ve yönetici onayına gönderildi!");
+          alert("✅ İlan güncellendi ve onaya gönderildi!");
         } else {
           adDataPayload.createdAt = Date.now();
           await db.ref('ads').push(adDataPayload);
-          alert("⏳ İlanınız başarıyla oluşturuldu! Yöneticiler onayladıktan sonra yayınlanacaktır.");
+          alert("⏳ İlanınız oluşturuldu, onaylandıktan sonra yayınlanacaktır.");
         }
 
         document.getElementById('postForm').reset();
@@ -1525,7 +1856,7 @@
           await db.ref('chats/' + adId).remove();
           alert("İlan kaldırıldı!");
           closeDetailModal();
-        } catch(err) { alert("Silme hatası: " + err.message); }
+        } catch(err) { alert("Hata: " + err.message); }
       }
     }
 
@@ -1547,6 +1878,7 @@
       imgs.forEach((imgSrc, idx) => {
         const thumb = document.createElement('img');
         thumb.src = imgSrc;
+        thumb.loading = "lazy";
         if (idx === thumbIdx) thumb.className = "active-thumb";
         thumb.onclick = () => {
           mainImgElem.src = imgSrc;
@@ -1560,8 +1892,8 @@
       pcArea.innerHTML = "";
       if (ad.pcFile) {
         pcArea.innerHTML = `
-          <button onclick="requestAndDownloadPc('${escapeHtml(ad.id)}', '${escapeHtml(ad.pcFileName || 'config.pc')}')" class="btn-action btn-auth" style="justify-content: center; background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #93c5fd;">
-            📥 .pc Dosyasını İndir (${escapeHtml(ad.pcFileName || 'arac_ayar.pc')})
+          <button onclick="requestAndDownloadPc('${escapeHtml(ad.id)}', '${escapeHtml(ad.pcFileName || 'config.pc')}')" class="btn-action btn-auth" style="justify-content: center; background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #93c5fd; font-size: 0.8rem;">
+            📥 .pc Dosyasını İndir (${escapeHtml(ad.pcFileName || 'ayar.pc')})
           </button>
         `;
       }
@@ -1570,8 +1902,8 @@
       modLinkArea.innerHTML = "";
       if (ad.isModded && ad.modLink) {
         modLinkArea.innerHTML = `
-          <button onclick="openExternalLinkModal('${escapeHtml(ad.modLink)}')" class="btn-action btn-auth" style="justify-content: center; background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #93c5fd;">
-            🔗 Mod İndirme / Kaynak Linkine Git
+          <button onclick="openExternalLinkModal('${escapeHtml(ad.modLink)}')" class="btn-action btn-auth" style="justify-content: center; background: rgba(59, 130, 246, 0.1); border-color: #3b82f6; color: #93c5fd; font-size: 0.8rem;">
+            🔗 Mod İndirme / Kaynak Linki
           </button>
         `;
       }
@@ -1590,9 +1922,9 @@
         <div>⛽ Yakıt Tipi: <strong>${escapeHtml(ad.fuel || 'Benzin')}</strong></div>
         <div>🛣️ Kilometre: <strong>${Number(ad.km).toLocaleString()} KM</strong></div>
         <div>⚡ Motor Gücü: <strong>${escapeHtml(ad.hp || '?')} HP</strong></div>
-        <div>⚙️ Motor: <strong>${escapeHtml(ad.engine)} (${escapeHtml(ad.aspiration)})</strong></div>
+        <div>⚙️ Motor: <strong>${escapeHtml(ad.engine)}</strong></div>
         <div>🕹️ Vites / Çekiş: <strong>${escapeHtml(ad.trans)} / ${escapeHtml(ad.drive)}</strong></div>
-        <div>⚠️ Hasar Durumu: <strong>${escapeHtml(ad.damageStatus)} ${ad.isPert ? '(PERT)' : ''}</strong></div>
+        <div>⚠️ Hasar Durumu: <strong>${escapeHtml(ad.damageStatus)}</strong></div>
       `;
 
       document.getElementById('detailSellerAvatar').src = ad.ownerAvatar || 'https://via.placeholder.com/150';
@@ -1602,7 +1934,7 @@
       let isSellerAdmin = isUserAdmin(ad.ownerId, sellerData.email, sellerData);
       let adminBadgeHtml = isSellerAdmin ? `<span class="admin-badge">🛡️ ADMİN</span>` : '';
       
-      document.getElementById('detailSellerName').innerHTML = `${escapeHtml(ad.ownerNickname || 'İlan Sahibi')} ${adminBadgeHtml}`;
+      document.getElementById('detailSellerName').innerHTML = `${escapeHtml(ad.ownerNickname || 'Satıcı')} ${adminBadgeHtml}`;
 
       let accountDateStr = "Bilinmiyor";
       if (sellerData.createdAt) {
@@ -1614,8 +1946,8 @@
       ownerActionArea.innerHTML = "";
       if (currentUser && currentUser.uid === ad.ownerId) {
         ownerActionArea.innerHTML = `
-          <button onclick="openEditModal('${escapeHtml(ad.id)}')" class="btn-action btn-auth" style="justify-content: center; background: rgba(59, 130, 246, 0.15); border-color: #3b82f6; color: #93c5fd;">✏️ İlanı Düzenle</button>
-          <button onclick="deleteAd('${escapeHtml(ad.id)}')" class="btn-action btn-danger">🗑️ Bu İlanı Kaldır (Sil)</button>
+          <button onclick="openEditModal('${escapeHtml(ad.id)}')" class="btn-action btn-auth" style="justify-content: center; background: rgba(59, 130, 246, 0.15); border-color: #3b82f6; color: #93c5fd; font-size: 0.85rem;">✏️ İlanı Düzenle</button>
+          <button onclick="deleteAd('${escapeHtml(ad.id)}')" class="btn-action btn-danger" style="font-size: 0.85rem;">🗑️ İlanı Sil</button>
         `;
       }
 
@@ -1627,50 +1959,53 @@
     }
 
     async function reportAd() {
-      if (!currentUser) { alert("Rapor etmek için giriş yapmalısınız!"); openAuthModal(); return; }
-      const reason = prompt("Lütfen bu ilanı rapor etme sebebinizi belirtin:");
+      if (!currentUser) { alert("Giriş yapmalısınız!"); openAuthModal(); return; }
+      const reason = prompt("Lütfen ilanı rapor etme sebebinizi yazın:");
       if (reason) {
         const ad = adsData.find(a => a.id === currentSelectedAdId);
         try {
           await db.ref('reports').push({
             type: 'İlan Raporu',
+            adId: currentSelectedAdId,
             content: ad ? ad.title : currentSelectedAdId,
             reason: reason,
             reporter: currentUserProfile.nickname,
             timestamp: Date.now()
           });
-          alert("🚨 Raporunuz yetkililere iletildi. Teşekkürler!");
+          alert("🚨 Raporunuz yetkililere iletildi[cite: 1].");
         } catch(e) {
-          alert("Hata oluştu: " + e.message);
+          alert("Hata: " + e.message);
         }
       }
     }
 
     async function reportMessage(adId, msgKey, text) {
-      if (!currentUser) { alert("Rapor etmek için giriş yapmalısınız!"); openAuthModal(); return; }
-      const reason = prompt("Lütfen mesajı rapor etme sebebinizi belirtin:");
+      if (!currentUser) { alert("Giriş yapmalısınız!"); openAuthModal(); return; }
+      const reason = prompt("Mesajı rapor etme sebebiniz:");
       if (reason) {
         try {
           await db.ref('reports').push({
             type: 'Mesaj Raporu',
+            adId: adId,
+            msgKey: msgKey,
             content: text,
             reason: reason,
             reporter: currentUserProfile.nickname,
             timestamp: Date.now()
           });
-          alert("🚨 Mesaj rapor edildi. Yetkililer inceleyecektir.");
+          alert("🚨 Mesaj rapor edildi[cite: 1].");
         } catch(e) {
-          alert("Hata oluştu: " + e.message);
+          alert("Hata: " + e.message);
         }
       }
     }
 
     function openMessengerModal() {
-      if (!currentUser) { alert("Soru sormak veya mesaj yazmak için giriş yapmalısınız!"); openAuthModal(); return; }
+      if (!currentUser) { alert("Giriş yapmalısınız!"); openAuthModal(); return; }
       const ad = adsData.find(a => a.id === currentSelectedAdId);
       if (!ad) return;
 
-      document.getElementById('messengerPeerName').textContent = `Soru & Tartışma: ${ad.title}`;
+      document.getElementById('messengerPeerName').textContent = `Soru & Tartışma`;
       loadMessengerMessages(currentSelectedAdId);
       document.getElementById('messengerModal').classList.add('active');
     }
@@ -1689,42 +2024,48 @@
         container.innerHTML = "";
         const data = snapshot.val();
         if (data) {
+          let lastDayKey = null;
           Object.entries(data).forEach(([msgKey, msg]) => {
             const avatar = msg.senderAvatar || 'https://via.placeholder.com/150';
             const isAdmin = currentUser && isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile);
-            const isOwnerOrSender = currentUser && (currentUser.uid === msg.senderId || isAdmin);
-            
-            const now = Date.now();
-            const diffMinutes = (now - (msg.timestamp || 0)) / (1000 * 60);
-            
-            /* Adminler İçin 30 Dakika Kuralı Kaldırıldı */
-            let deleteBtnHtml = '';
-            if (isOwnerOrSender && (diffMinutes <= 30 || isAdmin)) {
-              deleteBtnHtml = `<button class="delete-msg-btn" onclick="deleteMessage('${escapeHtml(adId)}', '${escapeHtml(msgKey)}')">Sil</button>`;
+            const isOwn = !!(currentUser && currentUser.uid === msg.senderId);
+            const canDelete = isOwn || isAdmin;
+            const isSystemMsg = typeof msg.text === 'string' && msg.text.startsWith('[Sistem Talebi]');
+
+            if (msg.timestamp) {
+              const dayKey = new Date(msg.timestamp).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
+              if (dayKey !== lastDayKey) {
+                container.insertAdjacentHTML('beforeend', `<div class="chat-day-divider"><span>${escapeHtml(dayKey)}</span></div>`);
+                lastDayKey = dayKey;
+              }
+            }
+
+            let actionsHtml = `<button class="chat-icon-btn report-icon" title="Rapor Et" onclick="reportMessage('${escapeHtml(adId)}', '${escapeHtml(msgKey)}', '${escapeHtml(msg.text)}')">🚨</button>`;
+            if (canDelete) {
+              actionsHtml += `<button class="chat-icon-btn delete-icon" title="Mesajı Sil" onclick="deleteMessage('${escapeHtml(adId)}', '${escapeHtml(msgKey)}')">🗑️</button>`;
             }
 
             const adminBadge = msg.isAdmin ? `<span class="admin-badge">🛡️ ADMİN</span>` : '';
+            const timeStr = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
 
             container.insertAdjacentHTML('beforeend', `
-              <div class="chat-msg">
-                <button class="report-msg-btn" onclick="reportMessage('${escapeHtml(adId)}', '${escapeHtml(msgKey)}', '${escapeHtml(msg.text)}')">🚨</button>
-                ${deleteBtnHtml}
-                <img src="${escapeHtml(avatar)}" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex-shrink: 0;" alt="Avatar">
-                <div style="flex: 1; overflow: hidden; padding-right: 45px;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 3px;">
-                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--accent-orange); display: flex; align-items: center; gap: 4px;">
-                      ${escapeHtml(msg.senderName)} ${adminBadge}
-                    </span>
-                    <span style="font-size: 0.7rem; color: var(--text-muted);">${msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
+              <div class="chat-msg-row ${isOwn ? 'is-own' : ''}">
+                <div class="chat-msg-actions">${actionsHtml}</div>
+                <img src="${escapeHtml(avatar)}" class="chat-avatar ${msg.isAdmin ? 'is-admin-avatar' : ''}" loading="lazy" alt="Avatar">
+                <div class="chat-bubble-col">
+                  <div class="chat-meta">
+                    <span class="chat-sender-name">${escapeHtml(msg.senderName)}</span>
+                    ${adminBadge}
+                    <span class="chat-time">${timeStr}</span>
                   </div>
-                  <div style="font-size: 0.85rem; color: var(--text-main); word-break: break-word;">${escapeHtml(msg.text)}</div>
+                  <div class="chat-bubble ${msg.isAdmin ? 'is-admin-bubble' : ''} ${isSystemMsg ? 'is-system-bubble' : ''}">${escapeHtml(msg.text)}</div>
                 </div>
               </div>
             `);
           });
           container.scrollTop = container.scrollHeight;
         } else {
-          container.innerHTML = `<div style="text-align:center; color:var(--text-muted); margin-top:2rem; font-size:0.85rem;">Bu ilan için henüz soru sorulmamış.</div>`;
+          container.innerHTML = `<div class="chat-empty-state"><span class="icon">💬</span>Henüz mesaj yok.<div class="sub">İlk soruyu sen sor!</div></div>`;
         }
       });
     }
@@ -1732,21 +2073,8 @@
     async function deleteMessage(adId, msgKey) {
       if (!currentUser) return;
       try {
-        const msgRef = db.ref(`chats/${adId}/${msgKey}`);
-        const snap = await msgRef.once('value');
-        if (snap.exists()) {
-          const msgData = snap.val();
-          const diffMinutes = (Date.now() - (msgData.timestamp || 0)) / (1000 * 60);
-          const isAdmin = isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile);
-
-          if (diffMinutes > 30 && !isAdmin) {
-            alert("Üstünden 30 dakika geçen mesajlar silinemez!");
-            return;
-          }
-
-          if (confirm("Bu mesajı silmek istediğinize emin misiniz?")) {
-            await msgRef.remove();
-          }
+        if (confirm("Bu mesajı hemen kaldırmak istediğinize emin misiniz?")) {
+          await db.ref(`chats/${adId}/${msgKey}`).remove();
         }
       } catch (err) {
         alert("Hata: " + err.message);
@@ -1791,7 +2119,7 @@
         senderId: currentUser.uid,
         senderName: currentUserProfile.nickname,
         senderAvatar: currentUserProfile.avatar || 'https://via.placeholder.com/150',
-        text: `[Sistem Talebi]: Merhaba, "${fileName}" adlı .pc dosyasını indirdim.`,
+        text: `[Sistem Talebi]: "${fileName}" indirildi.`,
         timestamp: Date.now(),
         isAdmin: isAdmin
       });
@@ -1806,9 +2134,6 @@
         document.body.removeChild(a);
       }
     }
-
-    toggleBrandList();
-    populateFilterBrands();
   </script>
 </body>
 </html>
