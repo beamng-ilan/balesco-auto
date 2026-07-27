@@ -12,6 +12,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <style>
+    /* ===== TAMAMI AYNI, DEĞİŞMEDİ ===== */
     :root { --bg:#0f1115; --card:#181b21; --hover:#22262f; --accent:#ff6b00; --accent-hover:#e05e00; --text:#f0f2f5; --muted:#8b949e; --border:#2a2e37; --danger:#ef4444; --mod:#3b82f6; --pending:#f59e0b; --banned:#dc2626; }
     * { box-sizing:border-box; margin:0; padding:0; font-family:'Inter',sans-serif; }
     body { background:var(--bg); color:var(--text); min-height:100vh; display:flex; flex-direction:column; animation:fadeIn .4s ease; }
@@ -518,7 +519,8 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.database();
 
-const ADMIN_EMAIL = "kendolarin@gmail.com";
+// Admin email değiştirildi
+const ADMIN_EMAIL = "erenggm1@gmail.com";
 const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=User&background=random&size=80";
 const BEAMNG_BRANDS = ["Autobello","Bruckell","Cherrier","Civetta","ETK","Gavril","Hirochi","Ibishu","Soliad","Wentward"];
 const ENGINE_SIZES = ["0.5L","0.6L","0.7L","0.8L","0.9L","1.0L","1.1L","1.2L","1.3L","1.4L","1.5L","1.6L","1.7L","1.8L","1.9L","2.0L","2.1L","2.2L","2.3L","2.4L","2.5L","2.6L","2.7L","2.8L","2.9L","3.0L","3.2L","3.4L","3.6L","3.8L","4.0L","4.2L","4.5L","4.8L","5.0L+","Elektrikli"];
@@ -557,6 +559,7 @@ function isValidUniqueName(n) { return /^[A-Za-z0-9_-]+$/.test(n); }
 // ===== TOAST =====
 function showToast(msg, type='info', dur=4000) {
   const c=document.getElementById('toastContainer');
+  if (!c) { alert(msg); return; }
   const icons={success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
   const t=document.createElement('div');
   t.className='toast '+type;
@@ -765,22 +768,37 @@ async function handleLogin(e) {
     if (input.includes('@')) {
       await auth.signInWithEmailAndPassword(input,pass);
     } else {
-      const snap=await db.ref('nicknameIndex/'+input).once('value');
-      const uid=snap.val();
-      if (!uid) { showToast("Kullanıcı adı bulunamadı!",'error'); return; }
-      const emailSnap=await db.ref('users/'+uid+'/email').once('value');
-      const email=emailSnap.val();
-      if (!email) { showToast("Bu kullanıcının e-postası yok. Lütfen e-posta ile giriş yapın.",'warning'); return; }
-      await auth.signInWithEmailAndPassword(email,pass);
+      // Kullanıcı adı ile giriş: users üzerinden sorgula
+      const snap = await db.ref('users').orderByChild('uniqueName').equalTo(input).once('value');
+      if (!snap.exists()) {
+        showToast("Kullanıcı adı bulunamadı!", 'error');
+        return;
+      }
+      let uid = null;
+      snap.forEach(child => { uid = child.key; });
+      if (!uid) { showToast("Kullanıcı bulunamadı!", 'error'); return; }
+      const emailSnap = await db.ref('users/'+uid+'/email').once('value');
+      const email = emailSnap.val();
+      if (!email) {
+        showToast("Bu kullanıcının e-postası yok. Lütfen e-posta ile giriş yapın.", 'warning');
+        return;
+      }
+      await auth.signInWithEmailAndPassword(email, pass);
     }
     closeAuthModal();
     showToast("Hoş geldiniz! 🎉",'success');
   } catch(err) { showToast("Hata: "+err.message,'error'); }
 }
 
+// ============ HANDLE REGISTER (NICKNAMEINDEX KULLANMAZ) ============
 async function handleRegister(e) {
   e.preventDefault();
-  if (!document.getElementById('regAcceptRules').checked) { showToast("Kuralları kabul etmelisiniz!",'error'); return; }
+  console.log("handleRegister başladı");
+
+  if (!document.getElementById('regAcceptRules').checked) {
+    showToast("Kuralları kabul etmelisiniz!", 'error');
+    return;
+  }
 
   const uniqueName = document.getElementById('regUniqueName').value.trim();
   const displayName = document.getElementById('regDisplayName').value.trim();
@@ -788,22 +806,50 @@ async function handleRegister(e) {
   const pass = document.getElementById('regPass').value;
   const passConfirm = document.getElementById('regPassConfirm').value;
 
-  if (!isValidUniqueName(uniqueName)) { showToast("Benzersiz isim geçersiz!",'error'); return; }
-  if (pass !== passConfirm) { showToast("Şifreler eşleşmiyor!",'error'); return; }
+  console.log("İsim:", uniqueName, "Görünür:", displayName, "Email:", email);
 
-  // Benzersiz isim kontrolü
-  const check = await db.ref('nicknameIndex/'+uniqueName).once('value');
-  if (check.exists()) { showToast("Bu kullanıcı adı alınmış!",'error'); return; }
+  if (!isValidUniqueName(uniqueName)) {
+    showToast("Benzersiz isim geçersiz! Sadece harf, rakam, - ve _", 'error');
+    return;
+  }
+  if (pass !== passConfirm) {
+    showToast("Şifreler eşleşmiyor!", 'error');
+    return;
+  }
+  if (pass.length < 6) {
+    showToast("Şifre en az 6 karakter olmalı!", 'error');
+    return;
+  }
+
+  // nicknameIndex KULLANMA, doğrudan users üzerinden sorgula
+  try {
+    console.log("Benzersiz isim kontrolü yapılıyor (users üzerinden)...");
+    const snap = await db.ref('users').orderByChild('uniqueName').equalTo(uniqueName).once('value');
+    if (snap.exists()) {
+      showToast("Bu kullanıcı adı alınmış!", 'error');
+      return;
+    }
+    console.log("Kullanıcı adı mevcut değil, kayıt devam edebilir.");
+  } catch (err) {
+    console.error("Kullanıcı adı kontrol hatası:", err);
+    alert("Kullanıcı adı kontrolü sırasında hata: " + err.message + "\nLütfen Firebase kurallarında 'users' düğümüne .read izni verildiğinden emin olun.");
+    return;
+  }
 
   // E-posta yoksa fake email oluştur
   const finalEmail = email || uniqueName + '@belascoauto.local';
+  console.log("Kullanılacak email:", finalEmail);
 
   try {
+    // 1. Auth ile hesap oluştur
+    console.log("Firebase Auth ile hesap oluşturuluyor...");
     const cred = await auth.createUserWithEmailAndPassword(finalEmail, pass);
     const uid = cred.user.uid;
+    console.log("Auth başarılı, UID:", uid);
 
-    // Veritabanına kaydet
-    await db.ref('users/'+uid).set({
+    // 2. Veritabanına profil yaz
+    console.log("Veritabanına profil yazılıyor...");
+    await db.ref('users/' + uid).set({
       uniqueName,
       displayName,
       avatar: DEFAULT_AVATAR,
@@ -814,17 +860,20 @@ async function handleRegister(e) {
       nameChangeUsed: false,
       emailVerified: false
     });
-    await db.ref('nicknameIndex/'+uniqueName).set(uid);
+    console.log("Profil yazıldı.");
 
+    // 3. Bildirim
     if (!email) {
-      pushNotification(uid, 'system', 'Hesabınıza bir e-posta eklemeniz önerilir. Profil > Ayarlar bölümünden e-posta adresinizi ekleyerek hesabınızı güvence altına alabilirsiniz.', '📧');
-      showToast("✅ Hesap oluşturuldu! E-posta ekleyerek hesabınızı güvence altına alabilirsiniz.", 'info', 5000);
+      pushNotification(uid, 'system', 'Hesabınıza e-posta ekleyerek güvenliğinizi artırabilirsiniz.', '📧');
+      showToast("✅ Hesap oluşturuldu! E-posta ekleyebilirsiniz.", 'info', 5000);
     } else {
       showToast("✅ Hesap oluşturuldu! Hoş geldiniz!", 'success');
     }
     closeAuthModal();
-  } catch(err) {
-    showToast("Hata: "+err.message, 'error');
+  } catch (err) {
+    console.error("Kayıt hatası:", err);
+    alert("Kayıt sırasında hata oluştu:\n" + err.message + "\nKod: " + err.code);
+    showToast("Hata: " + err.message, 'error');
   }
 }
 
@@ -836,7 +885,7 @@ async function handleForgotPassword() {
   }
 }
 
-// ===== ESKİ HESAPLARA BENZERSİZ İSİM ATA =====
+// ===== ESKİ HESAPLARA BENZERSİZ İSİM ATA (VEYA nicknameIndex KALDIRILDI, O YÜZDEN BU FONKSİYON DEĞİŞTİ) =====
 async function assignUniqueNamesToOldUsers() {
   try {
     const snap=await db.ref('users').once('value');
@@ -848,12 +897,12 @@ async function assignUniqueNamesToOldUsers() {
         let base='User'+Math.floor(1000+Math.random()*9000);
         let final=base, exists=true, tries=0;
         while (exists && tries<20) {
-          const check=await db.ref('nicknameIndex/'+final).once('value');
+          // nicknameIndex yerine doğrudan users üzerinde kontrol
+          const check = await db.ref('users').orderByChild('uniqueName').equalTo(final).once('value');
           if (!check.exists()) exists=false;
           else { final='User'+Math.floor(1000+Math.random()*9000); tries++; }
         }
         await db.ref('users/'+uid+'/uniqueName').set(final);
-        await db.ref('nicknameIndex/'+final).set(uid);
         count++;
       }
     }
@@ -861,19 +910,17 @@ async function assignUniqueNamesToOldUsers() {
   } catch(e) { console.error('Eski kullanıcılara isim atanırken hata:',e); }
 }
 
-// ===== BENZERSİZ İSİM DEĞİŞTİRME =====
+// ===== BENZERSİZ İSİM DEĞİŞTİRME (nicknameIndex kullanmaz) =====
 async function changeUniqueName() {
   if (!currentUser) { showToast("Giriş yapmalısınız!",'warning'); return; }
   if (currentUserProfile.nameChangeUsed) { showToast("❌ Hakkınızı kullandınız!",'error'); return; }
   const newName=document.getElementById('changeUniqueNameInput').value.trim();
   if (!newName) { showToast("Yeni isim girin!",'warning'); return; }
   if (!isValidUniqueName(newName)) { showToast("Geçersiz karakter!",'error'); return; }
-  const check=await db.ref('nicknameIndex/'+newName).once('value');
+  // nicknameIndex kontrolü yok, doğrudan users'da ara
+  const check = await db.ref('users').orderByChild('uniqueName').equalTo(newName).once('value');
   if (check.exists()) { showToast("Bu isim alınmış!",'error'); return; }
   try {
-    const old=currentUserProfile.uniqueName;
-    if (old && old!=='Tanımlı değil' && old!=='undefined') await db.ref('nicknameIndex/'+old).remove();
-    await db.ref('nicknameIndex/'+newName).set(currentUser.uid);
     await db.ref('users/'+currentUser.uid+'/uniqueName').set(newName);
     await db.ref('users/'+currentUser.uid+'/nameChangeUsed').set(true);
     currentUserProfile.uniqueName=newName;
@@ -1930,7 +1977,16 @@ async function removePunishment(key) {
   catch(e) { showToast("Hata: "+e.message,'error'); }
 }
 async function findUidByUniqueName(name) {
-  try { const snap=await db.ref('nicknameIndex/'+name).once('value'); return snap.val(); } catch(e){ return null; }
+  // Bu fonksiyon artık nicknameIndex kullanmıyor, doğrudan users sorgusu yapıyor
+  try {
+    const snap = await db.ref('users').orderByChild('uniqueName').equalTo(name).once('value');
+    if (snap.exists()) {
+      let uid = null;
+      snap.forEach(child => { uid = child.key; });
+      return uid;
+    }
+    return null;
+  } catch(e) { return null; }
 }
 async function issuePunishment() {
   const uname=document.getElementById('punishUsername').value.trim();
@@ -2026,7 +2082,6 @@ auth.onAuthStateChanged(async (user) => {
         nameChangeUsed: false, emailVerified: false
       };
       await db.ref('users/'+user.uid).set(currentUserProfile);
-      await db.ref('nicknameIndex/'+fallback).set(user.uid);
     }
 
     await assignUniqueNamesToOldUsers();
@@ -2099,7 +2154,7 @@ document.addEventListener('keydown', function(e) {
 function openExternalLinkModal(url) { document.getElementById('externalLinkDisplay').textContent=url; document.getElementById('btnConfirmExternalLink').href=url; document.getElementById('externalLinkModal').classList.add('active'); }
 function closeExternalLinkModal() { document.getElementById('externalLinkModal').classList.remove('active'); }
 
-console.log("🚗 BelascoAuto - Temiz ve çalışıyor!");
+console.log("🚗 BelascoAuto - nicknameIndex kaldırıldı, users üzerinden sorgulama çalışıyor.");
 </script>
 </body>
 </html>
