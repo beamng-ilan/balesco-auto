@@ -211,8 +211,22 @@
     .email-unverified { color:#f59e0b; font-size:.7rem; font-weight:600; background:rgba(245,158,11,.15); padding:2px 8px; border-radius:12px; border:1px solid #f59e0b; display:inline-block; margin-left:6px; }
     .email-verified { color:#4ade80; font-size:.7rem; font-weight:600; background:rgba(34,197,94,.15); padding:2px 8px; border-radius:12px; border:1px solid #22c55e; display:inline-block; margin-left:6px; }
   </style>
+  <style>
+    #appLoader { position:fixed; inset:0; background:var(--bg); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.1rem; transition:opacity .35s ease; }
+    #appLoader.hidden { opacity:0; pointer-events:none; }
+    .loader-spinner { width:44px; height:44px; border-radius:50%; border:4px solid var(--border); border-top-color:var(--accent); animation:loaderSpin .8s linear infinite; }
+    @keyframes loaderSpin { to { transform:rotate(360deg); } }
+    .loader-text { color:var(--text); font-weight:600; font-size:.95rem; text-align:center; padding:0 1rem; }
+    .loader-subtext { color:var(--muted); font-size:.8rem; }
+  </style>
 </head>
 <body>
+
+<div id="appLoader">
+  <div class="loader-spinner"></div>
+  <div class="loader-text">Yükleniyor, lütfen bekleyiniz...</div>
+  <div class="loader-subtext">Bu işlem birkaç saniye sürebilir</div>
+</div>
 
 <header>
   <a href="#" class="logo">
@@ -521,6 +535,10 @@ const db = firebase.database();
 
 // Admin email değiştirildi
 const ADMIN_EMAIL = "erenggm1@gmail.com";
+// ÖNEMLİ: Bildirimler UID'ye göre kaydedilip okunuyor, e-posta ile değil.
+// Firebase Console > Authentication > Users kısmından erenggm1@gmail.com hesabının
+// UID değerini kopyalayıp aşağıya yapıştırın (örn: "aB3xY9kLp0Z...").
+const ADMIN_UID = "ADMIN_UID_BURAYA_YAPISTIRIN";
 const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=User&background=random&size=80";
 const BEAMNG_BRANDS = ["Autobello","Bruckell","Cherrier","Civetta","ETK","Gavril","Hirochi","Ibishu","Soliad","Wentward"];
 const ENGINE_SIZES = ["0.5L","0.6L","0.7L","0.8L","0.9L","1.0L","1.1L","1.2L","1.3L","1.4L","1.5L","1.6L","1.7L","1.8L","1.9L","2.0L","2.1L","2.2L","2.3L","2.4L","2.5L","2.6L","2.7L","2.8L","2.9L","3.0L","3.2L","3.4L","3.6L","3.8L","4.0L","4.2L","4.5L","4.8L","5.0L+","Elektrikli"];
@@ -1332,7 +1350,7 @@ async function handleSaveAd(e) {
       const ref=db.ref('ads').push();
       await ref.set(payload);
       showToast("⏳ İlan oluşturuldu, onay bekliyor.",'success');
-      pushNotification(ADMIN_EMAIL,'admin_new_ad',`Yeni ilan: ${payload.title}`,'📢',{adId:ref.key});
+      pushNotification(ADMIN_UID,'admin_new_ad',`Yeni ilan: ${payload.title}`,'📢',{adId:ref.key});
     }
     document.getElementById('postForm').reset();
     document.getElementById('imagePreviewContainer').innerHTML='';
@@ -1542,15 +1560,27 @@ async function reportMessage(key, text, senderUid) {
   const reason=prompt("Rapor sebebiniz:");
   if (!reason) return;
   try {
+    let reportedDisplay='Kullanıcı', reportedUniqueName='';
+    try {
+      const rSnap=await db.ref('users/'+senderUid).once('value');
+      if (rSnap.exists()) {
+        const rU=rSnap.val();
+        reportedDisplay=rU.displayName||rU.uniqueName||'Kullanıcı';
+        reportedUniqueName=rU.uniqueName||'';
+      }
+    } catch(e) {}
     await db.ref('reports').push({
       type:"Mesaj Şikayeti", adId:currentSelectedAdId, msgKey:key, msgText:text,
       senderUid, reason,
       reporter: currentUserProfile.uniqueName || currentUser.uid,
       reporterDisplay: currentUserProfile.displayName || currentUserProfile.uniqueName || 'Kullanıcı',
+      reportedUid: senderUid,
+      reportedDisplay,
+      reportedUniqueName,
       timestamp: Date.now()
     });
     showToast("✅ Mesaj raporlandı.",'success');
-    pushNotification(ADMIN_EMAIL,'admin_new_report',`Yeni mesaj raporu`,'🚨');
+    pushNotification(ADMIN_UID,'admin_new_report',`Yeni mesaj raporu`,'🚨');
   } catch(e) { showToast("Hata: "+e.message,'error'); }
 }
 async function deleteMessage(key) {
@@ -1578,10 +1608,13 @@ async function reportAd() {
       reason,
       reporter: currentUserProfile.uniqueName || currentUser.uid,
       reporterDisplay: currentUserProfile.displayName || currentUserProfile.uniqueName || 'Kullanıcı',
+      reportedUid: currentSelectedAd?currentSelectedAd.ownerId:'',
+      reportedDisplay: currentSelectedAd?(currentSelectedAd.ownerDisplayName||currentSelectedAd.ownerUniqueName||'Kullanıcı'):'Kullanıcı',
+      reportedUniqueName: currentSelectedAd?(currentSelectedAd.ownerUniqueName||''):'',
       timestamp: Date.now()
     });
     showToast("✅ İlan raporlandı.",'success');
-    pushNotification(ADMIN_EMAIL,'admin_new_report',`Yeni ilan raporu: ${currentSelectedAd?currentSelectedAd.title:'İlan'}`,'🚨',{adId:currentSelectedAdId});
+    pushNotification(ADMIN_UID,'admin_new_report',`Yeni ilan raporu: ${currentSelectedAd?currentSelectedAd.title:'İlan'}`,'🚨',{adId:currentSelectedAdId});
   } catch(e) { showToast("Hata: "+e.message,'error'); }
 }
 
@@ -1717,15 +1750,27 @@ async function reportDmMessage(key, text, senderUid) {
   const reason=prompt("Rapor sebebiniz:");
   if (!reason) return;
   try {
+    let reportedDisplay='Kullanıcı', reportedUniqueName='';
+    try {
+      const rSnap=await db.ref('users/'+senderUid).once('value');
+      if (rSnap.exists()) {
+        const rU=rSnap.val();
+        reportedDisplay=rU.displayName||rU.uniqueName||'Kullanıcı';
+        reportedUniqueName=rU.uniqueName||'';
+      }
+    } catch(e) {}
     await db.ref('reports').push({
       type:"Özel Mesaj Şikayeti", msgKey:key, msgText:text, senderUid,
       reason,
       reporter: currentUserProfile.uniqueName || currentUser.uid,
       reporterDisplay: currentUserProfile.displayName || currentUserProfile.uniqueName || 'Kullanıcı',
+      reportedUid: senderUid,
+      reportedDisplay,
+      reportedUniqueName,
       timestamp: Date.now()
     });
     showToast("✅ Mesaj raporlandı.",'success');
-    pushNotification(ADMIN_EMAIL,'admin_new_report',`Yeni özel mesaj raporu`,'🚨');
+    pushNotification(ADMIN_UID,'admin_new_report',`Yeni özel mesaj raporu`,'🚨');
   } catch(e) { showToast("Hata: "+e.message,'error'); }
 }
 async function deleteDmMessage(key) {
@@ -1930,7 +1975,9 @@ function renderAdminReports() {
           <div>
             <div style="font-weight:bold;color:#ef4444;font-size:0.8rem;">Tür: ${escapeHtml(rep.type)}</div>
             <div style="font-size:0.85rem;color:var(--text);margin-top:2px;">"${escapeHtml(rep.content||rep.msgText||'')}"</div>
-            <div style="font-size:0.7rem;color:var(--muted);margin-top:2px;">Rapor Eden: ${escapeHtml(rep.reporterDisplay||rep.reporter)} (${escapeHtml(rep.reporter||'')}) | Sebep: ${escapeHtml(rep.reason)}</div>
+            <div style="font-size:0.7rem;color:var(--muted);margin-top:2px;">Rapor Eden: ${escapeHtml(rep.reporterDisplay||rep.reporter)} (${escapeHtml(rep.reporter||'')})</div>
+            <div style="font-size:0.7rem;color:#f59e0b;margin-top:2px;">Rapor Edilen: ${escapeHtml(rep.reportedDisplay||'Bilinmiyor')}${rep.reportedUniqueName?` (@${escapeHtml(rep.reportedUniqueName)})`:''}</div>
+            <div style="font-size:0.7rem;color:var(--muted);margin-top:2px;">Sebep: ${escapeHtml(rep.reason)}</div>
           </div>
           <div style="display:flex;gap:5px;flex-wrap:wrap;">${btns}</div>
         </div>
@@ -2124,13 +2171,36 @@ auth.onAuthStateChanged(async (user) => {
     showOnlyFavorites=false;
   }
   renderAds();
+  firstAuthLoadDone = true;
+  hideAppLoaderIfReady();
 });
 
 // ===== ADS LISTENER =====
+let firstAdsLoadDone = false;
+let firstAuthLoadDone = false;
+function hideAppLoaderIfReady() {
+  if (firstAdsLoadDone && firstAuthLoadDone) {
+    const loader = document.getElementById('appLoader');
+    if (loader) {
+      loader.classList.add('hidden');
+      setTimeout(() => loader.remove(), 400);
+    }
+  }
+}
+// Güvenlik: bağlantı yavaş/hatalıysa loader'ı 8sn sonra zorla kaldır
+setTimeout(() => {
+  const loader = document.getElementById('appLoader');
+  if (loader && !loader.classList.contains('hidden')) {
+    loader.classList.add('hidden');
+    setTimeout(() => loader.remove(), 400);
+  }
+}, 8000);
 db.ref('ads').on('value', snap=>{
   const data=snap.val()||{};
   adsData=Object.entries(data).map(([k,v])=>({id:k,...v})).reverse();
   renderAds();
+  firstAdsLoadDone = true;
+  hideAppLoaderIfReady();
 });
 
 // ===== BAŞLANGIÇ =====
