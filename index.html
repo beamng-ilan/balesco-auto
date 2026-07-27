@@ -5,6 +5,35 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BelascoAuto | BeamNG İlan Pazarı</title>
+  
+  <!-- SEO Meta Tagleri -->
+  <meta name="description" content="BelascoAuto - BeamNG.drive için en büyük ilan pazarı. Araç al, sat, takas et!">
+  <meta name="keywords" content="Belasco, BelascoAuto, BeamNG, BeamNG.drive, araç ilan, modlu araç, vanilla araç">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://belascoauto.com">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="BelascoAuto | BeamNG İlan Pazarı">
+  <meta property="og:description" content="BeamNG.drive için en büyük ilan pazarı">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://belascoauto.com">
+  
+  <!-- Schema.org için JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "BelascoAuto",
+    "url": "https://belascoauto.com",
+    "description": "BeamNG.drive için ilan pazarı",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://belascoauto.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <!-- Firebase SDK'ları -->
@@ -25,6 +54,7 @@
       --badge-danger: #ef4444;
       --badge-mod: #3b82f6;
       --badge-pending: #f59e0b;
+      --badge-banned: #dc2626;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
@@ -64,16 +94,30 @@
     .user-profile-badge { display: flex; align-items: center; gap: 0.4rem; background: var(--bg-main); padding: 0.25rem 0.6rem; border-radius: 6px; border: 1px solid var(--border-color); cursor: pointer; position: relative; }
     .user-profile-badge img { width: 24px; height: 24px; border-radius: 50%; object-fit: cover; }
 
-    /* ===== Aktiflik Durumu (Online/Çevrimdışı) ===== */
     .avatar-wrap { position: relative; display: inline-flex; flex-shrink: 0; }
     .online-dot { position: absolute; bottom: -1px; right: -1px; width: 10px; height: 10px; border-radius: 50%; background: #4b5563; border: 2px solid var(--bg-card); }
     .online-dot.is-online { background: #22c55e; box-shadow: 0 0 5px rgba(34,197,94,0.7); }
-    .online-text { font-size: 0.7rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
+    .online-text { font-size: 0.7rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px; justify-content: center; }
     .online-text .dot-inline { width: 7px; height: 7px; border-radius: 50%; background: #4b5563; flex-shrink: 0; }
     .online-text.is-online { color: #4ade80; }
     .online-text.is-online .dot-inline { background: #22c55e; box-shadow: 0 0 5px rgba(34,197,94,0.7); }
 
-    /* ===== Header İkon Butonları (Bildirim / Mesaj) ===== */
+    .banned-badge {
+      background: #dc2626;
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 800;
+      display: inline-block;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(0.95); }
+    }
+
+    /* Header İkon Butonları */
     .icon-bell-wrapper { position: relative; }
     .icon-bell-btn {
       position: relative; width: 40px; height: 40px; border-radius: 50%;
@@ -117,16 +161,17 @@
     .dm-item .info .t { font-size: 0.82rem; font-weight: 700; }
     .dm-item .unread-badge { background: var(--accent-orange); color: #fff; font-size: 0.65rem; font-weight: 800; min-width: 18px; height: 18px; border-radius: 20px; display: flex; align-items: center; justify-content: center; padding: 0 4px; flex-shrink: 0; }
 
-    /* ===== Herkese Açık Profil Kartı ===== */
+    /* Profil Kartı */
     .pp-header { text-align: center; padding: 1.5rem 1rem 1rem; }
     .pp-avatar { width: 84px; height: 84px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent-orange); }
-    .pp-nickname { font-size: 1.1rem; font-weight: 700; margin-top: 0.6rem; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .pp-nickname { font-size: 1.1rem; font-weight: 700; margin-top: 0.6rem; display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; }
+    .pp-unique-name { font-size: 0.7rem; color: var(--text-muted); font-weight: 400; }
     .pp-stats { display: flex; justify-content: center; gap: 1.5rem; margin: 0.8rem 0; }
     .pp-stats div { text-align: center; }
     .pp-stats .num { font-size: 1.05rem; font-weight: 700; color: var(--accent-orange); }
     .pp-stats .lbl { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; }
 
-    /* ===== Ceza Geçmişi ===== */
+    /* Ceza Geçmişi */
     .ban-history-item { background: var(--bg-main); border: 1px solid var(--border-color); border-radius: 8px; padding: 10px 12px; margin-bottom: 8px; }
     .ban-history-item .top-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
     .ban-status-pill { font-size: 0.62rem; font-weight: 800; padding: 2px 7px; border-radius: 20px; text-transform: uppercase; }
@@ -144,8 +189,12 @@
     .filter-group label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 0.3rem; text-transform: uppercase; }
     .filter-input, .filter-select { width: 100%; padding: 0.6rem; background-color: var(--bg-main); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-main); outline: none; font-size: 0.85rem; }
     .filter-input:focus, .filter-select:focus { border-color: var(--accent-orange); }
+    .filter-range-group { display: flex; gap: 8px; align-items: center; }
+    .filter-range-group input { width: 50%; }
 
-    .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 0 0.5rem; }
+    .sort-select { background-color: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main); padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer; }
+
+    .content-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 0 0.5rem; flex-wrap: wrap; gap: 0.5rem; }
     @media(min-width: 768px) { .content-header { margin-bottom: 1.5rem; padding: 0; } }
     
     .listings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; padding: 0 0.5rem; }
@@ -160,6 +209,7 @@
     .badge-modded { position: absolute; top: 10px; left: 10px; background-color: var(--badge-mod); color: #fff; padding: 0.2rem 0.4rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; z-index: 2; }
     .badge-pert { position: absolute; top: 10px; left: 70px; background-color: var(--badge-danger); color: #fff; padding: 0.2rem 0.4rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; z-index: 2; }
     .badge-pending { position: absolute; top: 10px; left: 10px; background-color: var(--badge-pending); color: #000; padding: 0.2rem 0.4rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; z-index: 2; }
+    .badge-seller-type { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: #fff; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.65rem; font-weight: 700; z-index: 2; border: 1px solid var(--accent-orange); }
     
     .favorite-btn { position: absolute; top: 10px; right: 10px; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); border: 1px solid var(--border-color); border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 5; transition: 0.2s; color: #fff; font-size: 1rem; }
     .favorite-btn:hover { background: rgba(255, 107, 0, 0.9); transform: scale(1.1); }
@@ -230,12 +280,12 @@
     .chat-msg-row { display: flex; gap: 8px; align-items: flex-end; margin: 6px 0; max-width: 88%; animation: chatMsgIn 0.22s ease; position: relative; }
     .chat-msg-row.is-own { flex-direction: row-reverse; margin-left: auto; }
 
-    .chat-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border-color); }
+    .chat-avatar { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border-color); cursor: pointer; }
 
     .chat-bubble-col { display: flex; flex-direction: column; min-width: 0; }
     .chat-msg-row.is-own .chat-bubble-col { align-items: flex-end; }
 
-    .chat-meta { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; padding: 0 4px; }
+    .chat-meta { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; padding: 0 4px; flex-wrap: wrap; }
     .chat-sender-name { font-size: 0.72rem; font-weight: 700; color: var(--accent-orange); }
     .chat-msg-row.is-own .chat-sender-name { color: #93c5fd; }
     .chat-time { font-size: 0.62rem; color: var(--text-muted); }
@@ -259,6 +309,11 @@
       border-radius: 14px 14px 4px 14px;
     }
 
+    .chat-msg-actions { display: flex; gap: 4px; margin-top: 4px; }
+    .chat-action-btn { background: none; border: none; color: var(--text-muted); font-size: 0.7rem; cursor: pointer; padding: 2px 6px; border-radius: 4px; transition: 0.15s; }
+    .chat-action-btn:hover { background: var(--bg-hover); color: var(--text-main); }
+    .chat-action-btn.danger:hover { color: #ef4444; }
+
     .messenger-input-area { padding: 10px; background: var(--bg-card); border-top: 1px solid var(--border-color); display: flex; gap: 8px; align-items: center; }
     .messenger-input-area .filter-input { border-radius: 22px; padding: 0.65rem 1rem; background: var(--bg-main); }
     
@@ -274,6 +329,50 @@
 
     .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); grid-column: 1 / -1; }
     .empty-state span { font-size: 2.5rem; display: block; margin-bottom: 0.8rem; }
+
+    .admin-tag {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+      color: #fff;
+      padding: 1px 8px;
+      border-radius: 12px;
+      font-size: 0.55rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      display: inline-block;
+    }
+
+    /* Kompakt Favori Butonu */
+    .favorites-compact {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--bg-hover);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.3rem 0.6rem;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .favorites-compact:hover { border-color: var(--accent-orange); color: var(--accent-orange); }
+    .favorites-compact.active { border-color: #ef4444; color: #ef4444; }
+    .favorites-compact .badge { background: var(--accent-orange); color: #fff; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 700; }
+
+    /* Mesaj Engelleme Butonu */
+    .block-user-btn {
+      background: none;
+      border: 1px solid #4b5563;
+      color: var(--text-muted);
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.65rem;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .block-user-btn:hover { border-color: #ef4444; color: #ef4444; }
+    .block-user-btn.blocked { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.1); }
   </style>
 </head>
 <body>
@@ -327,7 +426,9 @@
         </div>
       </div>
 
-      <button class="btn-auth" id="btnToggleFavorites" onclick="toggleFavoritesFilter()" style="display: none;">❤️ Favorilerim (<span id="favCountBadge">0</span>)</button>
+      <div class="favorites-compact" id="btnToggleFavorites" onclick="toggleFavoritesFilter()" style="display: none;">
+        ❤️ Favoriler <span class="badge" id="favCountBadge">0</span>
+      </div>
 
       <div id="userInfoArea" style="display: none;" class="user-profile-badge" onclick="openProfileModal()">
         <div class="avatar-wrap">
@@ -351,6 +452,15 @@
       </div>
 
       <div class="filter-group">
+        <label>İlan Sahibi</label>
+        <select id="filterSellerType" class="filter-select" onchange="renderAds()">
+          <option value="all">Tümü</option>
+          <option value="sahibinden">Sahibinden</option>
+          <option value="bayi">Bayi / Galeri</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
         <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.3rem;">
           <input type="checkbox" id="filterIsModded" style="width: 16px; height: 16px; cursor: pointer;" onchange="populateFilterBrands()">
           <label for="filterIsModded" style="margin-bottom: 0; cursor: pointer;">Modlu Markalar</label>
@@ -358,6 +468,22 @@
         <label>Marka</label>
         <select id="filterBrand" class="filter-select" onchange="renderAds()">
           <option value="all">Tüm Markalar</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Kasa Tipi</label>
+        <select id="filterBodyType" class="filter-select" onchange="renderAds()">
+          <option value="all">Tümü</option>
+          <option value="Sedan">Sedan</option>
+          <option value="Hatchback">Hatchback</option>
+          <option value="SUV">SUV / Offroad</option>
+          <option value="Coupe">Coupe</option>
+          <option value="Cabriolet">Cabriolet</option>
+          <option value="Station Wagon">Station Wagon</option>
+          <option value="Pickup">Pickup</option>
+          <option value="Van">Van / Minivan</option>
+          <option value="Supercar">Süper Spor</option>
         </select>
       </div>
 
@@ -376,6 +502,14 @@
       <div class="filter-group">
         <label>Model Yılı (Min)</label>
         <input type="number" id="filterYear" class="filter-input" placeholder="Örn: 1990" oninput="debouncedRenderAds()">
+      </div>
+
+      <div class="filter-group">
+        <label>Ağırlık (kg)</label>
+        <div class="filter-range-group">
+          <input type="number" id="filterWeightMin" class="filter-input" placeholder="Min" oninput="debouncedRenderAds()">
+          <input type="number" id="filterWeightMax" class="filter-input" placeholder="Max" oninput="debouncedRenderAds()">
+        </div>
       </div>
 
       <div class="filter-group">
@@ -452,7 +586,16 @@
 
     <main>
       <div class="content-header">
-        <h2 id="contentHeaderTitle" style="font-size: 1.2rem;">Aktif İlanlar</h2>
+        <div style="display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <h2 id="contentHeaderTitle" style="font-size: 1.2rem;">Aktif İlanlar</h2>
+          <select id="sortSelect" class="sort-select" onchange="renderAds()">
+            <option value="newest">🆕 En Yeni</option>
+            <option value="oldest">📅 En Eski</option>
+            <option value="popular">🔥 Popülerlik</option>
+            <option value="price_low">💰 Fiyat: Düşük → Yüksek</option>
+            <option value="price_high">💰 Fiyat: Yüksek → Düşük</option>
+          </select>
+        </div>
         <span id="listingCount" style="color: var(--text-muted); font-size: 0.85rem;">Yükleniyor...</span>
       </div>
       <div class="listings-grid" id="listingsGrid"></div>
@@ -472,7 +615,7 @@
       </div>
       <form id="loginForm" onsubmit="handleLogin(event)">
         <div style="display: flex; flex-direction: column; gap: 1rem;">
-          <input type="email" id="loginEmail" class="filter-input" placeholder="E-Posta" required>
+          <input type="text" id="loginEmailOrUsername" class="filter-input" placeholder="E-Posta veya Kullanıcı Adı" required>
           <input type="password" id="loginPass" class="filter-input" placeholder="Şifre" required>
           <div style="text-align: right;">
             <a href="#" onclick="handleForgotPassword()" style="color: var(--accent-orange); font-size: 0.8rem; text-decoration: none;">Şifremi Unuttum?</a>
@@ -482,9 +625,22 @@
       </form>
       <form id="registerForm" onsubmit="handleRegister(event)" style="display: none;">
         <div style="display: flex; flex-direction: column; gap: 0.9rem;">
-          <input type="text" id="regNickname" class="filter-input" placeholder="Kullanıcı Adı (Benzersiz Nickname)" required>
-          <input type="email" id="regEmail" class="filter-input" placeholder="E-Posta" required>
-          <input type="password" id="regPass" class="filter-input" placeholder="Şifre (Min 6 Karakter)" minlength="6" required>
+          <div>
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.75rem; color:var(--text-muted);">BENZERSİZ KULLANICI ADI (Sadece harf, rakam, - ve _)</label>
+            <input type="text" id="regUniqueName" class="filter-input" placeholder="Örn: Ahmet_123" required pattern="[A-Za-z0-9_-]+">
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.75rem; color:var(--text-muted);">GÖRÜNÜR İSİM (İstediğiniz gibi)</label>
+            <input type="text" id="regDisplayName" class="filter-input" placeholder="Örn: Ahmet Bey" required>
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.75rem; color:var(--text-muted);">E-POSTA (İsteğe bağlı)</label>
+            <input type="email" id="regEmail" class="filter-input" placeholder="ornek@email.com">
+          </div>
+          <div>
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.75rem; color:var(--text-muted);">ŞİFRE (Min 6 Karakter)</label>
+            <input type="password" id="regPass" class="filter-input" placeholder="••••••" minlength="6" required>
+          </div>
           <input type="password" id="regPassConfirm" class="filter-input" placeholder="Şifreyi Tekrar Girin" minlength="6" required>
           
           <div style="display: flex; align-items: flex-start; gap: 0.5rem; background: var(--bg-main); padding: 0.8rem; border-radius: 6px; border: 1px solid var(--border-color);">
@@ -512,7 +668,7 @@
         <p><strong>2. İlan Verme Kuralları:</strong> Paylaşılan ilan başlıkları ve açıklamaları gerçeği yansıtmalı, BeamNG.drive oyun konseptine uygun olmalıdır. Yanıltıcı bilgi içeren veya hakaret barındıran ilanlar yöneticiler tarafından uyarılmaksızın silinir.</p>
         <p><strong>3. Uygunsuz İçerik (+18 / NSFW):</strong> Görsellerde veya mesajlarda hiçbir şekilde müstehcen, yasadışı veya +18 içerik barındırılamaz. Sistem otomatik olarak şüpheli görselleri engeller.</p>
         <p><strong>4. Mod ve Dosya Paylaşımı:</strong> Dış bağlantı veya mod paylaşımlarında virüslü veya zararlı içerik paylaşmak yasaktır. Tespit edilen hesaplar süresiz olarak cezalandırılır.</p>
-        <p><strong>5. Raporlama Sistemi:</strong> Kural ihlali yapan ilanları veya mesajları rapor burtonuyla bildirebilirsiniz. Asılsız ve spam amaçlı raporlama yapmak yasaktır.</p>
+        <p><strong>5. Raporlama Sistemi:</strong> Kural ihlali yapan ilanları veya mesajları rapor butonuyla bildirebilirsiniz. Asılsız ve spam amaçlı raporlama yapmak yasaktır.</p>
       </div>
       <button onclick="closeRulesModal()" class="btn-action btn-primary" style="margin-top: 1rem;">Anladım / Kapat</button>
     </div>
@@ -527,16 +683,20 @@
       </div>
       <form id="profileForm" onsubmit="handleUpdateProfile(event)" style="display: flex; flex-direction: column; gap: 1rem;">
         <div style="text-align: center;">
-          <img id="profileModalAvatar" src="https://via.placeholder.com/150" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-orange); margin-bottom: 0.5rem;">
+          <img id="profileModalAvatar" src="https://ui-avatars.com/api/?name=User&background=random&size=80" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--accent-orange); margin-bottom: 0.5rem;">
           <input type="file" id="profileAvatarFile" accept="image/*" onchange="previewAvatar(event)" style="display: block; margin: 0 auto; font-size: 0.8rem; color: var(--text-muted);">
         </div>
         <div>
-          <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">KULLANICI ADI (NICKNAME)</label>
-          <input type="text" id="profileNickname" class="filter-input" required>
+          <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">GÖRÜNÜR İSİM</label>
+          <input type="text" id="profileDisplayName" class="filter-input" required>
         </div>
         <div>
-          <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">E-POSTA ADRESİ</label>
-          <input type="email" id="profileEmail" class="filter-input" required>
+          <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">BENZERSİZ KULLANICI ADI (Değiştirilemez)</label>
+          <input type="text" id="profileUniqueName" class="filter-input" disabled style="opacity:0.6;">
+        </div>
+        <div>
+          <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">E-POSTA (İsteğe bağlı)</label>
+          <input type="email" id="profileEmail" class="filter-input" placeholder="ornek@email.com">
         </div>
         <hr style="border-color: var(--border-color);">
         <h4 style="font-size: 0.95rem; color: var(--text-main);">Şifre Değiştir (Opsiyonel)</h4>
@@ -561,6 +721,11 @@
       <div style="margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
         <button type="button" onclick="toggleBanHistory()" class="btn-action btn-auth" style="justify-content: center; font-size: 0.85rem;">📋 Ceza Geçmişim <span id="banHistoryToggleIcon">▾</span></button>
         <div id="banHistoryContainer" style="display: none; margin-top: 0.8rem; max-height: 260px; overflow-y: auto;"></div>
+        
+        <div style="margin-top: 0.8rem; border-top: 1px solid var(--border-color); padding-top: 0.8rem;">
+          <h4 style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem;">Engellenen Kullanıcılar</h4>
+          <div id="blockedUsersList" style="display: flex; flex-wrap: wrap; gap: 4px;"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -575,22 +740,31 @@
       <div id="publicProfileBody">
         <div class="pp-header">
           <div class="avatar-wrap" style="display:inline-flex;">
-            <img id="ppAvatar" class="pp-avatar" src="https://via.placeholder.com/150" alt="Avatar">
+            <img id="ppAvatar" class="pp-avatar" src="https://ui-avatars.com/api/?name=User&background=random&size=80" alt="Avatar">
             <span class="online-dot" id="ppOnlineDot" style="width:14px; height:14px; bottom:2px; right:2px;"></span>
           </div>
-          <div class="pp-nickname" id="ppNickname">...</div>
+          <div id="ppBannedBadge" style="display: none; margin-top: 8px;">
+            <span class="banned-badge">🚫 BANLANDI</span>
+          </div>
+          <div class="pp-nickname" id="ppDisplayName">...</div>
+          <div class="pp-unique-name" id="ppUniqueName">@...</div>
           <div class="online-text" id="ppOnlineText">...</div>
           <div class="pp-stats">
             <div><div class="num" id="ppAdCount">0</div><div class="lbl">İlan</div></div>
             <div><div class="num" id="ppJoinDate">-</div><div class="lbl">Üyelik</div></div>
           </div>
         </div>
-        <div style="padding: 0 0.5rem 0.5rem;">
-          <button id="ppMessageBtn" onclick="startDmFromProfile()" class="btn-action btn-primary" style="justify-content:center; display:flex; align-items:center; gap:6px;">✉️ Özel Mesaj Gönder</button>
+        <div style="padding: 0 0.5rem 0.5rem; display: flex; gap: 6px; flex-wrap: wrap;">
+          <button id="ppMessageBtn" onclick="startDmFromProfile()" class="btn-action btn-primary" style="justify-content:center; display:flex; align-items:center; gap:6px; flex:1;">✉️ Özel Mesaj Gönder</button>
+          <button id="ppBlockBtn" onclick="toggleBlockUser()" class="btn-action" style="justify-content:center; display:flex; align-items:center; gap:6px; flex:0.5; background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-muted);">🚫 Engelle</button>
         </div>
         <div id="ppAdsSection" style="padding: 0.5rem;">
           <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; padding: 0 0.5rem;">İlanları</div>
           <div id="ppAdsList" style="display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow-y: auto;"></div>
+        </div>
+        <div id="ppBanHistorySection" style="padding: 0.5rem; border-top: 1px solid var(--border-color); margin-top: 0.5rem;">
+          <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.5rem; padding: 0 0.5rem;">📋 Ceza Geçmişi</div>
+          <div id="ppBanHistoryList" style="max-height: 150px; overflow-y: auto;"></div>
         </div>
       </div>
     </div>
@@ -602,7 +776,7 @@
       <div style="background: var(--bg-card); padding: 0.8rem 1rem; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;">
         <div style="display: flex; align-items: center; gap: 10px; min-width: 0; cursor: pointer;" onclick="openPublicProfile(dmActivePeerUid)">
           <div class="avatar-wrap">
-            <img id="dmPeerAvatar" src="https://via.placeholder.com/150" style="width:38px; height:38px; border-radius:50%; object-fit:cover;" alt="Avatar">
+            <img id="dmPeerAvatar" src="https://ui-avatars.com/api/?name=User&background=random&size=38" style="width:38px; height:38px; border-radius:50%; object-fit:cover;" alt="Avatar">
             <span class="online-dot" id="dmPeerOnlineDot"></span>
           </div>
           <div style="min-width: 0;">
@@ -636,6 +810,7 @@
         <div class="auth-tab" id="tabAdminReports" onclick="switchAdminTab('reports')">🚨 Bildirilen Raporlar</div>
         <div class="auth-tab" id="tabAdminPunish" onclick="switchAdminTab('punish')">⚖️ Ceza Verme Sistemi</div>
         <div class="auth-tab" id="tabAdminActivePunishments" onclick="switchAdminTab('activePunishments')">🚫 Aktif Cezalar</div>
+        <div class="auth-tab" id="tabAdminClearHistory" onclick="switchAdminTab('clearHistory')">🧹 Ceza Geçmişi Temizle</div>
       </div>
       <div id="adminAdsSection">
         <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Onay bekleyen veya yayındaki tüm ilanları göz atıp düzenleyebilir veya silebilirsiniz.</p>
@@ -646,11 +821,11 @@
         <div id="adminReportsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 480px; overflow-y: auto;"></div>
       </div>
       <div id="adminPunishSection" style="display: none;">
-        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Kurallara aykırı hareket eden kullanıcılara kullanıcı adı bazlı ve özel süreyle ceza uygulayın.</p>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Kurallara aykırı hareket eden kullanıcılara benzersiz kullanıcı adı bazlı ceza uygulayın.</p>
         <div style="display: flex; flex-direction: column; gap: 10px; background: var(--bg-main); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
           <div>
-            <label style="display:block; margin-bottom:0.3rem; font-size:0.75rem; color:var(--text-muted);">KULLANICI ADI (NICKNAME)</label>
-            <input type="text" id="punishUsername" class="filter-input" placeholder="Örn: Ahmet123">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.75rem; color:var(--text-muted);">BENZERSİZ KULLANICI ADI</label>
+            <input type="text" id="punishUsername" class="filter-input" placeholder="Örn: Ahmet_123">
           </div>
           <div>
             <label style="display:block; margin-bottom:0.3rem; font-size:0.75rem; color:var(--text-muted);">CEZA TÜRÜ</label>
@@ -680,6 +855,14 @@
       <div id="adminActivePunishmentsSection" style="display: none;">
         <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Aktif cezası bulunan tüm hesaplar aşağıda listelenmektedir. Tek tuşla cezayı kaldırabilirsiniz.</p>
         <div id="adminActivePunishmentsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 480px; overflow-y: auto;"></div>
+      </div>
+      <div id="adminClearHistorySection" style="display: none;">
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1rem;">Bir kullanıcının tüm ceza geçmişini temizleyin.</p>
+        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+          <input type="text" id="clearHistoryUsername" class="filter-input" placeholder="Benzersiz kullanıcı adı" style="flex:1; min-width:200px;">
+          <button onclick="clearUserBanHistory()" class="btn-action btn-danger" style="width: auto; padding: 0.6rem 1.5rem;">🧹 Ceza Geçmişini Temizle</button>
+        </div>
+        <div id="clearHistoryResult" style="margin-top: 1rem;"></div>
       </div>
     </div>
   </div>
@@ -714,6 +897,14 @@
             <input type="text" id="postTitle" class="filter-input" placeholder="Örn: Modifiye Tofaş Doğan SLX" required>
           </div>
 
+          <div class="form-group full-width">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">İLAN SAHİBİ</label>
+            <select id="postSellerType" class="filter-select" required>
+              <option value="sahibinden">Sahibinden</option>
+              <option value="bayi">Bayi / Galeri</option>
+            </select>
+          </div>
+
           <div class="form-group full-width" style="display: flex; align-items: center; gap: 0.5rem; background: var(--bg-main); padding: 0.8rem; border-radius: 6px; border: 1px solid var(--border-color);">
             <input type="checkbox" id="postIsModded" style="width: 18px; height: 18px; cursor: pointer;" onchange="toggleBrandList()">
             <label for="postIsModded" style="cursor: pointer; font-size: 0.9rem; font-weight: 600;">Bu araç modlu</label>
@@ -735,6 +926,21 @@
           </div>
 
           <div class="form-group">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">KASA TİPİ</label>
+            <select id="postBodyType" class="filter-select" required>
+              <option value="Sedan">Sedan</option>
+              <option value="Hatchback">Hatchback</option>
+              <option value="SUV">SUV / Offroad</option>
+              <option value="Coupe">Coupe</option>
+              <option value="Cabriolet">Cabriolet</option>
+              <option value="Station Wagon">Station Wagon</option>
+              <option value="Pickup">Pickup</option>
+              <option value="Van">Van / Minivan</option>
+              <option value="Supercar">Süper Spor</option>
+            </select>
+          </div>
+
+          <div class="form-group">
             <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">YAKIT TİPİ</label>
             <select id="postFuel" class="filter-select" required>
               <option value="Benzin">Benzin</option>
@@ -753,6 +959,11 @@
           <div class="form-group">
             <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">KİLOMETRE (KM)</label>
             <input type="number" id="postKm" class="filter-input" placeholder="120000" required>
+          </div>
+
+          <div class="form-group">
+            <label style="display:block; margin-bottom:0.3rem; font-size:0.8rem; color:var(--text-muted);">AĞIRLIK (KG)</label>
+            <input type="number" id="postWeight" class="filter-input" placeholder="1450" min="100" max="5000" required>
           </div>
 
           <div class="form-group">
@@ -873,18 +1084,22 @@
             <div id="detailDescription" style="font-size: 0.85rem; color: var(--text-main); white-space: pre-wrap;"></div>
           </div>
 
-          <div style="background: var(--bg-main); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+          <div style="background: var(--bg-main); padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px;">
             <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;" onclick="openPublicProfile(currentSelectedAd ? currentSelectedAd.ownerId : null)">
               <div class="avatar-wrap">
                 <img id="detailSellerAvatar" src="" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;" alt="Satıcı">
                 <span class="online-dot" id="detailSellerOnlineDot"></span>
               </div>
               <div>
-                <div id="detailSellerName" style="font-weight: 600; color: var(--text-main); display: flex; align-items: center; font-size: 0.9rem;">Satıcı</div>
+                <div id="detailSellerName" style="font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 6px; font-size: 0.9rem;"></div>
+                <div id="detailSellerUniqueName" style="font-size: 0.65rem; color: var(--text-muted);">@...</div>
                 <div id="detailSellerAccountDate" style="font-size: 0.7rem; color: var(--text-muted);">Kayıt: ...</div>
               </div>
             </div>
-            <button onclick="reportAd()" style="background: none; border: none; color: #ef4444; font-size: 0.75rem; cursor: pointer;">🚨 Rapor Et</button>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <span id="detailSellerTypeBadge" style="background: var(--bg-card); padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; border: 1px solid var(--border-color);"></span>
+              <button onclick="reportAd()" style="background: none; border: none; color: #ef4444; font-size: 0.75rem; cursor: pointer;">🚨 Rapor Et</button>
+            </div>
           </div>
 
           <div style="display: flex; gap: 6px; margin-bottom: 0.5rem;">
@@ -933,6 +1148,53 @@
   </div>
 
   <script>
+    // ============ KONFIGÜRASYON ============
+    const firebaseConfig = {
+      apiKey: "AIzaSyBbKXyS0hzjXOyj7nCsPBF1gRBzHdFTmXY",
+      authDomain: "beamng-ilan.firebaseapp.com",
+      databaseURL: "https://beamng-ilan-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "beamng-ilan",
+      storageBucket: "beamng-ilan.firebasestorage.app",
+      messagingSenderId: "220828166685",
+      appId: "1:220828166685:web:abbda68c6e22cf8ea974f4",
+      measurementId: "G-ZHJ48F54M0"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+
+    const ADMIN_EMAIL = "kendolarin@gmail.com";
+    const DEFAULT_AVATAR = "https://ui-avatars.com/api/?name=User&background=random&size=80";
+
+    // ============ TÜM BEAMNG VANILLA MARKALARI ============
+    const BEAMNG_BRANDS = [
+      "Autobello", "Bruckell", "Cherrier", "Civetta", "ETK", 
+      "Gavril", "Hirochi", "Ibishu", "Soliad", "Wentward"
+    ];
+
+    // ============ GLOBAL DEĞİŞKENLER ============
+    let currentUser = null;
+    let currentUserProfile = { uniqueName: "", displayName: "", avatar: DEFAULT_AVATAR, createdAt: Date.now(), favorites: [], blockedUsers: [] };
+    let adsData = [];
+    let currentUploadedImages = [];
+    let currentSelectedThumbnailIndex = 0;
+    let currentSelectedAdId = null;
+    let editingAdId = null;
+    let messengerChatRef = null;
+    let isSubmittingAd = false;
+    let showOnlyFavorites = false;
+    let notificationsData = [];
+    let dmInboxData = {};
+    let dmChatRef = null;
+    let dmActivePeerUid = null;
+    let usersCache = {};
+    let notifWatcherStarted = false;
+    let currentSelectedAd = null;
+    let publicProfileViewedUid = null;
+    let currentNewAvatar = "";
+
+    // ============ YARDIMCI FONKSİYONLAR ============
     function escapeHtml(str) {
       if (!str) return '';
       return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
@@ -954,56 +1216,13 @@
       return "Az önce";
     }
 
-    const ADMIN_EMAIL = "kendolarin@gmail.com"; 
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBbKXyS0hzjXOyj7nCsPBF1gRBzHdFTmXY",
-      authDomain: "beamng-ilan.firebaseapp.com",
-      databaseURL: "https://beamng-ilan-default-rtdb.europe-west1.firebasedatabase.app",
-      projectId: "beamng-ilan",
-      storageBucket: "beamng-ilan.firebasestorage.app",
-      messagingSenderId: "220828166685",
-      appId: "1:220828166685:web:abbda68c6e22cf8ea974f4",
-      measurementId: "G-ZHJ48F54M0"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.database();
-
-    let currentUser = null;
-    let currentUserProfile = { nickname: "Kullanıcı", avatar: "https://via.placeholder.com/150", createdAt: Date.now(), favorites: [] };
-    let adsData = [];
-    let currentUploadedImages = [];
-    let currentSelectedThumbnailIndex = 0;
-    let currentSelectedAdId = null;
-    let editingAdId = null; 
-    let messengerChatRef = null;
-    let isSubmittingAd = false;
-    let showOnlyFavorites = false;
-
-    // ===== Yeni sistemler için global durum =====
-    let notificationsData = [];
-    let dmInboxData = {};
-    let dmChatRef = null;
-    let dmActivePeerUid = null;
-    let usersCache = {};
-    let notifWatcherStarted = false;
-    let currentSelectedAd = null;
-
-    const beamngBrands = ["Autobello", "Bruckell", "Cherrier", "Civetta", "ETK", "Gavril", "Hirochi", "Ibishu", "Soliad", "Wentward"].sort();
-    const realBrands = ["Anadol", "Audi", "BMW", "Chevrolet", "Devrim", "Fiat", "Ford", "Honda", "Hyundai", "Karsan", "Lamborghini", "Mazda", "Mercedes-Benz", "Nissan", "Otokar", "Peugeot", "Porsche", "Renault", "Subaru", "Tofaş", "Toyota", "Volkswagen", "Volvo"].sort();
-
     function isUserAdmin(uid, email, profile) {
-      return (profile && profile.isAdmin) || email === ADMIN_EMAIL || email === "admin@belascoauto.com";
+      return (profile && profile.isAdmin) || email === ADMIN_EMAIL;
     }
 
-    /* --- CEZA KONTROL MEKANİZMASI --- */
-    /* --- CEZA KONTROL MEKANİZMASI ---
-       Önce kalıcı 'targetUid' ile eşleştirir (güvenli, nickname değişse bile geçerli).
-       targetUid içermeyen eski/geçmiş kayıtlar için nickname eşleşmesine geri düşer. */
-    async function checkUserPunishment(uid, username, punishType) {
-      if (!uid && !username) return null;
+    // ============ CEZA KONTROLÜ ============
+    async function checkUserPunishment(uid, uniqueName, punishType) {
+      if (!uid && !uniqueName) return null;
       const snapshot = await db.ref('punishments').once('value');
       const punishments = snapshot.val();
       if (!punishments) return null;
@@ -1015,7 +1234,7 @@
 
         const matches = p.targetUid
           ? (uid && p.targetUid === uid)
-          : (username && p.username && p.username.toLowerCase() === username.toLowerCase());
+          : (p.uniqueName && p.uniqueName.toLowerCase() === (uniqueName || '').toLowerCase());
         if (!matches) continue;
 
         const durationMs = ((p.days || 0) * 24 * 3600 * 1000) + ((p.hours || 0) * 3600 * 1000);
@@ -1031,9 +1250,7 @@
       return null;
     }
 
-    /* ============================================================
-       AKTİFLİK DURUMU (ONLINE / ÇEVRİMDIŞI - PRESENCE)
-       ============================================================ */
+    // ============ AKTİFLİK DURUMU ============
     function setupPresence(uid) {
       const myConnRef = db.ref('.info/connected');
       const myStatusRef = db.ref('users/' + uid);
@@ -1058,9 +1275,12 @@
       return '⚪ Çevrimdışı';
     }
 
-    /* ============================================================
-       BİLDİRİM SİSTEMİ (TÜM KULLANICILARA AÇIK)
-       ============================================================ */
+    // ============ KULLANICI ADI DOĞRULAMA ============
+    function isValidUniqueName(name) {
+      return /^[A-Za-z0-9_-]+$/.test(name);
+    }
+
+    // ============ BİLDİRİM SİSTEMİ ============
     async function pushNotification(targetUid, type, text, icon, meta) {
       if (!targetUid) return;
       try {
@@ -1069,386 +1289,145 @@
           timestamp: Date.now(), read: false,
           meta: meta || {}
         });
-      } catch (e) { /* sessizce yut, ana akışı bozma */ }
+      } catch (e) { /* sessizce yut */ }
     }
 
-    function startNotifAndDmWatchers() {
-      if (notifWatcherStarted || !currentUser) return;
-      notifWatcherStarted = true;
-      const uid = currentUser.uid;
-
-      db.ref('notifications/' + uid).on('value', snap => {
-        notificationsData = [];
-        const val = snap.val();
-        if (val) Object.entries(val).forEach(([key, n]) => notificationsData.push({ id: key, ...n }));
-        notificationsData.sort((a, b) => b.timestamp - a.timestamp);
-        renderNotifPanel();
-      });
-
-      db.ref('dmInbox/' + uid).on('value', snap => {
-        dmInboxData = snap.val() || {};
-        renderDmPanel();
-        if (document.getElementById('dmChatModal').classList.contains('active') && dmActivePeerUid) {
-          // açık sohbet varsa okunmamış sayacı otomatik sıfırlanır (onDmThreadOpen zaten sıfırlıyor)
-        }
-      });
-    }
-
-    function toggleNotifPanel(event) {
-      if (event) event.stopPropagation();
-      closeDmPanel();
-      const panel = document.getElementById('notifPanel');
-      panel.classList.toggle('open');
-      if (panel.classList.contains('open')) renderNotifPanel();
-    }
-    function closeNotifPanel() {
-      const p = document.getElementById('notifPanel');
-      if (p) p.classList.remove('open');
-    }
-
-    function toggleDmPanel(event) {
-      if (event) event.stopPropagation();
-      closeNotifPanel();
-      const panel = document.getElementById('dmPanel');
-      panel.classList.toggle('open');
-      if (panel.classList.contains('open')) renderDmPanel();
-    }
-    function closeDmPanel() {
-      const p = document.getElementById('dmPanel');
-      if (p) p.classList.remove('open');
-    }
-
-    document.addEventListener('click', (e) => {
-      const notifWrap = document.getElementById('notifBellWrapper');
-      const dmWrap = document.getElementById('dmBellWrapper');
-      if (notifWrap && !notifWrap.contains(e.target)) closeNotifPanel();
-      if (dmWrap && !dmWrap.contains(e.target)) closeDmPanel();
-    });
-
-    function renderNotifPanel() {
-      const dot = document.getElementById('notifBellDot');
-      const body = document.getElementById('notifPanelBody');
-      if (!dot || !body) return;
-
-      const unreadCount = notificationsData.filter(n => !n.read).length;
-      if (unreadCount > 0) {
-        dot.style.display = 'flex';
-        dot.textContent = unreadCount > 99 ? '99+' : unreadCount;
-      } else {
-        dot.style.display = 'none';
-      }
-
-      if (notificationsData.length === 0) {
-        body.innerHTML = `<div class="dropdown-empty"><span class="icon">🔔</span>Henüz bildiriminiz yok.</div>`;
-        return;
-      }
-
-      body.innerHTML = notificationsData.slice(0, 25).map(n => `
-        <div class="notif-item ${!n.read ? 'is-unread' : ''}" onclick="handleNotifClick('${escapeHtml(n.id)}')">
-          <div class="icon">${n.icon || '🔔'}</div>
-          <div class="info">
-            <div class="t">${escapeHtml(n.text)}</div>
-            <div class="s">${timeAgo(n.timestamp)}</div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    async function markAllNotifsRead() {
-      if (!currentUser) return;
-      const updates = {};
-      notificationsData.forEach(n => { if (!n.read) updates[n.id + '/read'] = true; });
-      if (Object.keys(updates).length > 0) {
-        await db.ref('notifications/' + currentUser.uid).update(updates);
-      }
-    }
-
-    async function handleNotifClick(notifId) {
-      const notif = notificationsData.find(n => n.id === notifId);
-      if (!notif) return;
-      if (!notif.read) db.ref(`notifications/${currentUser.uid}/${notifId}/read`).set(true);
-      closeNotifPanel();
-
-      if (notif.type === 'dm' && notif.meta && notif.meta.fromUid) {
-        startDmWithUid(notif.meta.fromUid);
-      } else if (notif.meta && notif.meta.adId) {
-        const ad = adsData.find(a => a.id === notif.meta.adId);
-        if (ad) openDetailModal(ad.id);
-      }
-    }
-
-    function renderDmPanel() {
-      const dot = document.getElementById('dmBellDot');
-      const body = document.getElementById('dmPanelBody');
-      if (!dot || !body) return;
-
-      const threads = Object.entries(dmInboxData).map(([uid, t]) => ({ uid, ...t }));
-      threads.sort((a, b) => (b.lastTimestamp || 0) - (a.lastTimestamp || 0));
-      const totalUnread = threads.reduce((sum, t) => sum + (t.unreadCount || 0), 0);
-
-      if (totalUnread > 0) {
-        dot.style.display = 'flex';
-        dot.textContent = totalUnread > 99 ? '99+' : totalUnread;
-      } else {
-        dot.style.display = 'none';
-      }
-
-      if (threads.length === 0) {
-        body.innerHTML = `<div class="dropdown-empty"><span class="icon">✉️</span>Henüz mesajınız yok.<div style="font-size:0.7rem; margin-top:4px;">Bir satıcının profilinden mesaj gönderebilirsiniz.</div></div>`;
-        return;
-      }
-
-      body.innerHTML = threads.map(t => `
-        <div class="dm-item" onclick="startDmWithUid('${escapeHtml(t.uid)}')">
-          <div class="avatar-wrap">
-            <img src="${escapeHtml(t.avatar || 'https://via.placeholder.com/150')}" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
-          </div>
-          <div class="info">
-            <div class="t">${escapeHtml(t.nickname || 'Kullanıcı')}</div>
-            <div class="s">${escapeHtml(t.lastMessage || '')}</div>
-          </div>
-          ${t.unreadCount > 0 ? `<span class="unread-badge">${t.unreadCount}</span>` : ''}
-        </div>
-      `).join('');
-    }
-
-    /* ============================================================
-       ÖZEL MESAJ (DM) SİSTEMİ
-       ============================================================ */
+    // ============ DM SİSTEMİ ============
     function getDmThreadId(uidA, uidB) {
       return [uidA, uidB].sort().join('_');
     }
 
-    async function startDmWithUid(otherUid) {
-      if (!currentUser) { alert("Mesaj göndermek için giriş yapmalısınız!"); openAuthModal(); return; }
-      if (!otherUid) { alert("Kullanıcı bulunamadı."); return; }
-      if (otherUid === currentUser.uid) { alert("Kendinize mesaj gönderemezsiniz."); return; }
+    // ============ MESAJ SİLME (30 DAKİKA) ============
+    function canDeleteMessage(msgTimestamp) {
+      return (Date.now() - msgTimestamp) < 30 * 60 * 1000;
+    }
 
-      const banCheck = await checkUserPunishment(currentUser.uid, currentUserProfile.nickname, "Sohbet Engeli");
-      const dmInput = document.getElementById('dmInput');
-      const dmBtn = document.getElementById('dmSendBtn');
-      if (banCheck) {
-        dmInput.disabled = true;
-        dmInput.placeholder = "🚫 Sohbet engeliniz bulunmaktadır!";
-        dmBtn.disabled = true;
+    // ============ SEO VE GOOGLE ============
+    // "Belasco" düzeltmesi - tüm metinlerde "Belasco" kullanılıyor
+    
+    // ============ FONKSİYONLAR ============
+    function openRulesModal() { document.getElementById('rulesModal').classList.add('active'); }
+    function closeRulesModal() { document.getElementById('rulesModal').classList.remove('active'); }
+
+    function openLightbox(imgSrc) {
+      if (!imgSrc) return;
+      document.getElementById('lightboxImg').src = imgSrc;
+      document.getElementById('lightboxModal').classList.add('active');
+    }
+    function closeLightbox() {
+      document.getElementById('lightboxModal').classList.remove('active');
+    }
+
+    function openExternalLinkModal(url) {
+      document.getElementById('externalLinkDisplay').textContent = url;
+      document.getElementById('btnConfirmExternalLink').href = url;
+      document.getElementById('externalLinkModal').classList.add('active');
+    }
+    function closeExternalLinkModal() {
+      document.getElementById('externalLinkModal').classList.remove('active');
+    }
+
+    // ============ FAVORİLER ============
+    async function toggleFavorite(event, adId) {
+      event.stopPropagation();
+      if (!currentUser) {
+        alert("Favorilere eklemek için giriş yapmalısınız!");
+        openAuthModal();
+        return;
+      }
+
+      if (!currentUserProfile.favorites) currentUserProfile.favorites = [];
+      const index = currentUserProfile.favorites.indexOf(adId);
+      const isAdding = index === -1;
+      
+      if (isAdding) {
+        currentUserProfile.favorites.push(adId);
+        // İlan sahibine bildirim
+        const ad = adsData.find(a => a.id === adId);
+        if (ad && ad.ownerId && ad.ownerId !== currentUser.uid) {
+          pushNotification(ad.ownerId, 'favorite', `${currentUserProfile.displayName} ilanınızı favorilerine ekledi! ❤️`, '❤️', { adId });
+        }
       } else {
-        dmInput.disabled = false;
-        dmInput.placeholder = "Bir mesaj yazın...";
-        dmBtn.disabled = false;
+        currentUserProfile.favorites.splice(index, 1);
       }
 
-      dmActivePeerUid = otherUid;
-      closeDetailModal();
-      closePublicProfileModal();
-      closeDmPanel();
-
-      const peerSnap = await db.ref('users/' + otherUid).once('value');
-      const peer = peerSnap.val() || {};
-      document.getElementById('dmPeerName').textContent = peer.nickname || 'Kullanıcı';
-      document.getElementById('dmPeerAvatar').src = peer.avatar || 'https://via.placeholder.com/150';
-      renderOnlineDot('dmPeerOnlineDot', peer.online);
-      document.getElementById('dmPeerOnlineText').textContent = formatOnlineText(peer);
-
-      document.getElementById('dmChatModal').classList.add('active');
-      loadDmMessages(otherUid);
-
-      // sohbeti açınca okunmamış sayacı sıfırla
-      db.ref(`dmInbox/${currentUser.uid}/${otherUid}/unreadCount`).set(0);
+      try {
+        await db.ref('users/' + currentUser.uid + '/favorites').set(currentUserProfile.favorites);
+        updateFavoritesUI();
+        renderAds();
+      } catch (err) {
+        alert("Hata: " + err.message);
+      }
     }
 
-    function startDmFromProfile() {
-      startDmWithUid(publicProfileViewedUid);
+    function updateFavoritesUI() {
+      const favs = currentUserProfile.favorites || [];
+      const badge = document.getElementById('favCountBadge');
+      const btnToggle = document.getElementById('btnToggleFavorites');
+      if (badge) badge.textContent = favs.length;
+      if (btnToggle) btnToggle.style.display = currentUser ? 'flex' : 'none';
     }
 
-    function closeDmChatModal() {
-      document.getElementById('dmChatModal').classList.remove('active');
-      if (dmChatRef) dmChatRef.off();
-      dmActivePeerUid = null;
+    function toggleFavoritesFilter() {
+      showOnlyFavorites = !showOnlyFavorites;
+      const btnToggle = document.getElementById('btnToggleFavorites');
+      const title = document.getElementById('contentHeaderTitle');
+      if (showOnlyFavorites) {
+        btnToggle.classList.add('active');
+        if (title) title.textContent = "❤️ Favori İlanlarım";
+      } else {
+        btnToggle.classList.remove('active');
+        if (title) title.textContent = "Aktif İlanlar";
+      }
+      renderAds();
     }
 
-    function loadDmMessages(otherUid) {
-      const container = document.getElementById('dmMessagesContainer');
-      container.innerHTML = '<div style="text-align:center; color:var(--text-muted); font-size:0.8rem; margin:auto;">Yükleniyor...</div>';
+    // ============ MARKA LİSTESİ ============
+    function toggleBrandList() {
+      const isModded = document.getElementById('postIsModded').checked;
+      const brandSelect = document.getElementById('postBrand');
+      const modLinkGroup = document.getElementById('modLinkGroup');
+      
+      if (modLinkGroup) modLinkGroup.style.display = isModded ? 'block' : 'none';
 
-      if (dmChatRef) dmChatRef.off();
-      const threadId = getDmThreadId(currentUser.uid, otherUid);
-      dmChatRef = db.ref(`dmThreads/${threadId}/messages`);
-
-      dmChatRef.on('value', snapshot => {
-        container.innerHTML = '';
-        const messages = snapshot.val();
-        if (!messages) {
-          container.innerHTML = `<div class="chat-empty-state"><span class="icon">✉️</span>Henüz mesajlaşmadınız.<div class="sub">İlk mesajı sen gönder!</div></div>`;
-          return;
-        }
-        Object.entries(messages).forEach(([msgKey, msg]) => {
-          const isOwn = currentUser && msg.senderUid === currentUser.uid;
-          const msgRow = document.createElement('div');
-          msgRow.className = `chat-msg-row ${isOwn ? 'is-own' : ''}`;
-          msgRow.innerHTML = `
-            <img src="${escapeHtml(msg.senderAvatar || 'https://via.placeholder.com/150')}" class="chat-avatar">
-            <div class="chat-bubble-col">
-              <div class="chat-meta">
-                <span class="chat-sender-name">${escapeHtml(msg.senderName)}</span>
-                <span class="chat-time">${timeAgo(msg.timestamp)}</span>
-              </div>
-              <div class="chat-bubble">${escapeHtml(msg.text)}</div>
-            </div>
-          `;
-          container.appendChild(msgRow);
-        });
-        container.scrollTop = container.scrollHeight;
+      const currentSelectedBrand = brandSelect.value;
+      brandSelect.innerHTML = "";
+      // Modlu işaretlendiğinde tüm markalar (vanilla + real) gösterilir
+      const brands = isModded ? [...BEAMNG_BRANDS, "Anadol", "Audi", "BMW", "Chevrolet", "Devrim", "Fiat", "Ford", "Honda", "Hyundai", "Karsan", "Lamborghini", "Mazda", "Mercedes-Benz", "Nissan", "Otokar", "Peugeot", "Porsche", "Renault", "Subaru", "Tofaş", "Toyota", "Volkswagen", "Volvo"].sort() : BEAMNG_BRANDS;
+      brands.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b; opt.textContent = b;
+        brandSelect.appendChild(opt);
       });
+      if (brands.includes(currentSelectedBrand)) brandSelect.value = currentSelectedBrand;
     }
 
-    async function sendDmMessage() {
-      if (!currentUser || !dmActivePeerUid) return;
-
-      const banCheck = await checkUserPunishment(currentUser.uid, currentUserProfile.nickname, "Sohbet Engeli");
-      if (banCheck) {
-        alert(`🚫 SOHBET ENGELİNİZ BULUNMAKTADIR!\n\nSebep: ${banCheck.reason}`);
-        return;
-      }
-
-      const input = document.getElementById('dmInput');
-      const text = input.value.trim();
-      if (!text) return;
-
-      const otherUid = dmActivePeerUid;
-      const threadId = getDmThreadId(currentUser.uid, otherUid);
-
-      try {
-        await db.ref(`dmThreads/${threadId}/messages`).push({
-          senderUid: currentUser.uid,
-          senderName: currentUserProfile.nickname,
-          senderAvatar: currentUserProfile.avatar,
-          text: text,
-          timestamp: Date.now()
-        });
-        input.value = '';
-
-        const now = Date.now();
-        await db.ref(`dmInbox/${currentUser.uid}/${otherUid}`).update({
-          nickname: (await db.ref('users/' + otherUid).once('value')).val()?.nickname || 'Kullanıcı',
-          avatar: (await db.ref('users/' + otherUid).once('value')).val()?.avatar || '',
-          lastMessage: text, lastTimestamp: now
-        });
-        await db.ref(`dmInbox/${otherUid}/${currentUser.uid}`).update({
-          nickname: currentUserProfile.nickname,
-          avatar: currentUserProfile.avatar,
-          lastMessage: text, lastTimestamp: now,
-          unreadCount: firebase.database.ServerValue.increment(1)
-        });
-
-        pushNotification(otherUid, 'dm', `${currentUserProfile.nickname} sana mesaj gönderdi`, '✉️', { fromUid: currentUser.uid });
-      } catch (e) { alert("Hata: " + e.message); }
+    function populateFilterBrands() {
+      const isModded = document.getElementById('filterIsModded').checked;
+      const filterBrandSelect = document.getElementById('filterBrand');
+      filterBrandSelect.innerHTML = '<option value="all">Tüm Markalar</option>';
+      const brands = isModded ? [...BEAMNG_BRANDS, "Anadol", "Audi", "BMW", "Chevrolet", "Devrim", "Fiat", "Ford", "Honda", "Hyundai", "Karsan", "Lamborghini", "Mazda", "Mercedes-Benz", "Nissan", "Otokar", "Peugeot", "Porsche", "Renault", "Subaru", "Tofaş", "Toyota", "Volkswagen", "Volvo"].sort() : BEAMNG_BRANDS;
+      brands.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b; opt.textContent = b;
+        filterBrandSelect.appendChild(opt);
+      });
+      renderAds();
     }
 
-    /* ============================================================
-       HERKESE AÇIK PROFİL SİSTEMİ
-       ============================================================ */
-    let publicProfileViewedUid = null;
-
-    async function openPublicProfile(uid) {
-      if (!uid) return;
-      if (currentUser && uid === currentUser.uid) { openProfileModal(); return; }
-
-      publicProfileViewedUid = uid;
-      closeDetailModal();
-      closeDmChatModal();
-
-      document.getElementById('ppNickname').textContent = "Yükleniyor...";
-      document.getElementById('publicProfileModal').classList.add('active');
-
-      try {
-        const snap = await db.ref('users/' + uid).once('value');
-        const u = snap.val();
-        if (!u) {
-          document.getElementById('ppNickname').textContent = "Kullanıcı bulunamadı";
-          return;
-        }
-        document.getElementById('ppAvatar').src = u.avatar || 'https://via.placeholder.com/150';
-        document.getElementById('ppNickname').textContent = u.nickname || 'Kullanıcı';
-        renderOnlineDot('ppOnlineDot', u.online);
-        const onlineTextEl = document.getElementById('ppOnlineText');
-        onlineTextEl.textContent = formatOnlineText(u);
-        onlineTextEl.classList.toggle('is-online', !!u.online);
-        document.getElementById('ppJoinDate').textContent = u.createdAt ? new Date(u.createdAt).toLocaleDateString('tr-TR', { year: 'numeric', month: 'short' }) : '-';
-
-        const userAds = adsData.filter(ad => ad.ownerId === uid && ad.approved !== false);
-        document.getElementById('ppAdCount').textContent = userAds.length;
-        const listEl = document.getElementById('ppAdsList');
-        listEl.innerHTML = userAds.length === 0
-          ? `<div style="color:var(--text-muted); font-size:0.75rem; text-align:center; padding:0.5rem;">Aktif ilanı yok.</div>`
-          : userAds.map(ad => `
-              <div onclick="closePublicProfileModal(); openDetailModal('${escapeHtml(ad.id)}')" style="display:flex; align-items:center; gap:8px; padding:6px; border-radius:8px; cursor:pointer; border:1px solid var(--border-color); background:var(--bg-main);">
-                <img src="${escapeHtml((ad.images && ad.images[ad.thumbnailIndex || 0]) || 'https://via.placeholder.com/60')}" style="width:36px; height:36px; border-radius:6px; object-fit:cover;">
-                <div style="font-size:0.78rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(ad.title)}</div>
-              </div>
-            `).join('');
-      } catch (e) {
-        document.getElementById('ppNickname').textContent = "Yüklenemedi";
+    function togglePertState() {
+      const isPert = document.getElementById('postIsPert').checked;
+      const damageSelect = document.getElementById('postDamageStatus');
+      if (isPert) {
+        damageSelect.value = "🔴 Projelik / Kazalı";
+        damageSelect.disabled = true;
+      } else {
+        damageSelect.disabled = false;
       }
     }
 
-    function closePublicProfileModal() {
-      document.getElementById('publicProfileModal').classList.remove('active');
-    }
-
-    /* ============================================================
-       CEZA GEÇMİŞİ (BAN HISTORY)
-       ============================================================ */
-    async function toggleBanHistory() {
-      const container = document.getElementById('banHistoryContainer');
-      const icon = document.getElementById('banHistoryToggleIcon');
-      const isOpen = container.style.display !== 'none';
-      if (isOpen) {
-        container.style.display = 'none';
-        icon.textContent = '▾';
-        return;
-      }
-      container.style.display = 'block';
-      icon.textContent = '▴';
-      container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:0.8rem; padding:1rem;">Yükleniyor...</div>`;
-
-      try {
-        const snap = await db.ref('punishments').once('value');
-        const all = snap.val() || {};
-        const mine = Object.entries(all)
-          .filter(([key, p]) => p.targetUid ? p.targetUid === currentUser.uid : (p.username && p.username.toLowerCase() === currentUserProfile.nickname.toLowerCase()))
-          .map(([key, p]) => ({ id: key, ...p }))
-          .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-
-        if (mine.length === 0) {
-          container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:0.8rem; padding:1rem;">🎉 Herhangi bir ceza geçmişiniz bulunmuyor.</div>`;
-          return;
-        }
-
-        const now = Date.now();
-        container.innerHTML = mine.map(p => {
-          const durationMs = ((p.days || 0) * 24 * 3600 * 1000) + ((p.hours || 0) * 3600 * 1000);
-          const expiresAt = (p.timestamp || 0) + durationMs;
-          const isInfinite = durationMs === 0;
-          let statusClass = 'expired', statusText = 'Süresi Doldu';
-          if (p.revoked) { statusClass = 'revoked'; statusText = 'Kaldırıldı'; }
-          else if (isInfinite || now < expiresAt) { statusClass = 'active'; statusText = 'Aktif'; }
-
-          return `
-            <div class="ban-history-item">
-              <div class="top-row">
-                <strong style="font-size:0.85rem;">${escapeHtml(p.type || 'Ceza')}</strong>
-                <span class="ban-status-pill ${statusClass}">${statusText}</span>
-              </div>
-              <div style="font-size:0.78rem; color:var(--text-main); margin-top:4px;">${escapeHtml(p.reason || '')}</div>
-              <div style="font-size:0.68rem; color:var(--text-muted); margin-top:4px;">
-                ${new Date(p.timestamp).toLocaleDateString('tr-TR')} • Süre: ${isInfinite ? 'Süresiz' : `${p.days || 0}g ${p.hours || 0}s`} • Veren: ${escapeHtml(p.admin || 'Admin')}
-              </div>
-            </div>`;
-        }).join('');
-      } catch (e) {
-        container.innerHTML = `<div style="color:#ef4444; font-size:0.8rem; text-align:center; padding:1rem;">Geçmiş yüklenemedi.</div>`;
-      }
-    }
+    // ============ GÖRSEL YÜKLEME ============
+    const MAX_IMAGE_SIZE_MB = 12;
 
     function resizeImageFile(file, maxDimension = 1280, quality = 0.75) {
       return new Promise((resolve, reject) => {
@@ -1494,150 +1473,6 @@
         resolve(false);
       });
     }
-
-    function openLightbox(imgSrc) {
-      if (!imgSrc) return;
-      document.getElementById('lightboxImg').src = imgSrc;
-      document.getElementById('lightboxModal').classList.add('active');
-    }
-
-    function closeLightbox() {
-      document.getElementById('lightboxModal').classList.remove('active');
-    }
-
-    document.addEventListener('keydown', function(event) {
-      if (event.key === 'Escape') closeLightbox();
-    });
-
-    function isSafeExternalUrl(url) {
-      try {
-        const parsed = new URL(url, window.location.href);
-        return parsed.protocol === 'http:' || parsed.protocol === 'https:';
-      } catch (e) {
-        return false;
-      }
-    }
-
-    function openExternalLinkModal(url) {
-      if (!isSafeExternalUrl(url)) {
-        alert("⚠️ Geçersiz veya güvensiz bağlantı, açılamıyor.");
-        return;
-      }
-      document.getElementById('externalLinkDisplay').textContent = url;
-      document.getElementById('btnConfirmExternalLink').href = url;
-      document.getElementById('externalLinkModal').classList.add('active');
-    }
-    function closeExternalLinkModal() {
-      document.getElementById('externalLinkModal').classList.remove('active');
-    }
-
-    function openRulesModal() { document.getElementById('rulesModal').classList.add('active'); }
-    function closeRulesModal() { document.getElementById('rulesModal').classList.remove('active'); }
-
-    async function handleForgotPassword() {
-      const email = prompt("Şifre sıfırlama bağlantısı gönderilecek e-posta adresiniz:");
-      if (email) {
-        try {
-          await auth.sendPasswordResetEmail(email.trim());
-          alert("✅ Şifre sıfırlama e-postası gönderildi!");
-        } catch(err) {
-          alert("Hata: " + err.message);
-        }
-      }
-    }
-
-    async function toggleFavorite(event, adId) {
-      event.stopPropagation();
-      if (!currentUser) {
-        alert("Favorilere eklemek için giriş yapmalısınız!");
-        openAuthModal();
-        return;
-      }
-
-      if (!currentUserProfile.favorites) currentUserProfile.favorites = [];
-      const index = currentUserProfile.favorites.indexOf(adId);
-      if (index > -1) {
-        currentUserProfile.favorites.splice(index, 1);
-      } else {
-        currentUserProfile.favorites.push(adId);
-      }
-
-      try {
-        await db.ref('users/' + currentUser.uid).update({ favorites: currentUserProfile.favorites });
-        updateFavoritesUI();
-        renderAds();
-      } catch (err) {
-        alert("Hata: " + err.message);
-      }
-    }
-
-    function updateFavoritesUI() {
-      const favs = currentUserProfile.favorites || [];
-      const badge = document.getElementById('favCountBadge');
-      const btnToggle = document.getElementById('btnToggleFavorites');
-      if (badge) badge.textContent = favs.length;
-      if (btnToggle) btnToggle.style.display = currentUser ? 'flex' : 'none';
-    }
-
-    function toggleFavoritesFilter() {
-      showOnlyFavorites = !showOnlyFavorites;
-      const btnToggle = document.getElementById('btnToggleFavorites');
-      const title = document.getElementById('contentHeaderTitle');
-      if (showOnlyFavorites) {
-        btnToggle.style.borderColor = 'var(--accent-orange)';
-        btnToggle.style.color = 'var(--accent-orange)';
-        if (title) title.textContent = "❤️ Favori İlanlarım";
-      } else {
-        btnToggle.style.borderColor = 'var(--border-color)';
-        btnToggle.style.color = 'var(--text-main)';
-        if (title) title.textContent = "Aktif İlanlar";
-      }
-      renderAds();
-    }
-
-    function toggleBrandList() {
-      const isModded = document.getElementById('postIsModded').checked;
-      const brandSelect = document.getElementById('postBrand');
-      const modLinkGroup = document.getElementById('modLinkGroup');
-      
-      if (modLinkGroup) modLinkGroup.style.display = isModded ? 'block' : 'none';
-
-      const currentSelectedBrand = brandSelect.value;
-      brandSelect.innerHTML = "";
-      const brands = isModded ? realBrands : beamngBrands;
-      brands.forEach(b => {
-        const opt = document.createElement('option');
-        opt.value = b; opt.textContent = b;
-        brandSelect.appendChild(opt);
-      });
-      if (brands.includes(currentSelectedBrand)) brandSelect.value = currentSelectedBrand;
-    }
-
-    function populateFilterBrands() {
-      const isModded = document.getElementById('filterIsModded').checked;
-      const filterBrandSelect = document.getElementById('filterBrand');
-      filterBrandSelect.innerHTML = '<option value="all">Tüm Markalar</option>';
-      const brands = isModded ? realBrands : beamngBrands;
-      brands.forEach(b => {
-        const opt = document.createElement('option');
-        opt.value = b; opt.textContent = b;
-        filterBrandSelect.appendChild(opt);
-      });
-      renderAds();
-    }
-
-    function togglePertState() {
-      const isPert = document.getElementById('postIsPert').checked;
-      const damageSelect = document.getElementById('postDamageStatus');
-      if (isPert) {
-        damageSelect.value = "🔴 Projelik / Kazalı";
-        damageSelect.disabled = true;
-      } else {
-        damageSelect.disabled = false;
-      }
-    }
-
-    const MAX_IMAGE_SIZE_MB = 12;
 
     async function handleMultipleImages(event) {
       const files = event.target.files;
@@ -1698,7 +1533,7 @@
       renderImagePreviews();
     }
 
-    let currentNewAvatar = "";
+    // ============ PROFİL FOTOĞRAFI ============
     async function previewAvatar(event) {
       const file = event.target.files[0];
       if (file) {
@@ -1722,191 +1557,10 @@
       }
     }
 
-    auth.onAuthStateChanged(async (user) => {
-      currentUser = user;
-      if (user) {
-        document.getElementById('btnAuthOpen').style.display = 'none';
-        document.getElementById('userInfoArea').style.display = 'flex';
-
-        const snapshot = await db.ref('users/' + user.uid).once('value');
-        if (snapshot.exists()) {
-          currentUserProfile = snapshot.val();
-          if (!currentUserProfile.favorites) currentUserProfile.favorites = [];
-        } else {
-          currentUserProfile = { 
-            nickname: user.email.split('@')[0], 
-            avatar: "https://via.placeholder.com/150",
-            createdAt: Date.now(),
-            favorites: []
-          };
-          await db.ref('users/' + user.uid).set(currentUserProfile);
-        }
-
-        /* --- HESAP ASKIYA ALINMIŞ MI KONTROLÜ --- */
-        const banCheck = await checkUserPunishment(user.uid, currentUserProfile.nickname, "Hesap Askıya Alma");
-        if (banCheck) {
-          alert(`🚫 HESABINIZ ASKIYA ALINMIŞTIR!\n\nSebep: ${banCheck.reason}\nSüre: ${banCheck.isInfinite ? 'Süresiz' : 'Geçici'}`);
-          await auth.signOut();
-          location.reload();
-          return;
-        }
-
-        document.getElementById('userNicknameText').textContent = currentUserProfile.nickname;
-        document.getElementById('userHeaderAvatar').src = currentUserProfile.avatar;
-        updateFavoritesUI();
-
-        if (isUserAdmin(user.uid, user.email, currentUserProfile)) {
-          document.getElementById('btnAdminPanel').style.display = 'flex';
-          document.getElementById('adminButtonContainer').style.display = 'block';
-        } else {
-          document.getElementById('btnAdminPanel').style.display = 'none';
-          document.getElementById('adminButtonContainer').style.display = 'none';
-        }
-
-        document.getElementById('notifBellWrapper').style.display = 'block';
-        document.getElementById('dmBellWrapper').style.display = 'block';
-        setupPresence(user.uid);
-        startNotifAndDmWatchers();
-      } else {
-        document.getElementById('userInfoArea').style.display = 'none';
-        document.getElementById('btnAuthOpen').style.display = 'flex';
-        document.getElementById('btnAdminPanel').style.display = 'none';
-        document.getElementById('adminButtonContainer').style.display = 'none';
-        document.getElementById('btnToggleFavorites').style.display = 'none';
-        document.getElementById('notifBellWrapper').style.display = 'none';
-        document.getElementById('dmBellWrapper').style.display = 'none';
-        closeNotifPanel();
-        closeDmPanel();
-        notifWatcherStarted = false;
-        notificationsData = [];
-        dmInboxData = {};
-        showOnlyFavorites = false;
-      }
-      renderAds();
-    });
-
-    db.ref('ads').on('value', (snapshot) => {
-      const data = snapshot.val();
-      adsData = [];
-      if (data) {
-        Object.keys(data).forEach(key => adsData.push({ id: key, ...data[key] }));
-        adsData.reverse();
-      }
-      renderAds();
-    });
-
-    let renderAdsDebounceTimer = null;
-    function debouncedRenderAds() {
-      clearTimeout(renderAdsDebounceTimer);
-      renderAdsDebounceTimer = setTimeout(renderAds, 250);
-    }
-
-    function renderAds() {
-      const grid = document.getElementById('listingsGrid');
-      const search = document.getElementById('filterSearch').value.toLowerCase().trim();
-      const fBrand = document.getElementById('filterBrand').value;
-      const fFuel = document.getElementById('filterFuel').value;
-      const fYear = document.getElementById('filterYear').value;
-      const fEngine = document.getElementById('filterEngine').value;
-      const fDamage = document.getElementById('filterDamage').value;
-      const drive = document.getElementById('filterDrive').value;
-      const trans = document.getElementById('filterTrans').value;
-      const moddedStatus = document.getElementById('filterModdedStatus').value;
-
-      const userFavorites = currentUserProfile.favorites || [];
-
-      const filtered = adsData.filter(ad => {
-        if (showOnlyFavorites && !userFavorites.includes(ad.id)) return false;
-
-        const isApprovedOrOwner = ad.approved !== false || (currentUser && ad.ownerId === currentUser.uid) || (currentUser && isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile));
-        if (!isApprovedOrOwner) return false;
-
-        const mSearch = (ad.title || '').toLowerCase().includes(search) || (ad.brand || '').toLowerCase().includes(search) || (ad.model || '').toLowerCase().includes(search);
-        const mBrand = (fBrand === 'all') || (ad.brand === fBrand);
-        const mFuel = (fFuel === 'all') || (ad.fuel === fFuel);
-        const mYear = !fYear || (ad.year && Number(ad.year) >= Number(fYear));
-        const mEngine = (fEngine === 'all') || (ad.engine === fEngine);
-        const mDamage = (fDamage === 'all') || (ad.damageStatus === fDamage);
-        const mDrive = (drive === 'all') || (ad.drive === drive);
-        const mTrans = (trans === 'all') || (ad.trans === trans);
-        let mModded = true;
-        if (moddedStatus === 'vanilla') mModded = !ad.isModded;
-        if (moddedStatus === 'modded') mModded = !!ad.isModded;
-
-        return mSearch && mBrand && mFuel && mYear && mEngine && mDamage && mDrive && mTrans && mModded;
-      });
-
-      grid.innerHTML = '';
-      document.getElementById('listingCount').textContent = `${filtered.length} İlan`;
-
-      if (filtered.length === 0) {
-        grid.innerHTML = `<div class="empty-state"><span>🔍</span><h3>İlan Bulunamadı</h3></div>`;
-        return;
-      }
-
-      filtered.forEach(ad => {
-        const modBadge = ad.isModded ? `<div class="badge-modded">MOD</div>` : '';
-        const pertBadge = ad.isPert ? `<div class="badge-pert">PERT</div>` : '';
-        const pendingBadge = (ad.approved === false) ? `<div class="badge-pending">⏳ ONAY BEKLİYOR</div>` : '';
-        
-        let mainImg = 'https://via.placeholder.com/400';
-        if (ad.images && ad.images.length > 0) {
-          const thumbIdx = ad.thumbnailIndex || 0;
-          mainImg = ad.images[thumbIdx] || ad.images[0];
-        }
-        
-        const isFav = userFavorites.includes(ad.id);
-        const favBtnClass = isFav ? 'favorite-btn active' : 'favorite-btn';
-        const favIconSymbol = isFav ? '❤️' : '🤍';
-        const formattedTimeAgo = timeAgo(ad.createdAt);
-
-        grid.insertAdjacentHTML('beforeend', `
-          <div class="card" onclick="openDetailModal('${escapeHtml(ad.id)}')">
-            <div class="card-img-wrapper">
-              ${modBadge}
-              ${pertBadge}
-              ${pendingBadge}
-              <button class="${favBtnClass}" onclick="toggleFavorite(event, '${escapeHtml(ad.id)}')">${favIconSymbol}</button>
-              <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(ad.title)}" loading="lazy">
-            </div>
-            <div class="card-body">
-              <div class="card-title">${escapeHtml(ad.title)}</div>
-              <div style="font-size: 0.7rem; color: var(--accent-orange); margin-bottom: 0.4rem; font-weight: 500;">⏱️ ${escapeHtml(formattedTimeAgo)}</div>
-              <div class="card-tags">
-                <span class="tag">📅 ${escapeHtml(ad.year || 'N/A')}</span>
-                <span class="tag">⛽ ${escapeHtml(ad.fuel || 'Benzin')}</span>
-                <span class="tag">⚡ ${escapeHtml(ad.hp || '?')} HP</span>
-                <span class="tag">🛣️ ${ad.km ? Number(ad.km).toLocaleString() : '0'} KM</span>
-              </div>
-              <div class="card-specs">
-                <div>🏷️ ${escapeHtml(ad.brand || '')}</div>
-                <div>👤 ${escapeHtml(ad.ownerNickname || 'Anonim')}</div>
-              </div>
-            </div>
-          </div>
-        `);
-      });
-    }
-
-    function resetFilters() {
-      document.getElementById('filterSearch').value = '';
-      document.getElementById('filterIsModded').checked = false;
-      populateFilterBrands();
-      document.getElementById('filterBrand').value = 'all';
-      document.getElementById('filterFuel').value = 'all';
-      document.getElementById('filterYear').value = '';
-      document.getElementById('filterEngine').value = 'all';
-      document.getElementById('filterDamage').value = 'all';
-      document.getElementById('filterDrive').value = 'all';
-      document.getElementById('filterTrans').value = 'all';
-      document.getElementById('filterModdedStatus').value = 'all';
-      showOnlyFavorites = false;
-      document.getElementById('contentHeaderTitle').textContent = "Aktif İlanlar";
-      renderAds();
-    }
-
+    // ============ AUTH ============
     function openAuthModal() { document.getElementById('authModal').classList.add('active'); }
     function closeAuthModal() { document.getElementById('authModal').classList.remove('active'); }
+
     function switchAuthTab(tab) {
       document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
       document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
@@ -1914,256 +1568,31 @@
       document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
     }
 
-    function openProfileModal() {
-      if (!currentUser) return;
-      document.getElementById('profileNickname').value = currentUserProfile.nickname;
-      document.getElementById('profileEmail').value = currentUser.email;
-      document.getElementById('profileModalAvatar').src = currentUserProfile.avatar;
-      document.getElementById('profileCurrentPass').value = "";
-      document.getElementById('profileNewPass').value = "";
-      document.getElementById('profileModal').classList.add('active');
-    }
-    function closeProfileModal() { document.getElementById('profileModal').classList.remove('active'); }
-
-    function openAdminModal() {
-      if (currentUser && isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile)) {
-        document.getElementById('adminModal').classList.add('active');
-        renderAdminAds();
-        renderAdminReports();
-        renderAdminActivePunishments();
-      } else {
-        alert("Yetkiniz yok!");
-      }
-    }
-    function closeAdminModal() { document.getElementById('adminModal').classList.remove('active'); }
-
-    function switchAdminTab(tab) {
-      document.getElementById('tabAdminAds').classList.toggle('active', tab === 'ads');
-      document.getElementById('tabAdminReports').classList.toggle('active', tab === 'reports');
-      document.getElementById('tabAdminPunish').classList.toggle('active', tab === 'punish');
-      document.getElementById('tabAdminActivePunishments').classList.toggle('active', tab === 'activePunishments');
-      
-      document.getElementById('adminAdsSection').style.display = tab === 'ads' ? 'block' : 'none';
-      document.getElementById('adminReportsSection').style.display = tab === 'reports' ? 'block' : 'none';
-      document.getElementById('adminPunishSection').style.display = tab === 'punish' ? 'block' : 'none';
-      document.getElementById('adminActivePunishmentsSection').style.display = tab === 'activePunishments' ? 'block' : 'none';
-    }
-
-    function renderAdminAds() {
-      const container = document.getElementById('adminAdsList');
-      container.innerHTML = "";
-      if (adsData.length === 0) {
-        container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:1.5rem;">İlan bulunmuyor.</div>`;
-        return;
-      }
-      adsData.forEach(ad => {
-        const isApproved = ad.approved !== false;
-        const statusText = isApproved ? `<span style="color:#10b981;">(Yayında)</span>` : `<span style="color:#f59e0b;">(Onay Bekliyor)</span>`;
-        const approveBtn = !isApproved ? `<button onclick="adminApproveAd('${escapeHtml(ad.id)}')" class="btn-primary" style="padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem;">Onayla</button>` : '';
-
-        container.insertAdjacentHTML('beforeend', `
-          <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-main); padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); flex-wrap:wrap; gap:8px;">
-            <div>
-              <div style="font-weight:600; font-size:0.85rem;">${escapeHtml(ad.title)} ${statusText}</div>
-              <div style="font-size:0.75rem; color:var(--text-muted);">Sahibi: ${escapeHtml(ad.ownerNickname)}</div>
-            </div>
-            <div style="display:flex; gap: 6px; flex-wrap:wrap;">
-              <button onclick="closeAdminModal(); openDetailModal('${escapeHtml(ad.id)}')" class="btn-auth" style="padding:0.3rem 0.6rem; font-size:0.75rem;">🔍 Göz At</button>
-              <button onclick="closeAdminModal(); openEditModal('${escapeHtml(ad.id)}')" class="btn-auth" style="padding:0.3rem 0.6rem; font-size:0.75rem; border-color:#3b82f6; color:#93c5fd;">✏️ Düzenle</button>
-              ${approveBtn}
-              <button onclick="adminDeleteAd('${escapeHtml(ad.id)}')" class="btn-danger" style="padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem;">Sil</button>
-            </div>
-          </div>
-        `);
-      });
-    }
-
-    let reportsListenerAttached = false;
-    function renderAdminReports() {
-      if (!reportsListenerAttached) {
-        db.ref('reports').on('value', snapshot => {
-          const container = document.getElementById('adminReportsList');
-          if (!container) return;
-          container.innerHTML = "";
-          const reports = snapshot.val();
-          if (!reports) {
-            container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:1.5rem;">Rapor yok.</div>`;
-            return;
-          }
-          Object.entries(reports).forEach(([key, rep]) => {
-            let actionButtons = `<button onclick="deleteReport('${escapeHtml(key)}')" class="btn-auth" style="padding:0.25rem 0.5rem; font-size:0.7rem;">Temizle</button>`;
-            
-            if (rep.adId) {
-              actionButtons += `
-                <button onclick="closeAdminModal(); openDetailModal('${escapeHtml(rep.adId)}')" class="btn-auth" style="padding:0.25rem 0.5rem; font-size:0.7rem;">Göz At</button>
-                <button onclick="closeAdminModal(); openEditModal('${escapeHtml(rep.adId)}')" class="btn-auth" style="padding:0.25rem 0.5rem; font-size:0.7rem; border-color:#3b82f6; color:#93c5fd;">Düzenle</button>
-              `;
-            }
-
-            container.insertAdjacentHTML('beforeend', `
-              <div style="background:var(--bg-main); padding:10px; border-radius:8px; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-                <div>
-                  <div style="font-weight:bold; color:#ef4444; font-size:0.8rem;">Tür: ${escapeHtml(rep.type)}</div>
-                  <div style="font-size:0.85rem; color:var(--text-main); margin-top:2px;">"${escapeHtml(rep.content || '')}"</div>
-                  <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">Rapor Eden: ${escapeHtml(rep.reporter)} | Sebep: ${escapeHtml(rep.reason)}</div>
-                </div>
-                <div style="display:flex; gap:5px; flex-wrap:wrap;">${actionButtons}</div>
-              </div>
-            `);
-          });
-        });
-        reportsListenerAttached = true;
-      }
-    }
-
-    let activePunishmentsListenerAttached = false;
-    function renderAdminActivePunishments() {
-      if (!activePunishmentsListenerAttached) {
-        db.ref('punishments').on('value', snapshot => {
-          const container = document.getElementById('adminActivePunishmentsList');
-          if (!container) return;
-          container.innerHTML = "";
-          const punishments = snapshot.val();
-          if (!punishments) {
-            container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:1.5rem;">Aktif cezası bulunan kullanıcı yok.</div>`;
-            return;
-          }
-          
-          let activeCount = 0;
-          const now = Date.now();
-
-          Object.entries(punishments).forEach(([punishKey, p]) => {
-            if (p.revoked) return;
-            const durationMs = ((p.days || 0) * 24 * 3600 * 1000) + ((p.hours || 0) * 3600 * 1000);
-            const expiresAt = (p.timestamp || 0) + durationMs;
-            const isInfinite = durationMs === 0;
-
-            if (isInfinite || now < expiresAt) {
-              activeCount++;
-              let remainingText = isInfinite ? "Süresiz" : `${Math.ceil((expiresAt - now) / (1000 * 60 * 60))} saat kaldı`;
-
-              container.insertAdjacentHTML('beforeend', `
-                <div style="background:var(--bg-main); padding:12px; border-radius:8px; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-                  <div>
-                    <div style="font-weight:bold; color:#ef4444; font-size:0.9rem;">👤 ${escapeHtml(p.username)} <span style="font-size: 0.75rem; background: rgba(239, 68, 68, 0.2); padding: 2px 6px; border-radius: 4px; border: 1px solid #ef4444;">${escapeHtml(p.type)}</span></div>
-                    <div style="font-size:0.8rem; color:var(--text-main); margin-top:4px;"><strong>Sebep:</strong> ${escapeHtml(p.reason)}</div>
-                    <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Süre: ${p.days} gün ${p.hours} saat | Kalan: ${remainingText} | Veren: ${escapeHtml(p.admin || 'Admin')}</div>
-                  </div>
-                  <div>
-                    <button onclick="removePunishment('${escapeHtml(punishKey)}')" class="btn-danger" style="padding:0.4rem 0.8rem; border-radius:6px; font-size:0.8rem; font-weight:600;">Cezayı Kaldır 🟢</button>
-                  </div>
-                </div>
-              `);
-            }
-          });
-
-          if (activeCount === 0) {
-            container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:1.5rem;">Aktif cezası bulunan kullanıcı yok.</div>`;
-          }
-        });
-        activePunishmentsListenerAttached = true;
-      }
-    }
-
-    async function removePunishment(punishKey) {
-      if (confirm("Bu kullanıcının cezasını kaldırmak istediğinize emin misiniz?")) {
-        try {
-          // Not: Geçmişi korumak için (Ceza Geçmişi özelliği) kayıt silinmiyor,
-          // 'revoked' olarak işaretleniyor.
-          await db.ref('punishments/' + punishKey).update({
-            revoked: true,
-            revokedAt: Date.now(),
-            revokedBy: currentUserProfile.nickname
-          });
-          alert("✅ Kullanıcının cezası başarıyla kaldırıldı!");
-        } catch(e) {
-          alert("Hata: " + e.message);
-        }
-      }
-    }
-
-    async function deleteReport(repKey) {
-      await db.ref('reports/' + repKey).remove();
-    }
-
-    async function findUidByNickname(nickname) {
-      try {
-        const snap = await db.ref('users').orderByChild('nickname').equalTo(nickname).once('value');
-        const val = snap.val();
-        if (!val) return null;
-        return Object.keys(val)[0];
-      } catch (e) { return null; }
-    }
-
-    async function issuePunishment() {
-      const username = document.getElementById('punishUsername').value.trim();
-      const type = document.getElementById('punishType').value;
-      const days = parseInt(document.getElementById('punishDays').value) || 0;
-      const hours = parseInt(document.getElementById('punishHours').value) || 0;
-      const reason = document.getElementById('punishReason').value.trim();
-
-      if (!username || !reason) {
-        alert("Lütfen kullanıcı adını ve ceza sebebini doldurun!");
-        return;
-      }
-
-      // Ceza, nickname yerine kalıcı uid'e bağlanır — kullanıcı adını
-      // değiştirerek cezadan kaçmayı engeller. Kullanıcı bulunamazsa
-      // (yazım hatası vb.) işlem güvenlik için durdurulur.
-      const targetUid = await findUidByNickname(username);
-      if (!targetUid) {
-        alert(`⚠️ "${username}" adında kayıtlı bir kullanıcı bulunamadı. Lütfen tam ve doğru kullanıcı adını girin.`);
-        return;
-      }
-
-      try {
-        await db.ref('punishments').push({
-          username: username,
-          targetUid: targetUid,
-          type: type,
-          days: days,
-          hours: hours,
-          reason: reason,
-          timestamp: Date.now(),
-          admin: currentUserProfile.nickname
-        });
-        alert(`✅ "${username}" kullanıcısına ${type} cezası verildi.`);
-        document.getElementById('punishUsername').value = "";
-        document.getElementById('punishReason').value = "";
-
-        pushNotification(targetUid, 'punishment', `Hesabınıza "${type}" cezası verildi: ${reason}`, '⚖️');
-      } catch(e) {
-        alert("Hata: " + e.message);
-      }
-    }
-
-    async function adminApproveAd(adId) {
-      try {
-        await db.ref('ads/' + adId).update({ approved: true });
-        alert("İlan onaylandı!");
-        const ad = adsData.find(a => a.id === adId);
-        if (ad && ad.ownerId) pushNotification(ad.ownerId, 'ad_approved', `"${ad.title}" ilanınız onaylandı ve yayına alındı! 🎉`, '✅', { adId });
-        renderAdminAds();
-      } catch(err) { alert("Hata: " + err.message); }
-    }
-
-    async function adminDeleteAd(adId) {
-      if (confirm("Bu ilanı kaldırmak istediğinize emin misiniz?")) {
-        try {
-          const ad = adsData.find(a => a.id === adId);
-          await db.ref('ads/' + adId).remove();
-          await db.ref('chats/' + adId).remove();
-          alert("İlan kaldırıldı.");
-          if (ad && ad.ownerId) pushNotification(ad.ownerId, 'ad_deleted', `"${ad.title}" ilanınız bir yönetici tarafından kaldırıldı.`, '🗑️');
-          renderAdminAds();
-        } catch(err) { alert("Hata: " + err.message); }
-      }
-    }
-
     async function handleLogin(e) {
       e.preventDefault();
+      const input = document.getElementById('loginEmailOrUsername').value.trim();
+      const pass = document.getElementById('loginPass').value;
+
       try {
-        await auth.signInWithEmailAndPassword(document.getElementById('loginEmail').value, document.getElementById('loginPass').value);
+        // Email ile giriş dene
+        if (input.includes('@')) {
+          await auth.signInWithEmailAndPassword(input, pass);
+        } else {
+          // Username ile giriş - önce uid bul
+          const snap = await db.ref('nicknameIndex/' + input).once('value');
+          const uid = snap.val();
+          if (!uid) {
+            alert("Kullanıcı adı bulunamadı!");
+            return;
+          }
+          const userSnap = await db.ref('users/' + uid + '/email').once('value');
+          const email = userSnap.val();
+          if (!email) {
+            alert("Bu kullanıcının e-posta adresi yok. Lütfen e-posta ile giriş yapın.");
+            return;
+          }
+          await auth.signInWithEmailAndPassword(email, pass);
+        }
         closeAuthModal();
       } catch (err) { alert("Hata: " + err.message); }
     }
@@ -2176,50 +1605,117 @@
         return;
       }
 
-      const nickname = document.getElementById('regNickname').value.trim();
-      const email = document.getElementById('regEmail').value;
+      const uniqueName = document.getElementById('regUniqueName').value.trim();
+      const displayName = document.getElementById('regDisplayName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
       const pass = document.getElementById('regPass').value;
       const passConfirm = document.getElementById('regPassConfirm').value;
 
+      if (!isValidUniqueName(uniqueName)) {
+        alert("Benzersiz kullanıcı adı sadece harf, rakam, - ve _ içerebilir!");
+        return;
+      }
+
       if (pass !== passConfirm) { alert("Şifreler eşleşmiyor!"); return; }
 
+      // Benzersiz ad kontrolü
+      const nameCheck = await db.ref('nicknameIndex/' + uniqueName).once('value');
+      if (nameCheck.exists()) {
+        alert("Bu kullanıcı adı zaten alınmış!");
+        return;
+      }
+
       try {
-        const cred = await auth.createUserWithEmailAndPassword(email, pass);
-        await cred.user.sendEmailVerification();
-        await db.ref('users/' + cred.user.uid).set({
-          nickname: nickname,
-          avatar: "https://via.placeholder.com/150",
+        // Email varsa auth ile hesap oluştur
+        let uid;
+        if (email) {
+          const cred = await auth.createUserWithEmailAndPassword(email, pass);
+          uid = cred.user.uid;
+        } else {
+          // Email yoksa anonim hesap oluştur
+          const cred = await auth.createUserWithEmailAndPassword(uniqueName + '@belascoauto.local', pass);
+          uid = cred.user.uid;
+        }
+
+        await db.ref('users/' + uid).set({
+          uniqueName: uniqueName,
+          displayName: displayName,
+          avatar: DEFAULT_AVATAR,
           createdAt: Date.now(),
-          favorites: []
+          favorites: [],
+          blockedUsers: [],
+          email: email || ''
         });
-        alert("Hesap oluşturuldu! Doğrulama e-postası gönderildi.");
+
+        await db.ref('nicknameIndex/' + uniqueName).set(uid);
+
+        alert("Hesap oluşturuldu!");
         closeAuthModal();
       } catch (err) { alert("Hata: " + err.message); }
+    }
+
+    async function handleForgotPassword() {
+      const email = prompt("Şifre sıfırlama bağlantısı gönderilecek e-posta adresiniz:");
+      if (email) {
+        try {
+          await auth.sendPasswordResetEmail(email.trim());
+          alert("✅ Şifre sıfırlama e-postası gönderildi!");
+        } catch(err) {
+          alert("Hata: " + err.message);
+        }
+      }
+    }
+
+    // ============ PROFİL ============
+    function openProfileModal() {
+      if (!currentUser) return;
+      document.getElementById('profileDisplayName').value = currentUserProfile.displayName || '';
+      document.getElementById('profileUniqueName').value = currentUserProfile.uniqueName || '';
+      document.getElementById('profileEmail').value = currentUserProfile.email || '';
+      document.getElementById('profileModalAvatar').src = currentUserProfile.avatar || DEFAULT_AVATAR;
+      document.getElementById('profileCurrentPass').value = "";
+      document.getElementById('profileNewPass').value = "";
+      document.getElementById('profileModal').classList.add('active');
+      renderBlockedUsers();
+    }
+    function closeProfileModal() { document.getElementById('profileModal').classList.remove('active'); }
+
+    function renderBlockedUsers() {
+      const container = document.getElementById('blockedUsersList');
+      const blocked = currentUserProfile.blockedUsers || [];
+      if (blocked.length === 0) {
+        container.innerHTML = '<span style="color:var(--text-muted); font-size:0.75rem;">Hiç kimseyi engellememişsiniz.</span>';
+        return;
+      }
+      container.innerHTML = blocked.map(uid => `
+        <span style="background:var(--bg-hover); padding:2px 8px; border-radius:12px; font-size:0.7rem; display:flex; align-items:center; gap:4px; border:1px solid var(--border-color);">
+          ${escapeHtml(uid)}
+          <button onclick="unblockUser('${escapeHtml(uid)}')" style="background:none; border:none; color:#ef4444; cursor:pointer; font-size:0.6rem;">×</button>
+        </span>
+      `).join('');
     }
 
     async function handleUpdateProfile(e) {
       e.preventDefault();
       const currentPass = document.getElementById('profileCurrentPass').value;
-      const newNickname = document.getElementById('profileNickname').value.trim();
-      const newEmail = document.getElementById('profileEmail').value;
+      const newDisplayName = document.getElementById('profileDisplayName').value.trim();
+      const newEmail = document.getElementById('profileEmail').value.trim();
       const newPass = document.getElementById('profileNewPass').value;
 
       try {
         const credential = firebase.auth.EmailAuthProvider.credential(currentUser.email, currentPass);
         await currentUser.reauthenticateWithCredential(credential);
 
-        let updates = { nickname: newNickname };
+        let updates = { displayName: newDisplayName };
         if (currentNewAvatar) updates.avatar = currentNewAvatar;
-
-        await db.ref('users/' + currentUser.uid).update(updates);
-
-        if (newEmail !== currentUser.email) {
+        if (newEmail && newEmail !== currentUser.email) {
+          updates.email = newEmail;
           await currentUser.verifyBeforeUpdateEmail(newEmail);
           alert("Yeni e-posta adresinize doğrulama postası gönderildi.");
         }
-
         if (newPass) await currentUser.updatePassword(newPass);
 
+        await db.ref('users/' + currentUser.uid).update(updates);
         alert("Profil güncellendi!");
         location.reload();
       } catch(err) {
@@ -2240,12 +1736,239 @@
       }
     }
 
-    /* --- İLAN VERME KONTROLÜ VE CEZA ENGELİ --- */
+    // ============ BAN HISTORY ============
+    async function toggleBanHistory() {
+      const container = document.getElementById('banHistoryContainer');
+      const icon = document.getElementById('banHistoryToggleIcon');
+      const isOpen = container.style.display !== 'none';
+      if (isOpen) {
+        container.style.display = 'none';
+        icon.textContent = '▾';
+        return;
+      }
+      container.style.display = 'block';
+      icon.textContent = '▴';
+      container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:0.8rem; padding:1rem;">Yükleniyor...</div>`;
+
+      try {
+        const snap = await db.ref('punishments').once('value');
+        const all = snap.val() || {};
+        const mine = Object.entries(all)
+          .filter(([key, p]) => p.targetUid ? p.targetUid === currentUser.uid : (p.uniqueName && p.uniqueName.toLowerCase() === (currentUserProfile.uniqueName || '').toLowerCase()))
+          .map(([key, p]) => ({ id: key, ...p }))
+          .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+        if (mine.length === 0) {
+          container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:0.8rem; padding:1rem;">🎉 Herhangi bir ceza geçmişiniz bulunmuyor.</div>`;
+          return;
+        }
+
+        const now = Date.now();
+        container.innerHTML = mine.map(p => {
+          const durationMs = ((p.days || 0) * 24 * 3600 * 1000) + ((p.hours || 0) * 3600 * 1000);
+          const expiresAt = (p.timestamp || 0) + durationMs;
+          const isInfinite = durationMs === 0;
+          let statusClass = 'expired', statusText = 'Süresi Doldu';
+          if (p.revoked) { statusClass = 'revoked'; statusText = 'Kaldırıldı'; }
+          else if (isInfinite || now < expiresAt) { statusClass = 'active'; statusText = 'Aktif'; }
+
+          return `
+            <div class="ban-history-item">
+              <div class="top-row">
+                <strong style="font-size:0.85rem;">${escapeHtml(p.type || 'Ceza')}</strong>
+                <span class="ban-status-pill ${statusClass}">${statusText}</span>
+              </div>
+              <div style="font-size:0.78rem; color:var(--text-main); margin-top:4px;">${escapeHtml(p.reason || '')}</div>
+              <div style="font-size:0.68rem; color:var(--text-muted); margin-top:4px;">
+                ${new Date(p.timestamp).toLocaleDateString('tr-TR')} • Süre: ${isInfinite ? 'Süresiz' : `${p.days || 0}g ${p.hours || 0}s`} • Veren: ${escapeHtml(p.admin || 'Admin')}
+              </div>
+            </div>`;
+        }).join('');
+      } catch (e) {
+        container.innerHTML = `<div style="color:#ef4444; font-size:0.8rem; text-align:center; padding:1rem;">Geçmiş yüklenemedi.</div>`;
+      }
+    }
+
+    // ============ BLOKLAMA SİSTEMİ ============
+    async function toggleBlockUser() {
+      if (!currentUser) { alert("Giriş yapmalısınız!"); return; }
+      if (!publicProfileViewedUid) return;
+      if (publicProfileViewedUid === currentUser.uid) { alert("Kendinizi engelleyemezsiniz!"); return; }
+
+      const blocked = currentUserProfile.blockedUsers || [];
+      const index = blocked.indexOf(publicProfileViewedUid);
+      if (index > -1) {
+        blocked.splice(index, 1);
+      } else {
+        blocked.push(publicProfileViewedUid);
+      }
+      
+      await db.ref('users/' + currentUser.uid + '/blockedUsers').set(blocked);
+      currentUserProfile.blockedUsers = blocked;
+      renderBlockedUsers();
+      document.getElementById('ppBlockBtn').textContent = index > -1 ? '🚫 Engelle' : '✅ Engellendi';
+      document.getElementById('ppBlockBtn').classList.toggle('blocked', index === -1);
+    }
+
+    async function unblockUser(uid) {
+      const blocked = currentUserProfile.blockedUsers || [];
+      const index = blocked.indexOf(uid);
+      if (index > -1) {
+        blocked.splice(index, 1);
+        await db.ref('users/' + currentUser.uid + '/blockedUsers').set(blocked);
+        currentUserProfile.blockedUsers = blocked;
+        renderBlockedUsers();
+      }
+    }
+
+    function isUserBlocked(uid) {
+      return (currentUserProfile.blockedUsers || []).includes(uid);
+    }
+
+    // ============ ANA SAYFA İLANLAR ============
+    let renderAdsDebounceTimer = null;
+    function debouncedRenderAds() {
+      clearTimeout(renderAdsDebounceTimer);
+      renderAdsDebounceTimer = setTimeout(renderAds, 250);
+    }
+
+    function renderAds() {
+      const grid = document.getElementById('listingsGrid');
+      const search = document.getElementById('filterSearch').value.toLowerCase().trim();
+      const fBrand = document.getElementById('filterBrand').value;
+      const fFuel = document.getElementById('filterFuel').value;
+      const fYear = document.getElementById('filterYear').value;
+      const fEngine = document.getElementById('filterEngine').value;
+      const fDamage = document.getElementById('filterDamage').value;
+      const drive = document.getElementById('filterDrive').value;
+      const trans = document.getElementById('filterTrans').value;
+      const moddedStatus = document.getElementById('filterModdedStatus').value;
+      const sellerType = document.getElementById('filterSellerType').value;
+      const bodyType = document.getElementById('filterBodyType').value;
+      const weightMin = parseInt(document.getElementById('filterWeightMin').value) || 0;
+      const weightMax = parseInt(document.getElementById('filterWeightMax').value) || Infinity;
+      const sortType = document.getElementById('sortSelect').value;
+
+      const userFavorites = currentUserProfile.favorites || [];
+
+      let filtered = adsData.filter(ad => {
+        if (showOnlyFavorites && !userFavorites.includes(ad.id)) return false;
+
+        const isApprovedOrOwner = ad.approved !== false || (currentUser && ad.ownerId === currentUser.uid) || (currentUser && isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile));
+        if (!isApprovedOrOwner) return false;
+
+        const mSearch = (ad.title || '').toLowerCase().includes(search) || (ad.brand || '').toLowerCase().includes(search) || (ad.model || '').toLowerCase().includes(search) || (ad.description || '').toLowerCase().includes(search);
+        const mBrand = (fBrand === 'all') || (ad.brand === fBrand);
+        const mFuel = (fFuel === 'all') || (ad.fuel === fFuel);
+        const mYear = !fYear || (ad.year && Number(ad.year) >= Number(fYear));
+        const mEngine = (fEngine === 'all') || (ad.engine === fEngine);
+        const mDamage = (fDamage === 'all') || (ad.damageStatus === fDamage);
+        const mDrive = (drive === 'all') || (ad.drive === drive);
+        const mTrans = (trans === 'all') || (ad.trans === trans);
+        const mSeller = (sellerType === 'all') || (ad.sellerType === sellerType);
+        const mBody = (bodyType === 'all') || (ad.bodyType === bodyType);
+        const mWeight = (ad.weight || 0) >= weightMin && (ad.weight || 0) <= weightMax;
+        let mModded = true;
+        if (moddedStatus === 'vanilla') mModded = !ad.isModded;
+        if (moddedStatus === 'modded') mModded = !!ad.isModded;
+
+        return mSearch && mBrand && mFuel && mYear && mEngine && mDamage && mDrive && mTrans && mSeller && mBody && mWeight && mModded;
+      });
+
+      // Sıralama
+      switch(sortType) {
+        case 'newest': filtered.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0)); break;
+        case 'oldest': filtered.sort((a,b) => (a.createdAt || 0) - (b.createdAt || 0)); break;
+        case 'popular': filtered.sort((a,b) => ((b.favorites || 0) - (a.favorites || 0)) || ((b.createdAt || 0) - (a.createdAt || 0))); break;
+        case 'price_low': filtered.sort((a,b) => (a.price || 0) - (b.price || 0)); break;
+        case 'price_high': filtered.sort((a,b) => (b.price || 0) - (a.price || 0)); break;
+        default: filtered.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
+      }
+
+      grid.innerHTML = '';
+      document.getElementById('listingCount').textContent = `${filtered.length} İlan`;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="empty-state"><span>🔍</span><h3>İlan Bulunamadı</h3></div>`;
+        return;
+      }
+
+      filtered.forEach(ad => {
+        const modBadge = ad.isModded ? `<div class="badge-modded">MOD</div>` : '';
+        const pertBadge = ad.isPert ? `<div class="badge-pert">PERT</div>` : '';
+        const pendingBadge = (ad.approved === false) ? `<div class="badge-pending">⏳ ONAY BEKLİYOR</div>` : '';
+        const sellerTypeBadge = ad.sellerType === 'bayi' ? `<div class="badge-seller-type">🏢 BAYİ</div>` : `<div class="badge-seller-type" style="background:rgba(34,197,94,0.2);border-color:#22c55e;">👤 SAHİBİNDEN</div>`;
+        
+        let mainImg = 'https://via.placeholder.com/400';
+        if (ad.images && ad.images.length > 0) {
+          const thumbIdx = ad.thumbnailIndex || 0;
+          mainImg = ad.images[thumbIdx] || ad.images[0];
+        }
+        
+        const isFav = userFavorites.includes(ad.id);
+        const favBtnClass = isFav ? 'favorite-btn active' : 'favorite-btn';
+        const favIconSymbol = isFav ? '❤️' : '🤍';
+        const formattedTimeAgo = timeAgo(ad.createdAt);
+
+        grid.insertAdjacentHTML('beforeend', `
+          <div class="card" onclick="openDetailModal('${escapeHtml(ad.id)}')">
+            <div class="card-img-wrapper">
+              ${modBadge}
+              ${pertBadge}
+              ${pendingBadge}
+              ${sellerTypeBadge}
+              <button class="${favBtnClass}" onclick="toggleFavorite(event, '${escapeHtml(ad.id)}')">${favIconSymbol}</button>
+              <img src="${escapeHtml(mainImg)}" alt="${escapeHtml(ad.title)}" loading="lazy">
+            </div>
+            <div class="card-body">
+              <div class="card-title">${escapeHtml(ad.title)}</div>
+              <div style="font-size: 0.7rem; color: var(--accent-orange); margin-bottom: 0.4rem; font-weight: 500;">⏱️ ${escapeHtml(formattedTimeAgo)}</div>
+              <div class="card-tags">
+                <span class="tag">📅 ${escapeHtml(ad.year || 'N/A')}</span>
+                <span class="tag">⛽ ${escapeHtml(ad.fuel || 'Benzin')}</span>
+                <span class="tag">⚡ ${escapeHtml(ad.hp || '?')} HP</span>
+                <span class="tag">🛣️ ${ad.km ? Number(ad.km).toLocaleString() : '0'} KM</span>
+                ${ad.weight ? `<span class="tag">⚖️ ${ad.weight} KG</span>` : ''}
+                ${ad.bodyType ? `<span class="tag">🚗 ${escapeHtml(ad.bodyType)}</span>` : ''}
+              </div>
+              <div class="card-specs">
+                <div>🏷️ ${escapeHtml(ad.brand || '')}</div>
+                <div>👤 ${escapeHtml(ad.ownerDisplayName || ad.ownerNickname || 'Anonim')}</div>
+              </div>
+            </div>
+          </div>
+        `);
+      });
+    }
+
+    function resetFilters() {
+      document.getElementById('filterSearch').value = '';
+      document.getElementById('filterIsModded').checked = false;
+      populateFilterBrands();
+      document.getElementById('filterBrand').value = 'all';
+      document.getElementById('filterFuel').value = 'all';
+      document.getElementById('filterYear').value = '';
+      document.getElementById('filterEngine').value = 'all';
+      document.getElementById('filterDamage').value = 'all';
+      document.getElementById('filterDrive').value = 'all';
+      document.getElementById('filterTrans').value = 'all';
+      document.getElementById('filterModdedStatus').value = 'all';
+      document.getElementById('filterSellerType').value = 'all';
+      document.getElementById('filterBodyType').value = 'all';
+      document.getElementById('filterWeightMin').value = '';
+      document.getElementById('filterWeightMax').value = '';
+      document.getElementById('sortSelect').value = 'newest';
+      showOnlyFavorites = false;
+      document.getElementById('contentHeaderTitle').textContent = "Aktif İlanlar";
+      document.getElementById('btnToggleFavorites').classList.remove('active');
+      renderAds();
+    }
+
+    // ============ İLAN VERME ============
     async function checkAuthAndOpenPost() {
       if (!currentUser) { alert("Önce giriş yapmalısınız!"); openAuthModal(); return; }
 
-      // İlan Verme Engeli Kontrolü
-      const banCheck = await checkUserPunishment(currentUser.uid, currentUserProfile.nickname, "İlan Engeli");
+      const banCheck = await checkUserPunishment(currentUser.uid, currentUserProfile.uniqueName, "İlan Engeli");
       if (banCheck) {
         alert(`🚫 İLAN VERME ENGELİNİZ BULUNMAKTADIR!\n\nSebep: ${banCheck.reason}\nSüre: ${banCheck.isInfinite ? 'Süresiz' : 'Geçici'}`);
         return;
@@ -2259,9 +1982,12 @@
       document.getElementById('imagePreviewContainer').innerHTML = "";
       document.getElementById('postForm').reset();
       document.getElementById('modLinkGroup').style.display = 'none';
+      document.getElementById('postWeight').value = 1450;
       toggleBrandList();
       document.getElementById('postModal').classList.add('active');
     }
+
+    function closePostModal() { document.getElementById('postModal').classList.remove('active'); }
 
     function openEditModal(adId) {
       const ad = adsData.find(a => a.id === adId);
@@ -2273,13 +1999,16 @@
 
       document.getElementById('postTitle').value = ad.title || '';
       document.getElementById('postIsModded').checked = !!ad.isModded;
+      document.getElementById('postSellerType').value = ad.sellerType || 'sahibinden';
       toggleBrandList();
 
       document.getElementById('postBrand').value = ad.brand || '';
       document.getElementById('postModel').value = ad.model || '';
+      document.getElementById('postBodyType').value = ad.bodyType || 'Sedan';
       document.getElementById('postFuel').value = ad.fuel || 'Benzin';
       document.getElementById('postYear').value = ad.year || '';
       document.getElementById('postKm').value = ad.km || '';
+      document.getElementById('postWeight').value = ad.weight || 1450;
       document.getElementById('postHp').value = ad.hp || '';
       document.getElementById('postDrive').value = ad.drive || 'RWD';
       document.getElementById('postTrans').value = ad.trans || 'Manuel';
@@ -2303,13 +2032,11 @@
       document.getElementById('postModal').classList.add('active');
     }
 
-    function closePostModal() { document.getElementById('postModal').classList.remove('active'); }
-
     async function handleSaveAd(e) {
       e.preventDefault();
       if (isSubmittingAd) return;
 
-      const banCheck = await checkUserPunishment(currentUser.uid, currentUserProfile.nickname, "İlan Engeli");
+      const banCheck = await checkUserPunishment(currentUser.uid, currentUserProfile.uniqueName, "İlan Engeli");
       if (banCheck) {
         alert(`🚫 İLAN VERME ENGELİNİZ BULUNMAKTADIR!\n\nSebep: ${banCheck.reason}`);
         return;
@@ -2353,9 +2080,11 @@
         modLink: modLink,
         brand: document.getElementById('postBrand').value,
         model: document.getElementById('postModel').value,
+        bodyType: document.getElementById('postBodyType').value,
         fuel: document.getElementById('postFuel').value,
         year: parseInt(document.getElementById('postYear').value),
         km: parseInt(document.getElementById('postKm').value),
+        weight: parseInt(document.getElementById('postWeight').value) || 1450,
         hp: parseInt(document.getElementById('postHp').value),
         drive: document.getElementById('postDrive').value,
         trans: document.getElementById('postTrans').value,
@@ -2363,12 +2092,16 @@
         aspiration: document.getElementById('postAspiration').value,
         damageStatus: document.getElementById('postDamageStatus').value,
         isPert: document.getElementById('postIsPert').checked,
+        sellerType: document.getElementById('postSellerType').value,
         images: currentUploadedImages,
         thumbnailIndex: currentSelectedThumbnailIndex,
         ownerId: currentUser.uid,
-        ownerNickname: currentUserProfile.nickname,
-        ownerAvatar: currentUserProfile.avatar,
-        approved: false
+        ownerDisplayName: currentUserProfile.displayName || currentUserProfile.uniqueName,
+        ownerUniqueName: currentUserProfile.uniqueName,
+        ownerAvatar: currentUserProfile.avatar || DEFAULT_AVATAR,
+        approved: false,
+        favorites: 0,
+        price: 0 // Fiyat sonra eklenebilir
       };
 
       if (pcFileData) {
@@ -2382,8 +2115,12 @@
           alert("✅ İlan güncellendi ve onaya gönderildi!");
         } else {
           adDataPayload.createdAt = Date.now();
-          await db.ref('ads').push(adDataPayload);
+          const newRef = db.ref('ads').push();
+          await newRef.set(adDataPayload);
           alert("⏳ İlanınız oluşturuldu, onaylandıktan sonra yayınlanacaktır.");
+          
+          // Admin'e bildirim
+          pushNotification(ADMIN_EMAIL, 'admin_new_ad', `Yeni ilan eklendi: ${adDataPayload.title}`, '📢', { adId: newRef.key });
         }
 
         document.getElementById('postForm').reset();
@@ -2401,17 +2138,7 @@
       }
     }
 
-    async function deleteAd(adId) {
-      if (confirm("Bu ilanı kaldırmak istediğinize emin misiniz?")) {
-        try {
-          await db.ref('ads/' + adId).remove();
-          await db.ref('chats/' + adId).remove();
-          alert("İlan kaldırıldı!");
-          closeDetailModal();
-        } catch(err) { alert("Hata: " + err.message); }
-      }
-    }
-
+    // ============ İLAN DETAY ============
     async function openDetailModal(adId) {
       currentSelectedAdId = adId;
       const ad = adsData.find(a => a.id === adId);
@@ -2456,14 +2183,17 @@
 
       document.getElementById('detailSpecs').innerHTML = `
         <div> Marka/Model: <strong>${escapeHtml(ad.brand)} ${escapeHtml(ad.model)}</strong></div>
+        <div> Kasa Tipi: <strong>${escapeHtml(ad.bodyType || 'Belirtilmemiş')}</strong></div>
         <div> Model Yılı: <strong>${escapeHtml(ad.year)}</strong></div>
         <div> Kilometre: <strong>${ad.km ? Number(ad.km).toLocaleString() : '0'} KM</strong></div>
+        <div> Ağırlık: <strong>${ad.weight || '?'} KG</strong></div>
         <div> Motor: <strong>${escapeHtml(ad.engine || '1.6L')} (${escapeHtml(ad.aspiration || 'Atmosferik')})</strong></div>
         <div> Motor Gücü: <strong>${escapeHtml(ad.hp)} HP</strong></div>
         <div> Yakıt Tipi: <strong>${escapeHtml(ad.fuel)}</strong></div>
         <div> Çekiş Tipi: <strong>${escapeHtml(ad.drive)}</strong></div>
         <div> Vites Tipi: <strong>${escapeHtml(ad.trans)}</strong></div>
         <div> Hasar Durumu: <strong>${escapeHtml(ad.damageStatus)}</strong></div>
+        <div> İlan Sahibi: <strong>${ad.sellerType === 'bayi' ? '🏢 Bayi / Galeri' : '👤 Sahibinden'}</strong></div>
       `;
 
       const descBox = document.getElementById('detailDescriptionContainer');
@@ -2474,19 +2204,31 @@
         descBox.style.display = 'none';
       }
 
-      document.getElementById('detailSellerName').textContent = ad.ownerNickname || 'Anonim';
-      document.getElementById('detailSellerAvatar').src = ad.ownerAvatar || 'https://via.placeholder.com/150';
+      // Satıcı bilgileri
+      document.getElementById('detailSellerName').textContent = ad.ownerDisplayName || ad.ownerNickname || 'Anonim';
+      document.getElementById('detailSellerUniqueName').textContent = ad.ownerUniqueName ? '@' + ad.ownerUniqueName : '';
+      document.getElementById('detailSellerAvatar').src = ad.ownerAvatar || DEFAULT_AVATAR;
       document.getElementById('detailSellerAccountDate').textContent = "Yükleniyor...";
+      document.getElementById('detailSellerTypeBadge').textContent = ad.sellerType === 'bayi' ? '🏢 BAYİ' : '👤 SAHİBİNDEN';
+      
+      // DM butonu (kendi ilanıysa gizle)
       document.getElementById('detailDmBtn').style.display = (currentUser && ad.ownerId === currentUser.uid) ? 'none' : 'flex';
+      
+      // Satıcı online durumu ve ban kontrolü
       if (ad.ownerId) {
-        db.ref('users/' + ad.ownerId).once('value').then(snap => {
-          const u = snap.val();
-          const dot = document.getElementById('detailSellerOnlineDot');
-          if (u) {
-            document.getElementById('detailSellerAccountDate').textContent = "Üyelik: " + (u.createdAt ? new Date(u.createdAt).toLocaleDateString('tr-TR') : '?');
-            dot.classList.toggle('is-online', !!u.online);
+        const snap = await db.ref('users/' + ad.ownerId).once('value');
+        const u = snap.val();
+        const dot = document.getElementById('detailSellerOnlineDot');
+        if (u) {
+          document.getElementById('detailSellerAccountDate').textContent = "Üyelik: " + (u.createdAt ? new Date(u.createdAt).toLocaleDateString('tr-TR') : '?');
+          dot.classList.toggle('is-online', !!u.online);
+          
+          // Ban kontrolü
+          const banCheck = await checkUserPunishment(ad.ownerId, u.uniqueName, "Hesap Askıya Alma");
+          if (banCheck) {
+            document.getElementById('detailSellerName').innerHTML += ' <span class="banned-badge" style="font-size:0.55rem;">BANLANDI</span>';
           }
-        }).catch(() => {});
+        }
       }
 
       const actionArea = document.getElementById('detailOwnerActionArea');
@@ -2494,8 +2236,8 @@
 
       if (currentUser && (ad.ownerId === currentUser.uid || isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile))) {
         actionArea.innerHTML = `
-          <button onclick="openEditModal('${escapeHtml(ad.id)}')" class="btn-action btn-auth" style="font-size:0.8rem;">✏️ İlanı Düzenle</button>
-          <button onclick="deleteAd('${escapeHtml(ad.id)}')" class="btn-action btn-danger" style="font-size:0.8rem;">🗑️ İlanı Sil</button>
+          <button onclick="openEditModal('${escapeHtml(ad.id)}')" class="btn-action btn-auth" style="font-size:0.8rem; text-align:center;">✏️ İlanı Düzenle</button>
+          <button onclick="deleteAd('${escapeHtml(ad.id)}')" class="btn-action btn-danger" style="font-size:0.8rem; text-align:center;">🗑️ İlanı Sil</button>
         `;
       }
 
@@ -2504,11 +2246,23 @@
 
     function closeDetailModal() { document.getElementById('detailModal').classList.remove('active'); }
 
-    /* --- SOHBET / MESAJLAŞMA VE CEZA ENGELİ --- */
+    async function deleteAd(adId) {
+      if (confirm("Bu ilanı kaldırmak istediğinize emin misiniz?")) {
+        try {
+          const ad = adsData.find(a => a.id === adId);
+          await db.ref('ads/' + adId).remove();
+          await db.ref('chats/' + adId).remove();
+          alert("İlan kaldırıldı!");
+          closeDetailModal();
+        } catch(err) { alert("Hata: " + err.message); }
+      }
+    }
+
+    // ============ MESAJLAŞMA (Soru-Cevap) ============
     async function openMessengerModal() {
       if (!currentUser) { alert("Soru sormak için giriş yapmalısınız!"); openAuthModal(); return; }
 
-      const banCheck = await checkUserPunishment(currentUser.uid, currentUserProfile.nickname, "Sohbet Engeli");
+      const banCheck = await checkUserPunishment(currentUser.uid, currentUserProfile.uniqueName, "Sohbet Engeli");
       const chatInput = document.getElementById('messengerInput');
       const chatBtn = document.getElementById('sendChatBtn');
 
@@ -2542,23 +2296,33 @@
         container.innerHTML = '';
         const messages = snapshot.val();
         if (!messages) {
-          container.innerHTML = `<div class="chat-empty-state"><span class="icon">💬</span>Bu ilan için henüz soru sorulmamış.<div class="sub">İlk soruyu siz sorun!</div></div>`;
+          container.innerHTML = `<div class="chat-empty-state" style="text-align:center; color:var(--text-muted); padding:2rem;"><span class="icon" style="font-size:2rem;">💬</span><div>Bu ilan için henüz soru sorulmamış.</div><div style="font-size:0.8rem;">İlk soruyu siz sorun!</div></div>`;
           return;
         }
 
-        Object.entries(messages).forEach(([msgKey, msg]) => {
+        const sortedKeys = Object.keys(messages).sort((a,b) => (messages[a].timestamp || 0) - (messages[b].timestamp || 0));
+        sortedKeys.forEach((msgKey) => {
+          const msg = messages[msgKey];
           const isOwn = currentUser && msg.senderUid === currentUser.uid;
+          const isAdmin = msg.senderUid && isUserAdmin(msg.senderUid, null, { isAdmin: true });
           const msgRow = document.createElement('div');
           msgRow.className = `chat-msg-row ${isOwn ? 'is-own' : ''}`;
+          
+          const canDelete = isOwn ? canDeleteMessage(msg.timestamp) : false;
+          const adminCanDelete = currentUser && isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile);
 
           msgRow.innerHTML = `
-            <img src="${escapeHtml(msg.senderAvatar || 'https://via.placeholder.com/150')}" class="chat-avatar" style="cursor:pointer;" onclick="openPublicProfile('${escapeHtml(msg.senderUid || '')}')">
+            <img src="${escapeHtml(msg.senderAvatar || DEFAULT_AVATAR)}" class="chat-avatar" style="cursor:pointer;" onclick="openPublicProfile('${escapeHtml(msg.senderUid || '')}')">
             <div class="chat-bubble-col">
               <div class="chat-meta">
-                <span class="chat-sender-name">${escapeHtml(msg.senderName)}</span>
+                <span class="chat-sender-name">${escapeHtml(msg.senderName)} ${isAdmin ? '<span class="admin-tag">Admin</span>' : ''}</span>
                 <span class="chat-time">${timeAgo(msg.timestamp)}</span>
               </div>
               <div class="chat-bubble">${escapeHtml(msg.text)}</div>
+              <div class="chat-msg-actions">
+                <button class="chat-action-btn" onclick="reportMessage('${escapeHtml(msgKey)}', '${escapeHtml(msg.text)}', '${escapeHtml(msg.senderUid)}')">🚨 Rapor Et</button>
+                ${(canDelete || adminCanDelete) ? `<button class="chat-action-btn danger" onclick="deleteMessage('${escapeHtml(msgKey)}')">🗑️ Sil</button>` : ''}
+              </div>
             </div>
           `;
           container.appendChild(msgRow);
@@ -2570,7 +2334,7 @@
     async function sendMessengerMessage() {
       if (!currentUser) return;
 
-      const banCheck = await checkUserPunishment(currentUser.uid, currentUserProfile.nickname, "Sohbet Engeli");
+      const banCheck = await checkUserPunishment(currentUser.uid, currentUserProfile.uniqueName, "Sohbet Engeli");
       if (banCheck) {
         alert(`🚫 SOHBET ENGELİNİZ BULUNMAKTADIR!\n\nSebep: ${banCheck.reason}`);
         return;
@@ -2583,8 +2347,8 @@
       try {
         await db.ref(`chats/${currentSelectedAdId}`).push({
           senderUid: currentUser.uid,
-          senderName: currentUserProfile.nickname,
-          senderAvatar: currentUserProfile.avatar,
+          senderName: currentUserProfile.displayName || currentUserProfile.uniqueName,
+          senderAvatar: currentUserProfile.avatar || DEFAULT_AVATAR,
           text: text,
           timestamp: Date.now()
         });
@@ -2592,11 +2356,59 @@
 
         const ad = adsData.find(a => a.id === currentSelectedAdId);
         if (ad && ad.ownerId && ad.ownerId !== currentUser.uid) {
-          pushNotification(ad.ownerId, 'ad_message', `${currentUserProfile.nickname}, "${ad.title}" ilanınıza mesaj yazdı`, '💬', { adId: ad.id });
+          pushNotification(ad.ownerId, 'ad_message', `${currentUserProfile.displayName}, "${ad.title}" ilanınıza mesaj yazdı`, '💬', { adId: ad.id });
         }
       } catch(e) { alert("Hata: " + e.message); }
     }
 
+    // ============ MESAJ RAPORLAMA VE SİLME ============
+    async function reportMessage(msgKey, msgText, senderUid) {
+      if (!currentUser) { alert("Raporlamak için giriş yapın!"); return; }
+      const reason = prompt("Bu mesajı rapor etme sebebiniz:");
+      if (reason) {
+        try {
+          await db.ref('reports').push({
+            type: "Mesaj Şikayeti",
+            adId: currentSelectedAdId,
+            msgKey: msgKey,
+            msgText: msgText,
+            senderUid: senderUid,
+            reason: reason,
+            reporter: currentUserProfile.uniqueName,
+            reporterDisplay: currentUserProfile.displayName,
+            timestamp: Date.now()
+          });
+          alert("✅ Mesaj yöneticilere bildirildi.");
+        } catch(e) { alert("Hata: " + e.message); }
+      }
+    }
+
+    async function deleteMessage(msgKey) {
+      if (!currentUser) return;
+      const isAdmin = isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile);
+      
+      // Mesajı bul
+      const snap = await db.ref(`chats/${currentSelectedAdId}/${msgKey}`).once('value');
+      const msg = snap.val();
+      if (!msg) return;
+      
+      const isOwn = msg.senderUid === currentUser.uid;
+      const canDelete = isOwn ? canDeleteMessage(msg.timestamp) : false;
+      
+      if (!canDelete && !isAdmin) {
+        alert("Bu mesajı silme yetkiniz yok (sadece 30 dakika içinde kendi mesajınızı silebilirsiniz).");
+        return;
+      }
+      
+      if (confirm("Bu mesajı silmek istediğinize emin misiniz?")) {
+        try {
+          await db.ref(`chats/${currentSelectedAdId}/${msgKey}`).remove();
+          alert("Mesaj silindi.");
+        } catch(e) { alert("Hata: " + e.message); }
+      }
+    }
+
+    // ============ İLAN RAPORLAMA ============
     async function reportAd() {
       if (!currentUser) { alert("Rapor etmek için giriş yapın!"); openAuthModal(); return; }
       const reason = prompt("Bu ilanı rapor etme sebebiniz:");
@@ -2605,14 +2417,833 @@
           await db.ref('reports').push({
             type: "İlan Şikayeti",
             adId: currentSelectedAdId,
+            adTitle: currentSelectedAd ? currentSelectedAd.title : '',
             reason: reason,
-            reporter: currentUserProfile.nickname,
+            reporter: currentUserProfile.uniqueName,
+            reporterDisplay: currentUserProfile.displayName,
             timestamp: Date.now()
           });
           alert("✅ İlan yöneticilere bildirildi.");
+          // Admin'e bildirim
+          pushNotification(ADMIN_EMAIL, 'admin_new_report', `Yeni rapor: ${currentSelectedAd ? currentSelectedAd.title : 'İlan'}`, '🚨', { adId: currentSelectedAdId });
         } catch(e) { alert("Hata: " + e.message); }
       }
     }
+
+    // ============ DM SİSTEMİ ============
+    function startDmFromProfile() {
+      startDmWithUid(publicProfileViewedUid);
+    }
+
+    async function startDmWithUid(otherUid) {
+      if (!currentUser) { alert("Mesaj göndermek için giriş yapmalısınız!"); openAuthModal(); return; }
+      if (!otherUid) { alert("Kullanıcı bulunamadı."); return; }
+      if (otherUid === currentUser.uid) { alert("Kendinize mesaj gönderemezsiniz."); return; }
+      
+      // Engellenmiş mi kontrol et
+      if (isUserBlocked(otherUid)) {
+        alert("Bu kullanıcıyı engellediniz. Mesaj gönderemezsiniz.");
+        return;
+      }
+
+      // Karşı taraf beni engellemiş mi kontrol et
+      const peerSnap = await db.ref('users/' + otherUid + '/blockedUsers').once('value');
+      const peerBlocked = peerSnap.val() || [];
+      if (peerBlocked.includes(currentUser.uid)) {
+        alert("Bu kullanıcı sizi engellemiş. Mesaj gönderemezsiniz.");
+        return;
+      }
+
+      const banCheck = await checkUserPunishment(currentUser.uid, currentUserProfile.uniqueName, "Sohbet Engeli");
+      const dmInput = document.getElementById('dmInput');
+      const dmBtn = document.getElementById('dmSendBtn');
+      if (banCheck) {
+        dmInput.disabled = true;
+        dmInput.placeholder = "🚫 Sohbet engeliniz bulunmaktadır!";
+        dmBtn.disabled = true;
+      } else {
+        dmInput.disabled = false;
+        dmInput.placeholder = "Bir mesaj yazın...";
+        dmBtn.disabled = false;
+      }
+
+      dmActivePeerUid = otherUid;
+      closeDetailModal();
+      closePublicProfileModal();
+      closeDmPanel();
+
+      const peer = await getPeerUser(otherUid);
+      document.getElementById('dmPeerName').textContent = peer.displayName || peer.uniqueName || 'Kullanıcı';
+      document.getElementById('dmPeerAvatar').src = peer.avatar || DEFAULT_AVATAR;
+      renderOnlineDot('dmPeerOnlineDot', peer.online);
+      document.getElementById('dmPeerOnlineText').textContent = formatOnlineText(peer);
+
+      document.getElementById('dmChatModal').classList.add('active');
+      loadDmMessages(otherUid);
+
+      db.ref(`dmInbox/${currentUser.uid}/${otherUid}/unreadCount`).set(0);
+    }
+
+    async function getPeerUser(uid) {
+      const snap = await db.ref('users/' + uid).once('value');
+      return snap.val() || { displayName: 'Kullanıcı', uniqueName: '', avatar: DEFAULT_AVATAR };
+    }
+
+    function closeDmChatModal() {
+      document.getElementById('dmChatModal').classList.remove('active');
+      if (dmChatRef) dmChatRef.off();
+      dmActivePeerUid = null;
+    }
+
+    function loadDmMessages(otherUid) {
+      const container = document.getElementById('dmMessagesContainer');
+      container.innerHTML = '<div style="text-align:center; color:var(--text-muted); font-size:0.8rem; margin:auto;">Yükleniyor...</div>';
+
+      if (dmChatRef) dmChatRef.off();
+      const threadId = getDmThreadId(currentUser.uid, otherUid);
+      dmChatRef = db.ref(`dmThreads/${threadId}/messages`);
+
+      dmChatRef.on('value', async snapshot => {
+        container.innerHTML = '';
+        const messages = snapshot.val();
+        if (!messages) {
+          container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:2rem;"><span style="font-size:2rem;">✉️</span><div>Henüz mesajlaşmadınız.</div><div style="font-size:0.8rem;">İlk mesajı sen gönder!</div></div>`;
+          return;
+        }
+
+        const isAdmin = currentUser && isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile);
+        const sortedKeys = Object.keys(messages).sort((a,b) => (messages[a].timestamp || 0) - (messages[b].timestamp || 0));
+        
+        for (const msgKey of sortedKeys) {
+          const msg = messages[msgKey];
+          const isOwn = currentUser && msg.senderUid === currentUser.uid;
+          const canDelete = isOwn ? canDeleteMessage(msg.timestamp) : false;
+          const adminCanDelete = isAdmin;
+          const isSenderAdmin = msg.senderUid && isUserAdmin(msg.senderUid, null, { isAdmin: true });
+          
+          const msgRow = document.createElement('div');
+          msgRow.className = `chat-msg-row ${isOwn ? 'is-own' : ''}`;
+          msgRow.innerHTML = `
+            <img src="${escapeHtml(msg.senderAvatar || DEFAULT_AVATAR)}" class="chat-avatar" style="cursor:pointer;" onclick="openPublicProfile('${escapeHtml(msg.senderUid || '')}')">
+            <div class="chat-bubble-col">
+              <div class="chat-meta">
+                <span class="chat-sender-name">${escapeHtml(msg.senderName)} ${isSenderAdmin ? '<span class="admin-tag">Admin</span>' : ''}</span>
+                <span class="chat-time">${timeAgo(msg.timestamp)}</span>
+              </div>
+              <div class="chat-bubble">${escapeHtml(msg.text)}</div>
+              <div class="chat-msg-actions">
+                <button class="chat-action-btn" onclick="reportDmMessage('${escapeHtml(msgKey)}', '${escapeHtml(msg.text)}', '${escapeHtml(msg.senderUid)}')">🚨 Rapor Et</button>
+                ${(canDelete || adminCanDelete) ? `<button class="chat-action-btn danger" onclick="deleteDmMessage('${escapeHtml(msgKey)}')">🗑️ Sil</button>` : ''}
+              </div>
+            </div>
+          `;
+          container.appendChild(msgRow);
+        }
+        container.scrollTop = container.scrollHeight;
+      });
+    }
+
+    async function sendDmMessage() {
+      if (!currentUser || !dmActivePeerUid) return;
+
+      const banCheck = await checkUserPunishment(currentUser.uid, currentUserProfile.uniqueName, "Sohbet Engeli");
+      if (banCheck) {
+        alert(`🚫 SOHBET ENGELİNİZ BULUNMAKTADIR!\n\nSebep: ${banCheck.reason}`);
+        return;
+      }
+
+      const input = document.getElementById('dmInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const otherUid = dmActivePeerUid;
+      const threadId = getDmThreadId(currentUser.uid, otherUid);
+
+      try {
+        await db.ref(`dmThreads/${threadId}/messages`).push({
+          senderUid: currentUser.uid,
+          senderName: currentUserProfile.displayName || currentUserProfile.uniqueName,
+          senderAvatar: currentUserProfile.avatar || DEFAULT_AVATAR,
+          text: text,
+          timestamp: Date.now()
+        });
+        input.value = '';
+
+        const now = Date.now();
+        const peer = await getPeerUser(otherUid);
+        await db.ref(`dmInbox/${currentUser.uid}/${otherUid}`).update({
+          displayName: peer.displayName || peer.uniqueName || 'Kullanıcı',
+          avatar: peer.avatar || DEFAULT_AVATAR,
+          lastMessage: text, lastTimestamp: now
+        });
+        await db.ref(`dmInbox/${otherUid}/${currentUser.uid}`).update({
+          displayName: currentUserProfile.displayName || currentUserProfile.uniqueName,
+          avatar: currentUserProfile.avatar || DEFAULT_AVATAR,
+          lastMessage: text, lastTimestamp: now,
+          unreadCount: firebase.database.ServerValue.increment(1)
+        });
+
+        // DM bildirimi (sadece DM kutusuna, bildirimlere değil)
+        await db.ref(`notifications/${otherUid}`).push({
+          type: 'dm',
+          text: `${currentUserProfile.displayName} sana özel mesaj gönderdi`,
+          icon: '✉️',
+          timestamp: Date.now(),
+          read: false,
+          meta: { fromUid: currentUser.uid }
+        });
+      } catch (e) { alert("Hata: " + e.message); }
+    }
+
+    async function reportDmMessage(msgKey, msgText, senderUid) {
+      if (!currentUser) { alert("Raporlamak için giriş yapın!"); return; }
+      const reason = prompt("Bu mesajı rapor etme sebebiniz:");
+      if (reason) {
+        try {
+          await db.ref('reports').push({
+            type: "Özel Mesaj Şikayeti",
+            msgKey: msgKey,
+            msgText: msgText,
+            senderUid: senderUid,
+            reason: reason,
+            reporter: currentUserProfile.uniqueName,
+            reporterDisplay: currentUserProfile.displayName,
+            timestamp: Date.now()
+          });
+          alert("✅ Mesaj yöneticilere bildirildi.");
+          pushNotification(ADMIN_EMAIL, 'admin_new_report', `Yeni özel mesaj raporu`, '🚨');
+        } catch(e) { alert("Hata: " + e.message); }
+      }
+    }
+
+    async function deleteDmMessage(msgKey) {
+      if (!currentUser) return;
+      const isAdmin = isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile);
+      
+      const threadId = getDmThreadId(currentUser.uid, dmActivePeerUid);
+      const snap = await db.ref(`dmThreads/${threadId}/messages/${msgKey}`).once('value');
+      const msg = snap.val();
+      if (!msg) return;
+      
+      const isOwn = msg.senderUid === currentUser.uid;
+      const canDelete = isOwn ? canDeleteMessage(msg.timestamp) : false;
+      
+      if (!canDelete && !isAdmin) {
+        alert("Bu mesajı silme yetkiniz yok (sadece 30 dakika içinde kendi mesajınızı silebilirsiniz).");
+        return;
+      }
+      
+      if (confirm("Bu mesajı silmek istediğinize emin misiniz?")) {
+        try {
+          await db.ref(`dmThreads/${threadId}/messages/${msgKey}`).remove();
+          alert("Mesaj silindi.");
+        } catch(e) { alert("Hata: " + e.message); }
+      }
+    }
+
+    // ============ DM PANELİ ============
+    function toggleDmPanel(event) {
+      if (event) event.stopPropagation();
+      closeNotifPanel();
+      const panel = document.getElementById('dmPanel');
+      panel.classList.toggle('open');
+      if (panel.classList.contains('open')) renderDmPanel();
+    }
+    function closeDmPanel() {
+      const p = document.getElementById('dmPanel');
+      if (p) p.classList.remove('open');
+    }
+
+    function renderDmPanel() {
+      const dot = document.getElementById('dmBellDot');
+      const body = document.getElementById('dmPanelBody');
+      if (!dot || !body) return;
+
+      const threads = Object.entries(dmInboxData).map(([uid, t]) => ({ uid, ...t }));
+      threads.sort((a, b) => (b.lastTimestamp || 0) - (a.lastTimestamp || 0));
+      const totalUnread = threads.reduce((sum, t) => sum + (t.unreadCount || 0), 0);
+
+      if (totalUnread > 0) {
+        dot.style.display = 'flex';
+        dot.textContent = totalUnread > 99 ? '99+' : totalUnread;
+      } else {
+        dot.style.display = 'none';
+      }
+
+      if (threads.length === 0) {
+        body.innerHTML = `<div class="dropdown-empty"><span class="icon">✉️</span>Henüz mesajınız yok.</div>`;
+        return;
+      }
+
+      body.innerHTML = threads.map(t => `
+        <div class="dm-item" onclick="startDmWithUid('${escapeHtml(t.uid)}')">
+          <div class="avatar-wrap">
+            <img src="${escapeHtml(t.avatar || DEFAULT_AVATAR)}" style="width:36px; height:36px; border-radius:50%; object-fit:cover;">
+          </div>
+          <div class="info">
+            <div class="t">${escapeHtml(t.displayName || 'Kullanıcı')}</div>
+            <div class="s">${escapeHtml(t.lastMessage || '')}</div>
+          </div>
+          ${t.unreadCount > 0 ? `<span class="unread-badge">${t.unreadCount}</span>` : ''}
+        </div>
+      `).join('');
+    }
+
+    // ============ BİLDİRİMLER ============
+    function toggleNotifPanel(event) {
+      if (event) event.stopPropagation();
+      closeDmPanel();
+      const panel = document.getElementById('notifPanel');
+      panel.classList.toggle('open');
+      if (panel.classList.contains('open')) renderNotifPanel();
+    }
+    function closeNotifPanel() {
+      const p = document.getElementById('notifPanel');
+      if (p) p.classList.remove('open');
+    }
+
+    function renderNotifPanel() {
+      const dot = document.getElementById('notifBellDot');
+      const body = document.getElementById('notifPanelBody');
+      if (!dot || !body) return;
+
+      const unreadCount = notificationsData.filter(n => !n.read).length;
+      if (unreadCount > 0) {
+        dot.style.display = 'flex';
+        dot.textContent = unreadCount > 99 ? '99+' : unreadCount;
+      } else {
+        dot.style.display = 'none';
+      }
+
+      if (notificationsData.length === 0) {
+        body.innerHTML = `<div class="dropdown-empty"><span class="icon">🔔</span>Henüz bildiriminiz yok.</div>`;
+        return;
+      }
+
+      body.innerHTML = notificationsData.slice(0, 25).map(n => `
+        <div class="notif-item ${!n.read ? 'is-unread' : ''}" onclick="handleNotifClick('${escapeHtml(n.id)}')">
+          <div class="icon">${n.icon || '🔔'}</div>
+          <div class="info">
+            <div class="t">${escapeHtml(n.text)}</div>
+            <div class="s">${timeAgo(n.timestamp)}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function markAllNotifsRead() {
+      if (!currentUser) return;
+      const updates = {};
+      notificationsData.forEach(n => { if (!n.read) updates[n.id + '/read'] = true; });
+      if (Object.keys(updates).length > 0) {
+        await db.ref('notifications/' + currentUser.uid).update(updates);
+      }
+    }
+
+    async function handleNotifClick(notifId) {
+      const notif = notificationsData.find(n => n.id === notifId);
+      if (!notif) return;
+      if (!notif.read) db.ref(`notifications/${currentUser.uid}/${notifId}/read`).set(true);
+      closeNotifPanel();
+
+      if (notif.type === 'dm' && notif.meta && notif.meta.fromUid) {
+        startDmWithUid(notif.meta.fromUid);
+      } else if (notif.meta && notif.meta.adId) {
+        const ad = adsData.find(a => a.id === notif.meta.adId);
+        if (ad) openDetailModal(ad.id);
+      }
+    }
+
+    function startNotifAndDmWatchers() {
+      if (notifWatcherStarted || !currentUser) return;
+      notifWatcherStarted = true;
+      const uid = currentUser.uid;
+
+      db.ref('notifications/' + uid).on('value', snap => {
+        notificationsData = [];
+        const val = snap.val();
+        if (val) Object.entries(val).forEach(([key, n]) => notificationsData.push({ id: key, ...n }));
+        notificationsData.sort((a, b) => b.timestamp - a.timestamp);
+        renderNotifPanel();
+      });
+
+      db.ref('dmInbox/' + uid).on('value', snap => {
+        dmInboxData = snap.val() || {};
+        renderDmPanel();
+        if (document.getElementById('dmChatModal').classList.contains('active') && dmActivePeerUid) {
+          // Açık sohbet varsa okunmamış sayacı sıfırlanır
+        }
+      });
+    }
+
+    // ============ HERKESE AÇIK PROFİL ============
+    async function openPublicProfile(uid) {
+      if (!uid) return;
+      if (currentUser && uid === currentUser.uid) { openProfileModal(); return; }
+
+      publicProfileViewedUid = uid;
+      closeDetailModal();
+      closeDmChatModal();
+
+      document.getElementById('ppDisplayName').textContent = "Yükleniyor...";
+      document.getElementById('ppUniqueName').textContent = "";
+      document.getElementById('publicProfileModal').classList.add('active');
+
+      try {
+        const snap = await db.ref('users/' + uid).once('value');
+        const u = snap.val();
+        if (!u) {
+          document.getElementById('ppDisplayName').textContent = "Kullanıcı bulunamadı";
+          return;
+        }
+
+        // Ban kontrolü
+        const banCheck = await checkUserPunishment(uid, u.uniqueName, "Hesap Askıya Alma");
+        const isBanned = !!banCheck;
+        document.getElementById('ppBannedBadge').style.display = isBanned ? 'block' : 'none';
+
+        document.getElementById('ppAvatar').src = u.avatar || DEFAULT_AVATAR;
+        document.getElementById('ppDisplayName').textContent = u.displayName || u.uniqueName || 'Kullanıcı';
+        document.getElementById('ppUniqueName').textContent = u.uniqueName ? '@' + u.uniqueName : '';
+        renderOnlineDot('ppOnlineDot', u.online);
+        const onlineTextEl = document.getElementById('ppOnlineText');
+        onlineTextEl.textContent = formatOnlineText(u);
+        onlineTextEl.classList.toggle('is-online', !!u.online);
+        document.getElementById('ppJoinDate').textContent = u.createdAt ? new Date(u.createdAt).toLocaleDateString('tr-TR', { year: 'numeric', month: 'short' }) : '-';
+
+        const userAds = adsData.filter(ad => ad.ownerId === uid && ad.approved !== false);
+        document.getElementById('ppAdCount').textContent = userAds.length;
+        const listEl = document.getElementById('ppAdsList');
+        listEl.innerHTML = userAds.length === 0
+          ? `<div style="color:var(--text-muted); font-size:0.75rem; text-align:center; padding:0.5rem;">Aktif ilanı yok.</div>`
+          : userAds.map(ad => `
+              <div onclick="closePublicProfileModal(); openDetailModal('${escapeHtml(ad.id)}')" style="display:flex; align-items:center; gap:8px; padding:6px; border-radius:8px; cursor:pointer; border:1px solid var(--border-color); background:var(--bg-main);">
+                <img src="${escapeHtml((ad.images && ad.images[ad.thumbnailIndex || 0]) || 'https://via.placeholder.com/60')}" style="width:36px; height:36px; border-radius:6px; object-fit:cover;">
+                <div style="font-size:0.78rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(ad.title)}</div>
+              </div>
+            `).join('');
+
+        // Ceza geçmişi
+        const banHistoryContainer = document.getElementById('ppBanHistoryList');
+        const allPunishments = await db.ref('punishments').once('value');
+        const allData = allPunishments.val() || {};
+        const userPunishments = Object.entries(allData)
+          .filter(([key, p]) => p.targetUid ? p.targetUid === uid : (p.uniqueName && p.uniqueName.toLowerCase() === (u.uniqueName || '').toLowerCase()))
+          .map(([key, p]) => ({ id: key, ...p }))
+          .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+        if (userPunishments.length === 0) {
+          banHistoryContainer.innerHTML = `<div style="color:var(--text-muted); font-size:0.7rem; text-align:center; padding:0.5rem;">Ceza geçmişi yok.</div>`;
+        } else {
+          banHistoryContainer.innerHTML = userPunishments.map(p => `
+            <div style="font-size:0.7rem; padding:4px 8px; background:var(--bg-main); border-radius:4px; border:1px solid var(--border-color); margin-bottom:4px;">
+              <strong>${escapeHtml(p.type || 'Ceza')}</strong> - ${p.revoked ? '✅ Kaldırıldı' : '❌ Aktif'}
+              <div style="color:var(--text-muted);">${escapeHtml(p.reason || '')}</div>
+              <div style="color:var(--text-muted); font-size:0.6rem;">${new Date(p.timestamp).toLocaleDateString('tr-TR')}</div>
+            </div>
+          `).join('');
+        }
+
+        // Block butonu
+        const blockBtn = document.getElementById('ppBlockBtn');
+        const isBlocked = (currentUserProfile.blockedUsers || []).includes(uid);
+        blockBtn.textContent = isBlocked ? '✅ Engellendi' : '🚫 Engelle';
+        blockBtn.classList.toggle('blocked', isBlocked);
+
+      } catch (e) {
+        document.getElementById('ppDisplayName').textContent = "Yüklenemedi";
+      }
+    }
+
+    function closePublicProfileModal() {
+      document.getElementById('publicProfileModal').classList.remove('active');
+    }
+
+    // ============ ADMIN PANELİ ============
+    function openAdminModal() {
+      if (currentUser && isUserAdmin(currentUser.uid, currentUser.email, currentUserProfile)) {
+        document.getElementById('adminModal').classList.add('active');
+        renderAdminAds();
+        renderAdminReports();
+        renderAdminActivePunishments();
+      } else {
+        alert("Yetkiniz yok!");
+      }
+    }
+    function closeAdminModal() { document.getElementById('adminModal').classList.remove('active'); }
+
+    function switchAdminTab(tab) {
+      document.getElementById('tabAdminAds').classList.toggle('active', tab === 'ads');
+      document.getElementById('tabAdminReports').classList.toggle('active', tab === 'reports');
+      document.getElementById('tabAdminPunish').classList.toggle('active', tab === 'punish');
+      document.getElementById('tabAdminActivePunishments').classList.toggle('active', tab === 'activePunishments');
+      document.getElementById('tabAdminClearHistory').classList.toggle('active', tab === 'clearHistory');
+      
+      document.getElementById('adminAdsSection').style.display = tab === 'ads' ? 'block' : 'none';
+      document.getElementById('adminReportsSection').style.display = tab === 'reports' ? 'block' : 'none';
+      document.getElementById('adminPunishSection').style.display = tab === 'punish' ? 'block' : 'none';
+      document.getElementById('adminActivePunishmentsSection').style.display = tab === 'activePunishments' ? 'block' : 'none';
+      document.getElementById('adminClearHistorySection').style.display = tab === 'clearHistory' ? 'block' : 'none';
+    }
+
+    function renderAdminAds() {
+      const container = document.getElementById('adminAdsList');
+      container.innerHTML = "";
+      if (adsData.length === 0) {
+        container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:1.5rem;">İlan bulunmuyor.</div>`;
+        return;
+      }
+      adsData.forEach(ad => {
+        const isApproved = ad.approved !== false;
+        const statusText = isApproved ? `<span style="color:#10b981;">(Yayında)</span>` : `<span style="color:#f59e0b;">(Onay Bekliyor)</span>`;
+        const approveBtn = !isApproved ? `<button onclick="adminApproveAd('${escapeHtml(ad.id)}')" class="btn-primary" style="padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem;">Onayla</button>` : '';
+
+        container.insertAdjacentHTML('beforeend', `
+          <div style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-main); padding:8px 12px; border-radius:8px; border:1px solid var(--border-color); flex-wrap:wrap; gap:8px;">
+            <div>
+              <div style="font-weight:600; font-size:0.85rem;">${escapeHtml(ad.title)} ${statusText}</div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">Sahibi: ${escapeHtml(ad.ownerDisplayName || ad.ownerNickname)} (@${escapeHtml(ad.ownerUniqueName || '')})</div>
+            </div>
+            <div style="display:flex; gap: 6px; flex-wrap:wrap;">
+              <button onclick="closeAdminModal(); openDetailModal('${escapeHtml(ad.id)}')" class="btn-auth" style="padding:0.3rem 0.6rem; font-size:0.75rem;">🔍 Göz At</button>
+              <button onclick="closeAdminModal(); openEditModal('${escapeHtml(ad.id)}')" class="btn-auth" style="padding:0.3rem 0.6rem; font-size:0.75rem; border-color:#3b82f6; color:#93c5fd;">✏️ Düzenle</button>
+              ${approveBtn}
+              <button onclick="adminDeleteAd('${escapeHtml(ad.id)}')" class="btn-danger" style="padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem;">Sil</button>
+            </div>
+          </div>
+        `);
+      });
+    }
+
+    let reportsListenerAttached = false;
+    function renderAdminReports() {
+      if (!reportsListenerAttached) {
+        db.ref('reports').on('value', snapshot => {
+          const container = document.getElementById('adminReportsList');
+          if (!container) return;
+          container.innerHTML = "";
+          const reports = snapshot.val();
+          if (!reports) {
+            container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:1.5rem;">Rapor yok.</div>`;
+            return;
+          }
+          Object.entries(reports).forEach(([key, rep]) => {
+            let actionButtons = `<button onclick="deleteReport('${escapeHtml(key)}')" class="btn-auth" style="padding:0.25rem 0.5rem; font-size:0.7rem;">Temizle</button>`;
+            
+            if (rep.adId) {
+              actionButtons += `
+                <button onclick="closeAdminModal(); openDetailModal('${escapeHtml(rep.adId)}')" class="btn-auth" style="padding:0.25rem 0.5rem; font-size:0.7rem;">Göz At</button>
+                <button onclick="closeAdminModal(); openEditModal('${escapeHtml(rep.adId)}')" class="btn-auth" style="padding:0.25rem 0.5rem; font-size:0.7rem; border-color:#3b82f6; color:#93c5fd;">Düzenle</button>
+              `;
+            }
+
+            container.insertAdjacentHTML('beforeend', `
+              <div style="background:var(--bg-main); padding:10px; border-radius:8px; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                <div>
+                  <div style="font-weight:bold; color:#ef4444; font-size:0.8rem;">Tür: ${escapeHtml(rep.type)}</div>
+                  <div style="font-size:0.85rem; color:var(--text-main); margin-top:2px;">"${escapeHtml(rep.content || rep.msgText || '')}"</div>
+                  <div style="font-size:0.7rem; color:var(--text-muted); margin-top:2px;">Rapor Eden: ${escapeHtml(rep.reporterDisplay || rep.reporter)} | Sebep: ${escapeHtml(rep.reason)}</div>
+                </div>
+                <div style="display:flex; gap:5px; flex-wrap:wrap;">${actionButtons}</div>
+              </div>
+            `);
+          });
+        });
+        reportsListenerAttached = true;
+      }
+    }
+
+    let activePunishmentsListenerAttached = false;
+    function renderAdminActivePunishments() {
+      if (!activePunishmentsListenerAttached) {
+        db.ref('punishments').on('value', snapshot => {
+          const container = document.getElementById('adminActivePunishmentsList');
+          if (!container) return;
+          container.innerHTML = "";
+          const punishments = snapshot.val();
+          if (!punishments) {
+            container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:1.5rem;">Aktif cezası bulunan kullanıcı yok.</div>`;
+            return;
+          }
+          
+          let activeCount = 0;
+          const now = Date.now();
+
+          Object.entries(punishments).forEach(([punishKey, p]) => {
+            if (p.revoked) return;
+            const durationMs = ((p.days || 0) * 24 * 3600 * 1000) + ((p.hours || 0) * 3600 * 1000);
+            const expiresAt = (p.timestamp || 0) + durationMs;
+            const isInfinite = durationMs === 0;
+
+            if (isInfinite || now < expiresAt) {
+              activeCount++;
+              let remainingText = isInfinite ? "Süresiz" : `${Math.ceil((expiresAt - now) / (1000 * 60 * 60))} saat kaldı`;
+
+              container.insertAdjacentHTML('beforeend', `
+                <div style="background:var(--bg-main); padding:12px; border-radius:8px; border:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                  <div>
+                    <div style="font-weight:bold; color:#ef4444; font-size:0.9rem;">👤 ${escapeHtml(p.displayName || p.username)} <span style="font-size: 0.75rem; background: rgba(239, 68, 68, 0.2); padding: 2px 6px; border-radius: 4px; border: 1px solid #ef4444;">${escapeHtml(p.type)}</span></div>
+                    <div style="font-size:0.8rem; color:var(--text-main); margin-top:4px;"><strong>Sebep:</strong> ${escapeHtml(p.reason)}</div>
+                    <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">Süre: ${p.days} gün ${p.hours} saat | Kalan: ${remainingText} | Veren: ${escapeHtml(p.admin || 'Admin')}</div>
+                  </div>
+                  <div>
+                    <button onclick="removePunishment('${escapeHtml(punishKey)}')" class="btn-danger" style="padding:0.4rem 0.8rem; border-radius:6px; font-size:0.8rem; font-weight:600;">Cezayı Kaldır 🟢</button>
+                  </div>
+                </div>
+              `);
+            }
+          });
+
+          if (activeCount === 0) {
+            container.innerHTML = `<div style="color:var(--text-muted); text-align:center; padding:1.5rem;">Aktif cezası bulunan kullanıcı yok.</div>`;
+          }
+        });
+        activePunishmentsListenerAttached = true;
+      }
+    }
+
+    async function deleteReport(repKey) {
+      await db.ref('reports/' + repKey).remove();
+    }
+
+    async function removePunishment(punishKey) {
+      if (confirm("Bu kullanıcının cezasını kaldırmak istediğinize emin misiniz?")) {
+        try {
+          await db.ref('punishments/' + punishKey).update({
+            revoked: true,
+            revokedAt: Date.now(),
+            revokedBy: currentUserProfile.displayName || currentUserProfile.uniqueName
+          });
+          alert("✅ Kullanıcının cezası başarıyla kaldırıldı!");
+        } catch(e) {
+          alert("Hata: " + e.message);
+        }
+      }
+    }
+
+    async function findUidByUniqueName(uniqueName) {
+      try {
+        const snap = await db.ref('nicknameIndex/' + uniqueName).once('value');
+        return snap.val();
+      } catch (e) { return null; }
+    }
+
+    async function issuePunishment() {
+      const uniqueName = document.getElementById('punishUsername').value.trim();
+      const type = document.getElementById('punishType').value;
+      const days = parseInt(document.getElementById('punishDays').value) || 0;
+      const hours = parseInt(document.getElementById('punishHours').value) || 0;
+      const reason = document.getElementById('punishReason').value.trim();
+
+      if (!uniqueName || !reason) {
+        alert("Lütfen kullanıcı adını ve ceza sebebini doldurun!");
+        return;
+      }
+
+      const targetUid = await findUidByUniqueName(uniqueName);
+      if (!targetUid) {
+        alert(`⚠️ "${uniqueName}" adında kayıtlı bir kullanıcı bulunamadı.`);
+        return;
+      }
+
+      try {
+        // Kullanıcı bilgilerini al
+        const userSnap = await db.ref('users/' + targetUid).once('value');
+        const userData = userSnap.val();
+
+        await db.ref('punishments').push({
+          uniqueName: uniqueName,
+          targetUid: targetUid,
+          displayName: userData ? userData.displayName : uniqueName,
+          type: type,
+          days: days,
+          hours: hours,
+          reason: reason,
+          timestamp: Date.now(),
+          admin: currentUserProfile.displayName || currentUserProfile.uniqueName
+        });
+        alert(`✅ "${uniqueName}" kullanıcısına ${type} cezası verildi.`);
+        document.getElementById('punishUsername').value = "";
+        document.getElementById('punishReason').value = "";
+
+        pushNotification(targetUid, 'punishment', `Hesabınıza "${type}" cezası verildi: ${reason}`, '⚖️');
+      } catch(e) {
+        alert("Hata: " + e.message);
+      }
+    }
+
+    async function adminApproveAd(adId) {
+      try {
+        await db.ref('ads/' + adId).update({ approved: true });
+        alert("İlan onaylandı!");
+        const ad = adsData.find(a => a.id === adId);
+        if (ad && ad.ownerId) pushNotification(ad.ownerId, 'ad_approved', `"${ad.title}" ilanınız onaylandı ve yayına alındı! 🎉`, '✅', { adId });
+        renderAdminAds();
+      } catch(err) { alert("Hata: " + err.message); }
+    }
+
+    async function adminDeleteAd(adId) {
+      if (confirm("Bu ilanı kaldırmak istediğinize emin misiniz?")) {
+        try {
+          const ad = adsData.find(a => a.id === adId);
+          await db.ref('ads/' + adId).remove();
+          await db.ref('chats/' + adId).remove();
+          alert("İlan kaldırıldı.");
+          if (ad && ad.ownerId) pushNotification(ad.ownerId, 'ad_deleted', `"${ad.title}" ilanınız bir yönetici tarafından kaldırıldı.`, '🗑️');
+          renderAdminAds();
+        } catch(err) { alert("Hata: " + err.message); }
+      }
+    }
+
+    // ============ CEZA GEÇMİŞİ TEMİZLEME ============
+    async function clearUserBanHistory() {
+      const uniqueName = document.getElementById('clearHistoryUsername').value.trim();
+      if (!uniqueName) {
+        alert("Lütfen bir kullanıcı adı girin.");
+        return;
+      }
+
+      if (!confirm(`"${uniqueName}" kullanıcısının tüm ceza geçmişini temizlemek istediğinize emin misiniz?`)) return;
+
+      try {
+        const targetUid = await findUidByUniqueName(uniqueName);
+        if (!targetUid) {
+          alert("Kullanıcı bulunamadı.");
+          return;
+        }
+
+        const snap = await db.ref('punishments').once('value');
+        const all = snap.val() || {};
+        const updates = {};
+        
+        Object.entries(all).forEach(([key, p]) => {
+          if (p.targetUid === targetUid || (p.uniqueName && p.uniqueName.toLowerCase() === uniqueName.toLowerCase())) {
+            updates[key + '/revoked'] = true;
+            updates[key + '/revokedAt'] = Date.now();
+            updates[key + '/revokedBy'] = currentUserProfile.displayName || currentUserProfile.uniqueName;
+          }
+        });
+
+        if (Object.keys(updates).length === 0) {
+          document.getElementById('clearHistoryResult').innerHTML = '<div style="color:var(--text-muted);">Bu kullanıcıya ait ceza kaydı bulunamadı.</div>';
+          return;
+        }
+
+        await db.ref('punishments').update(updates);
+        document.getElementById('clearHistoryResult').innerHTML = `<div style="color:#10b981;">✅ ${Object.keys(updates).length} ceza kaydı temizlendi.</div>`;
+        document.getElementById('clearHistoryUsername').value = '';
+      } catch(e) {
+        document.getElementById('clearHistoryResult').innerHTML = `<div style="color:#ef4444;">❌ Hata: ${e.message}</div>`;
+      }
+    }
+
+    // ============ AUTH STATE ============
+    auth.onAuthStateChanged(async (user) => {
+      currentUser = user;
+      if (user) {
+        document.getElementById('btnAuthOpen').style.display = 'none';
+        document.getElementById('userInfoArea').style.display = 'flex';
+
+        const snapshot = await db.ref('users/' + user.uid).once('value');
+        if (snapshot.exists()) {
+          currentUserProfile = snapshot.val();
+          if (!currentUserProfile.favorites) currentUserProfile.favorites = [];
+          if (!currentUserProfile.blockedUsers) currentUserProfile.blockedUsers = [];
+        } else {
+          const fallbackName = user.email ? user.email.split('@')[0] : 'user_' + Date.now().toString(36);
+          currentUserProfile = { 
+            uniqueName: fallbackName,
+            displayName: fallbackName,
+            avatar: DEFAULT_AVATAR,
+            createdAt: Date.now(),
+            favorites: [],
+            blockedUsers: [],
+            email: user.email || ''
+          };
+          await db.ref('users/' + user.uid).set(currentUserProfile);
+          await db.ref('nicknameIndex/' + fallbackName).set(user.uid);
+        }
+
+        // Ban kontrolü
+        const banCheck = await checkUserPunishment(user.uid, currentUserProfile.uniqueName, "Hesap Askıya Alma");
+        if (banCheck) {
+          alert(`🚫 HESABINIZ ASKIYA ALINMIŞTIR!\n\nSebep: ${banCheck.reason}\nSüre: ${banCheck.isInfinite ? 'Süresiz' : 'Geçici'}`);
+          await auth.signOut();
+          location.reload();
+          return;
+        }
+
+        document.getElementById('userNicknameText').textContent = currentUserProfile.displayName || currentUserProfile.uniqueName;
+        document.getElementById('userHeaderAvatar').src = currentUserProfile.avatar || DEFAULT_AVATAR;
+        updateFavoritesUI();
+
+        if (isUserAdmin(user.uid, user.email, currentUserProfile)) {
+          document.getElementById('btnAdminPanel').style.display = 'flex';
+          document.getElementById('adminButtonContainer').style.display = 'block';
+        } else {
+          document.getElementById('btnAdminPanel').style.display = 'none';
+          document.getElementById('adminButtonContainer').style.display = 'none';
+        }
+
+        document.getElementById('notifBellWrapper').style.display = 'block';
+        document.getElementById('dmBellWrapper').style.display = 'block';
+        setupPresence(user.uid);
+        startNotifAndDmWatchers();
+      } else {
+        document.getElementById('userInfoArea').style.display = 'none';
+        document.getElementById('btnAuthOpen').style.display = 'flex';
+        document.getElementById('btnAdminPanel').style.display = 'none';
+        document.getElementById('adminButtonContainer').style.display = 'none';
+        document.getElementById('btnToggleFavorites').style.display = 'none';
+        document.getElementById('notifBellWrapper').style.display = 'none';
+        document.getElementById('dmBellWrapper').style.display = 'none';
+        closeNotifPanel();
+        closeDmPanel();
+        notifWatcherStarted = false;
+        notificationsData = [];
+        dmInboxData = {};
+        showOnlyFavorites = false;
+      }
+      renderAds();
+    });
+
+    // ============ ADS LISTENER ============
+    db.ref('ads').on('value', (snapshot) => {
+      const data = snapshot.val();
+      adsData = [];
+      if (data) {
+        Object.keys(data).forEach(key => adsData.push({ id: key, ...data[key] }));
+        adsData.reverse();
+      }
+      renderAds();
+    });
+
+    // ============ BAŞLANGIÇ ============
+    populateFilterBrands();
+    toggleBrandList();
+
+    document.addEventListener('click', (e) => {
+      const notifWrap = document.getElementById('notifBellWrapper');
+      const dmWrap = document.getElementById('dmBellWrapper');
+      if (notifWrap && !notifWrap.contains(e.target)) closeNotifPanel();
+      if (dmWrap && !dmWrap.contains(e.target)) closeDmPanel();
+    });
+
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape') {
+        closeLightbox();
+        closeDetailModal();
+        closeDmChatModal();
+        closeMessengerModal();
+        closePostModal();
+        closeProfileModal();
+        closePublicProfileModal();
+        closeAdminModal();
+      }
+    });
+
+    console.log("🚗 BelascoAuto - BeamNG İlan Pazarı");
+    console.log("🏷️ Tüm markalar, filtreler ve özellikler eklendi!");
   </script>
 </body>
 </html>
